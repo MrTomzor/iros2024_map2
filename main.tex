@@ -1,0 +1,437 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+\UseRawInputEncoding
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+%In case you encounter the following error:
+%Error 1010 The PDF file may be corrupt (unable to open PDF file) OR
+%Error 1000 An error occurred while parsing a contents stream. Unable to analyze the PDF file.
+%This is a known problem with pdfLaTeX conversion filter. The file cannot be opened with acrobat reader
+%Please use one of the alternatives below to circumvent this error by uncommenting one or the other
+%\pdfobjcompresslevel=0
+%\pdfminorversion=4
+
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+% The following packages can be found on http:\\www.ctan.org
+% \usepackage{graphics} % for pdf, bitmapped graphics files
+%\usepackage{epsfig} % for postscript graphics files
+%\usepackage{mathptmx} % assumes new font selection scheme installed
+%\usepackage{times} % assumes new font selection scheme installed
+% \usepackage{amsmath} % assumes amsmath package installed
+%\usepackage{amssymb}  % assumes amsmath package installed
+% \usepackage{cite}
+
+% \usepackage{amsmath} % assumes amsmath package installed
+\usepackage{amsmath, bm} % assumes amsmath package installed
+%\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{amssymb}
+\usepackage{pdfpages}
+\usepackage{subcaption}
+\usepackage{siunitx}
+% \usepackage[dvipsnames]{xcolor}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage[]{hyperref}
+% \hypersetup{
+%   colorlinks,
+%   citecolor=black,
+%   filecolor=black,
+%   linkcolor=blue,
+%   urlcolor=blue,
+%   pdfauthor={},
+%   pdfsubject={},
+%   pdftitle={}
+% }
+\usepackage{cite}
+
+% REVISIONS
+% \newcommand{\vk}[1]{{\hypersetup{allcolors=blue}{\color{blue} {#1}}}}
+% \newcommand{\vkcaption}[1]{{\color{blue} {#1}}}
+\newcommand{\vk}[1]{#1}
+\newcommand{\vkcaption}[1]{#1}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\newcommand{\simname}{\text{HARDNAV}}
+
+% \newcommand{\real}{\mathbb{R}}
+
+\title{\LARGE \bf
+% Novel Benchmark for Navigation and Active Place Recognition in Confusing and Changing Environments
+{\simname} - Simulator for Benchmarking Robust Navigation and Place Recognition in Large, Confusing and Highly Dynamic Environments}
+
+
+% ORCID %%{
+\usepackage{scalerel}
+\usepackage{tikz}
+\usetikzlibrary{svg.path}
+\definecolor{orcidlogocol}{HTML}{A6CE39}
+\tikzset{
+  orcidlogo/.pic={
+    \fill[orcidlogocol] svg{M256,128c0,70.7-57.3,128-128,128C57.3,256,0,198.7,0,128C0,57.3,57.3,0,128,0C198.7,0,256,57.3,256,128z};
+    \fill[white] svg{M86.3,186.2H70.9V79.1h15.4v48.4V186.2z}
+    svg{M108.9,79.1h41.6c39.6,0,57,28.3,57,53.6c0,27.5-21.5,53.6-56.8,53.6h-41.8V79.1z M124.3,172.4h24.5c34.9,0,42.9-26.5,42.9-39.7c0-21.5-13.7-39.7-43.7-39.7h-23.7V172.4z}
+    svg{M88.7,56.8c0,5.5-4.5,10.1-10.1,10.1c-5.6,0-10.1-4.6-10.1-10.1c0-5.6,4.5-10.1,10.1-10.1C84.2,46.7,88.7,51.3,88.7,56.8z};
+  }
+}
+
+\newcommand\orcidicon[1]{\href{https://orcid.org/#1}{\mbox{\scalerel*{
+        \begin{tikzpicture}[yscale=-1,transform shape]
+          \pic{orcidlogo};
+        \end{tikzpicture}
+}{|}}}}
+% %%}
+
+% \author{Tomas Musil, Matej Petrlik, Martin Saska% <-this % stops a space
+% % \thanks{*This work was not supported by any organization}% <-this % stops a space
+% % \thanks{$^{1}$Albert Author is with Faculty of Electrical Engineering, Mathematics and Computer Science,
+% %         University of Twente, 7500 AE Enschede, The Netherlands
+% %         {\tt\small albert.author@papercept.net}}%
+% % \thanks{$^{2}$Bernard D. Researcheris with the Department of Electrical Engineering, Wright State University,
+% %         Dayton, OH 45435, USA
+% %         {\tt\small b.d.researcher@ieee.org}}%
+% }
+\author{
+  Tom\'{a}\v{s} Musil$^{\orcidicon{0000-0002-9421-6544}}$, 
+  Mat\v{e}j Petrl\'{i}k$^{\orcidicon{0000-0002-5337-9558}}$,
+  Martin Saska$^{\orcidicon{0000-0001-7106-3816}}$%
+
+  \thanks{%
+    Authors are with the Department of Cybernetics, Faculty of Electrical Engineering, Czech Technical University in Prague, 166 36 Prague 6, {\tt\footnotesize\{\href{mailto:musilto8@fel.cvut.cz}{musilto8}|\href{mailto:matej.petrlik@fel.cvut.cz}{matej.petrlik}|\href{mailto:martin.saska@fel.cvut.cz}{martin.saska}\}@fel.cvut.cz}
+}
+  \thanks{Digital Object Identifier (DOI): see top of this page.}
+}
+
+
+\begin{document}
+
+
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+
+  We present a novel simulator called {\simname} for developing and benchmarking robust autonomous navigation and place recognition.
+  The simulator is designed to effortlessly simulate challenging scenarios and environmental features for single-mission autonomy such as dynamic objects and lights, featureless areas, sensor corruption, and for long-term autonomy such as visibility or structural and topological changes and large-scale unstructured environments.
+  % The simulator can also be used for generating multi-session place recognition datasets or testing active place recognition.
+  Additionally, we propose replicable benchmarks of active place recognition, and of multi-session navigation, specifically for a kidnapped robot return home mission type, and discuss other challenging benchmarks possible in our simulator.
+  % and additional spatial intelligence tasks.
+  % Furthermore, we propose several specific spatial intelligence evaluation methods and metrics, which aim to move away from the status-quo of optimizing for metrically precise localization and towards more robust spatial representations.
+  We opensource the code for the simulator and provide scripts and tutorials to easily design multi-session experiments. 
+  We hope the simulator will serve the robotics and AI community to develop robust spatial intelligence methods.
+
+Code--- %\href{
+\href{https://github.com/MrTomzor/navigation_unity_testbed}{https://github.com/MrTomzor/navigation\_unity\_testbed}
+
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODUCTION}
+% Autonomous navigation, place recognition and SLAM, which are aspects of an emerging more general field - spatial/embodied artificial intelligence - are essential for the development of any kind of embodied agents that can perform complex and meaningful tasks in the physical world.
+Autonomous navigation, place recognition and SLAM are aspects of an emerging more general field - spatial/embodied artificial intelligence. They are essential for the development of any kind of embodied agents that can perform complex and meaningful tasks in the physical world.
+These fields have been heavily researched and reviewed in the several last decades \cite{embodied_eval,slam2016,vpr_survey}, and many existing methods are robust enough that they are seeing their use in real world applications.
+
+However, most state-of-the-art methods, especially for SLAM, still make very strong and limiting assumptions about the world --- that it is mostly static, and that global metric localization is achievable most of the time.
+Some SLAMs try to relax the metric localization, such as \cite{ratslam}, but those rely on purely visual appearance matching for place recognition, which fails for example under illumination/visibility changes.
+% \vk{Importantly, in most approaches, incorrect loop closures can lead to corrupted and unusable maps.}
+
+% Similarly, place recognition methods mostly define place as TODO and assume they are matching images to images seen under similar viewpoints, and do not consider recognition from totally different viewpoints of the same area. 
+Navigation also suffers from these assumptions, and even learning-based methods often incorporate a perfect position sensor into its inputs \cite{maps_emergence}.
+% TODO - CITE MORE PAPERS
+There are some methods that attempt to break free of this assumption \cite{dare_slam}, but these are often tailored to specific edge cases and are not a general solution.
+
+In contrast, living organisms are able to navigate changing, ambiguous, large-scale environments with ease and despite the discovery of grid-cells \cite{place_grid_cells} that seem to form an internal metric system, humans and animals can navigate environments where metric localization is unattainable (e.g. navigating abstract conceptual spaces, such as a social hierarchy \cite{cogmap}).
+They can also quickly change their cognitive maps (connected to the discovery of place cells) in case of drastic structural changes in the environment and adapt to them without needing hundreds of hours of retraining time \cite{cogmap} \cite{cogneurosci}\vk{, whereas in most of the current spatial perception methods, a single incorrect loop closure can cause the map to be corrupted and unusable.}
+There is, therefore, still many open questions and challenges in spatial intelligence to answer before spatial artificial intelligence methods are anywhere near the level of robustness of living organisms.
+
+\section{RELATED WORKS}
+\subsection{Simulators}
+Currently, there is a vast amount of simulators for robotics applications that feature different motion and sensor models in different 3D environments, such as Flightmare \cite{flightmare} which is tailored mainly for development of control and planning methods for quadrotors and has a modular structure with a high-fidelity physics engine, CARLA \cite{carla} which features large-scale road traffic and weather change and \vk{AirSim} \cite{airsim} for quadrotor simulation with the high-fidelity NVIDIA PhysX engine.
+
+In the machine learning community, there are also many simulators available for embodied AI aresearch - for example Habitat \cite{habitat}, RoboTHOR \cite{robothor}, 
+These mostly focus on task such as "vision-language navigation" in which deep learning models are trained to perform tasks specified in human language \cite{vision_language_navigation}.
+
+The majority of these simulators still feature only static, small-scale, structured scenes, with the major exception being CARLA \cite{carla}, which is however designed for cars moving in the highly structured and navigable domain of roads.
+In contrast, {\simname} does not offer high-fidelity dynamics nor super-realistic rendering because it is focused on offering large-scale, unstructured, confusing, dynamic environments and the ability to easily modify the configuration of the world and design multi-session tasks.
+
+\subsection{Benchmarks}
+% DARPA SUBT - lorem ipsum
+Perhaps the most impactful recent benchmark of navigation capabilities was the Darpa SubT Challenge \cite{darpa_cerberus_wins}.
+In the challenge, robot teams had to (semi-autonomusly in the systems track, and fully autonomously in the virtual track) explore unstructured subterranean environments, detect and determine precise metric location of pre-defined objects, with each team having a limited amount of guesses and receiving one point per correct object report (correct class and position error less than 5 meters).
+The challenge pushed the limits of current methods, and featured difficult environmental conditions (featureless areas, dynamic obstacles, smoke, water, ...), but nearly all teams relied on multi-row LiDARs for precise localization.
+In our benchmarks, we try to relax the goal of precise metric localization, but keep the challenging environmental conditions.
+
+% visual place recognition benchmarking
+% TODO - mention VPR benchmarks! BUt say that they are just dataset-based!!! 
+
+% AIRSIM - lorem ipsum
+% TODO - mention all the most popular robotics (ROS) sims - AirSIM, CARLA, Flightmare
+
+% RoboTHOR and more ML-focused sims - 
+Another approach at benchmarking robust navigation is \cite{robustnav} where the authors created a framework in which they apply visual corruptions (e.g. lens cracks) and dynamic corruptions (e.g. forward motion leading to slight turning) to the agent in their environment and opensource their code to benchmark robustness of embodied navigation agents.
+Compared to our environment, their work and other works \cite{procthor}, \cite{robothor} feature procedurally generated environments of household interiors, while our simulator focuses more on large-scale unstructured and dynamic environments.
+
+\begin{table*}[t]
+  \centering
+% \fontsize{8pt}{8pt}\selectfont
+  \begin{tabular}{p{1.1in}p{3in}p{2in}}
+  \hline
+    \textbf{Challenge} & \textbf{Examples} & \textbf{Expected negatively affected methods} \\
+  \hline
+
+  \hline
+    Visual corruption & Dust particles, \textit{leaves}, rain, motion blur, \textit{lens dirt}, big exposure changes & all of vision \\
+  \hline
+    Dynamic objects & Ground and air robots randomly moving around environment; \textit{grass and trees swaying in the wind}, clouds & odometry drifting if many objects nearby, faulty object-based place recognition \\
+  \hline
+    Dynamic lights & Flickering lights, \textit{fires}, many light sources on dynamic objects & purely visual odometry drifting due to many outliers or perceived motion \\
+  \hline
+    Illumination and visibility changes & Global directional light of varying intensity, color, angle; fog of varying color and density  & faulty visual place recognition, odometry having low amount of features\\
+  \hline
+    Small structural change across sessions & Object positions being randomized, \textit{trees falling down between sessions} & wrong place recognition, relocalization \\
+  \hline
+    Drastic structural change across sessions & Passages being blocked, \textit{buildings being built}, distant landmarks disappearing, \textit{several meters of snow} & wrong place recognition, relocalization, teach-and-repeat navigation \\
+  \hline
+    Robot affecting scene & \textit{Leaving footprints/tracks}, moving objects on collision & place recognition, relocalization \\
+    \hline
+    % \vspace{1cm}
+    \hline
+  \hline
+    Featureless areas, transparent objects & textureless corridors (lack of visual features), straight smooth corridor/wide open area (depth features), fences, window & odometry drift, depth estimation failures in case of vision \\
+  \hline
+    Perceptual aliasing / self-similarity & Multiple areas having the same appearance - appearance-based, topology-based or both. Medium in \textit{Forest1}, heavy in \textit{ScifiBase1} & relocalization, loop closure \\
+  \hline
+    Scale variation & Having both small areas (buildings, small corridors) and comparably larger areas (forest, big rooms) in one environment & fixed-resolution mapping/navigation \\
+  \hline
+    Large environment scale & The environments are approx. 2km wide with robots being approx. 1m wide & SLAM memory problems, difficulty learning with deep learning methods \\
+  \hline
+  \end{tabular}
+  \caption{The challenges for place recognition and navigation implemented (and planned, in italics) in \simname. The upper portion of the challenges in the table can all be individually enabled or disabled in the session config YAML string for each session. The lower half challenges are caused by the design of the individual environments and are not toggleable.}
+  \label{tab:challenges}
+\end{table*}
+
+\section{{\simname} SIMULATOR}
+The {\simname} simulator uses Unity both for rendering and for physics simulation, since we do not strive for high-fidelity control or dynamics simulation, but rather large-scale long-term navigation tasks.
+% Unlike other simulators such as \cite{flightmare}, the physics for our simple robot agents is also simulated in Unity, as we do not strive for precise dynamics modeling.
+We have chosen Unity over the widely used Gazebo simulator primarily for its ease of modifying scenes, and its superior visual fidelity, as discussed in \cite{gazebo_vs_unity}.
+% It is also suitable for creating large-scale natural environment, thanks to Unity's terrain engine that supports efficient rendering and collision detection for large terrains with thousands of objects such as trees.
+
+\vk{The simulator is not as photorealistic as some others, which could pose a problem for sim-to-real transfer of deep learning vision-based navigation methods that cannot generalize well across visual domains. Thus, we believe the simulator poses another good challenge, which is to design methods that generalize across visual appearnce (which humans and animals can do, as they can navigate virtual-reality spaces as well as real world spaces). Additionally, the slightly lower graphical fidelity allows for faster simulation, which is essential for missions that span hours and kilometers.}
+
+The user-friendly interface of the Unity editor allows easy creation of new environmental behaviors (e.g. adding moving agents, automatic doors, changing textures etc.) through simple C\# scripts, and also creating or modifying environments.
+It is also important to mention that Unity has an asset store with a plethora of free assets for world building, visual effects and potential agents.
+Overall, we believe that the potential of this game engine for creating challenging and useful robotics scenarios has not yet been fully explored and that {\simname} might motivate this exploration.
+
+Currently, the simulator features two worlds: one very open and visually rich - \textit{Forest1} shown in Fig. \ref{fig:forest_changes} and one with a more labyrinth-like structure and barren - \textit{ScifiBase1} shown in Fig. \ref{fig:scifibase}, both of which support changing of visibility conditions and toggling of the challenges specified in Table \ref{tab:challenges} through a ROS service by passing a YAML config string.
+% and we hope that people can reuse our scripts and basic Unity assets to build even more challenging worlds.
+% In this section, we describe the features of our simulator.
+% For large-scale environments with changing environmental and visual features, we chose the game engine Unity TODO-CITEUNITY. Compared to Gazebo TODO-CITECOMPARISON, Unity offers high-fidelity visuals and runs even faster.
+% More importantly, the Unity Editor allows for extremely convenient editing of the simulated environments - the user can easily add, toggle, modify and move objects in the world, even at runtime.
+% Currently, Unity is connected to ROS through TODO. A connection to AI Gym is currently in the works.
+\subsection{Implemented Agents and Sensors}
+As of now, the simulator offers 2 types of agents - an idealized space/underwater/flying robot with full force+torque or linear+angular velocity control, and a simple car robot.
+Traversability and control for both agents should be trivial, as it is not the focus of the simulator.
+
+The sensors implemented so far are a \vk{global-shutter camera} and an IMU sensor \vk{in any number and configuration}.
+We have decided to not implement LiDARs as of yet, since we believe these make the navigation tasks far too easy or nudge people to take global metrically precise localization achievability as an assumption, which we propose to move away from.
+We only output the precise ground truth position of the robot to ROS as a means of visualizing navigation progress.
+However, it could be useful to add a very noisy GPS sensor for tasks like for example "search this approximate area of 100m around this GPS position in the forest".
+\subsection{Area Labels and World Configuration}
+\label{sec:areadef}
+% Existing simulators offer various labelings of the simulated world, such as CARLA \cite{carla} which offers pixel labelings of objects for machine learning tasks.
+Each environment in {\simname} contains multiple \textit{areas}, which are for now defined as oriented bounding boxes, containing multiple spawn points for the agent and having a text label.
+% This label is sent as a message to ROS whenever the robot is inside an area.
+The simulator sends a string message to ROS at a fixed rate, containing the labels of all areas the robot is currently intersecting.
+We find this labeling realizable in the real world - for example when a robot is being "shown around" a new area, an operator could simply define an area by pressing a button and walking the robot along approximate boundaries of the desired area, and this specification does not require the robot to learn the human-language semantics of for example what "kitchen" means.
+The main point of this distinction is that we can then define missions in terms of \textit{AreaNavigation}, as specified in \cite{embodied_eval} and not just metric positions in some given frame, and also to automatically evaluate missions such as "reach area A, avoid area B".
+
+% Additionally, we have implemented resetting and configuring sessions of the Unity environment through sending a YAML string by a ROS service, so that users can easily set up scripts that evaluate spatial capabilities on a sequence of defined sessions, as shown in the example scripts we provide.
+% Many spatial intelligence challenges can be turned on and off in the environments through the YAML file. The ones we have implemented so far are:
+
+% \subsection{Visual Single-Mission Navigation Challenges}
+% \begin{itemize}
+%         \item Dynamic objects - ground/air/water - many moving objects in the scene can impair and confuse visual odometry, and will force us to develop systems that filter distracting motion well, and also for example actively "look away" from the distractions.
+%         \item Dynamic lights - e.g. flashing/flickering man-made lights
+%         \item Dynamic textures - e.g. robots leaving tracks/footprints on the ground
+%         \item Large scale - we construct the environments to have many possible paths so that random motion will almost never lead to the target area.
+%         \item Homogenity - identical rooms, forest being mostly homogenous appearance-wise ... - forces the solution to somehow allow for multiple hypotheses
+% \end{itemize}
+% \subsection{Multi-Session Autonomy Challenges}
+% Our simulation offers multiple settings, specified in a YAML file in the ROS package, through which the user can make drastic changes in the environment - to push current multi-session methods to the limit.
+% They are the following:
+% \begin{itemize}
+%     \item Day time change - simply changes the intensity and angle of global lighting. This causes the shadows to be long or short dependent on the day, creating a high texture variance in the environment. The user can set the day time, and also toggle a fixed or dynamic day time during the session.
+%       \item Fog - changes the visibility drastically, and is a useful challenge to prepare for robots operating in extreme conditions, such as in smoke or true fog, e.g. in search and rescue missions.
+%         \item Object positioning randomization - shuffling objects in an environment can also confuse localization systems.
+%         \item Drastic environment change - e.g. buildings being built between sessions, large texture change, doors being blocked...
+% \end{itemize}
+
+% \section{NAVIGATION AND PLACE RECOGNITION TRIALS}
+\section{ROBUST NAVIGATION AND PLACE RECOGNITION BENCHMARKS}
+In this section, we propose several novel ways of evaluating spatial navigation and spatial AI capabilities, and present the tools available in {\simname} for conveniently running these evaluations.
+
+\subsection{Multi-Session Synthetic Dataset Generation}
+The most basic contribution of our simulator is that it can be easily used for generating synthetic datasets for visual place recognition under heavy inter-session change, simply by changing the configuration file of a given environment, and then manually driving the robot and recording a desired dataset.
+We hope this can be of benefit to the visual place recognition community and welcome any feedback on this matter.
+\subsection{Active Place Recognition under Heavy Environment Change}
+Since successful self-localization after being lost/kidnapped is a task necessary for succesful active navigation, we propose a task definition we call "active place recognition".
+Essentially, the task is that the robot should actively explore an environment after being kidnapped, and in some given amount of time give an answer as to in which previously seen area (for example a bounding box in the world, as described in Sec. \ref{sec:areadef}) it is.
+The focus here is on \textit{active} place recognition, meaning that the robot should search for the environmental features that disambiguate the area from other previously seen areas (e.g. in the \textit{Forest1} environment, there are two nearly identical environments which differ in subtle features, such as the shape of the nearby mountain and where the bridge leading from the island is placed, as shown in Fig. \ref{fig:forest_pa}, and humans tend to immediately look for these features to disambiguate the situation in this task).
+% Note that this definition of a place recognition task
+
+% As this is, in essence, a labeling problem, we propose to use the cross-entropy loss for computing the overall metric.
+We believe this problem to be a vital subproblem for the following task:
+
+
+% For place recognition, we propose a slightly different approach than the state of the art methods focusing on TODO.
+% Instead, in our simulation, we propose testing "active place recognition" - spawning the robot at a "zone" which it has previously seen, but under different environmental conditions (lighting, textures, fog etc. as in Section TODO), and then allowing it to move for N seconds and making a guess what zone it is in.
+% The "previously seen" areas are meant to be seen in a dataset collected by the user by manually driving the robot around in several sessions the user specifies.
+% This approach seems reasonable for the reason that for example the forest environment looks almost identical everywhere, but humans test subjects know at which large environmental features to look to relocalize themselves.
+
+\subsection{Multi-Session Return Home Challenge}
+For evaluating navigation capabilities, we use the taxonomy introduced by \cite{embodied_eval} and focus mostly on the AreaGoal navigation task - that is navigating to an area specified by a bounding box as defined in Sec. \ref{sec:areadef}.
+As the first main task, due to its importance in robotics, we chose to benchmark the navigation by spawning the robot at multiple previously seen areas and having it navigate to a "home" area.
+
+In this task specification, the robot is spawned at previously seen zones, but not necessarily at previously visited waypoints.
+Previously seen in this context means seen in a pre-recorded dataset, which can either be collected through autonomous exploration or by manually driving the robot.
+We provide an example script for running this kind of navigation task, which can be modified to include not-seen areas and varying amounts of environment change between sessions to increase the difficulty.
+% The way we propose to test navigation capabilities is as follows:
+% The navigation trial consists of two phases - the "training" and "testing" phase.
+% We first considered having the training phase be that the robot would autonomously explore the environment starting from zone A, mark which zones it reached, and then spawning it at each of the other zones, and testing if it came back to A in some specified time.
+% However, the task of "exploring for further navigation" is a different task than navigating itself, so we chose to allow a different way of learning the environment - through datasets collected in the same way as in the place recognition task specified above. 
+% We provide a script, which looks at the "learning" datasets, creates a graph of reached areas, and then provides a list of possible trials (e.g. spawn at A, go to B).
+
+% \subsection{Additional challenges}
+% In addition to the tasks proposed above, our simulation offers an environment to develop and test visual autonomy methods against conditions such as large numbers of moving objects, changing textures (even during a session), featureless areas which introduce heavy drift.
+
+\subsection{Replicable benchmarks}
+To allow for replicable testing conditions for comparison of robust navigation approaches, we have constructed the environment so that without changing the YAML configuration provided through the ROS reset service, the environment will always be initialized to be the same.
+As an example, we are working on specifying fixed benchmark in our environment, through a dataset and a script that initializes the individual trials of returning home from different areas visited in the dataset.
+We collect the dataset by driving the robot manually, and choose the maximum times for the return missions to be slightly higher than was the mission time of several human subjects.
+
+% \section{DISCUSSION}
+% Here we would like to pose and reiterate the challenges and open questions which might be able to be tested and solved with the help of our simulator:
+% \begin{itemize}
+%     \item How could we design systems that accept that metric localization is not attainable at all times? What sort of reasoning and planning should agents perform when it is unattainable?
+%     \item How should agents decide what to keep in memory, when the data associaton is strong enough to do a rewrite (e.g. "This seems strongly like the same place I was before but with changed objects, so I am changing its appearance in my memory")
+%     \item What should we use learning-based methods and handcrafted methods for to solve these problems? Purely vision-based methods will often fail under apperance change, but purely geometrical methods are not well suited to learn objects / area classes. What is the balance? What role should single-shot/unsupervised learning have?
+% \end{itemize}
+
+\section{FUTURE WORK AND DISCUSSION}
+The simulator is still a work in progress, and we are constantly adding new important features, shown on the github website. 
+% Furthermore, we intend to implement additional motion models and sensor models, for example a simplifed marine robot with sonar, as deep sea navigation and exploration is also a very challenging task that exhibits difficulties such as homogenous environments and high sensor noise.
+The simulator is flexible enough to allow creating any sort of multi-session navigation challenges, and we intend to formulate additional spatial tasks, such as searching for objects or covering a specified area.
+We will also likely connect the simulator with AI Gym CITEGYM, so that reinforcement learning approaches, ideally in combination with classical robotics approaches, can be used for tackling the simulated challenges.
+The priority of these potential features will be decided based on the feedback and suggestions from fellow researchers.
+% based on the needs of the community. 
+
+We hope our simulator and benchmarks will help researchers develop robust spatial intelligence approaches that allow robots to work autonomously in the difficult, chaotic conditions of the ever-changing real world.
+Specifically, we hope the presented work can contribute to solving the following questions:
+\begin{itemize}
+    \item How could we design methods that are resilient to repeatedly being wrong - e.g. repeated wrong loop closures, wrong relocalization after kidnapping?
+    \item How could we design systems that accept that metric localization is not attainable at all times? What sort of reasoning and planning should agents perform when it is unattainable?
+      % TODO - about "am i know sure where i am enough to start modifying my map?
+    \item How should agents decide what to keep in memory, when the data associaton is strong enough to do a rewrite (e.g. "This seems strongly like the same place I was before but with changed objects, so I am changing its appearance in my memory.")
+       Is a one map policy viable for lifelong learning? 
+       How can neuroscience of memory and cognitive maps help us? 
+    \item How should the mechanisms for determining staticity or navigation-usefulness of perceived features be designed? How are they handled in the brain?
+    % \item What should we use learning-based methods and handcrafted methods for to solve these problems? Purely vision-based methods will often fail under apperance change, but purely geometrical methods are not well suited to learn objects / area classes. What is the balance? What role should single-shot/unsupervised learning have?
+\end{itemize}
+
+% \section{CONCLUSIONS}
+
+% A conclusion section is not required. Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance of the work or suggest applications and extensions. 
+
+\addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
+                                  % on the last page of the document manually. It shortens
+                                  % the textheight of the last page by a suitable amount.
+                                  % This command does not take effect until the next page
+                                  % so it should come on the page before the last. Make
+                                  % sure that you do not shorten the textheight too much.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section*{APPENDIX}
+
+% Appendixes should appear before the acknowledgment.
+
+% \section*{ACKNOWLEDGMENT}
+
+% The preferred spelling of the word ÒacknowledgmentÓ in America is without an ÒeÓ after the ÒgÓ. Avoid the stilted expression, ÒOne of us (R. B. G.) thanks . . .Ó  Instead, try ÒR. B. G. thanksÓ. Put sponsor acknowledgments in the unnumbered footnote on the first page.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% References are important to the reader; therefore, each citation must be complete and correct. If at all possible, references should be commonly available publications.
+
+
+%%%{ BIBLIOGRAPHY
+% \balance
+\bibliographystyle{IEEEtran}
+% DO NOT ERASE THE NEXT LINE,
+% ONLY COMMENT IT AND DECOMMENT THE NEXT-NEXT, IF YOU NEED
+% if you need it, get the repo git://redmine.laas.fr/laas/users/afranchi/bib.git and configure your bibinput in order to have : bibAlias,bibMain,bibNew,bibAF
+\bibliography{main.bib}
+%%%}
+
+
+% \begin{thebibliography}{99}
+
+% \bibitem{c1} G. O. Young, ÒSynthetic structure of industrial plastics (Book style with paper title and editor),Ó 	in Plastics, 2nd ed. vol. 3, J. Peters, Ed.  New York: McGraw-Hill, 1964, pp. 15Ð64.
+% \bibitem{c2} W.-K. Chen, Linear Networks and Systems (Book style).	Belmont, CA: Wadsworth, 1993, pp. 123Ð135.
+% \bibitem{c3} H. Poor, An Introduction to Signal Detection and Estimation.   New York: Springer-Verlag, 1985, ch. 4.
+% \bibitem{c4} B. Smith, ÒAn approach to graphs of linear forms (Unpublished work style),Ó unpublished.
+% \bibitem{c5} E. H. Miller, ÒA note on reflector arrays (Periodical styleÑAccepted for publication),Ó IEEE Trans. Antennas Propagat., to be publised.
+% \bibitem{c6} J. Wang, ÒFundamentals of erbium-doped fiber amplifiers arrays (Periodical styleÑSubmitted for publication),Ó IEEE J. Quantum Electron., submitted for publication.
+% \bibitem{c7} C. J. Kaufman, Rocky Mountain Research Lab., Boulder, CO, private communication, May 1995.
+% \bibitem{c8} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ÒElectron spectroscopy studies on magneto-optical media and plastic substrate interfaces(Translation Journals style),Ó IEEE Transl. J. Magn.Jpn., vol. 2, Aug. 1987, pp. 740Ð741 [Dig. 9th Annu. Conf. Magnetics Japan, 1982, p. 301].
+% \bibitem{c9} M. Young, The Techincal Writers Handbook.  Mill Valley, CA: University Science, 1989.
+% \bibitem{c10} J. U. Duncombe, ÒInfrared navigationÑPart I: An assessment of feasibility (Periodical style),Ó IEEE Trans. Electron Devices, vol. ED-11, pp. 34Ð39, Jan. 1959.
+% \bibitem{c11} S. Chen, B. Mulgrew, and P. M. Grant, ÒA clustering technique for digital communications channel equalization using radial basis function networks,Ó IEEE Trans. Neural Networks, vol. 4, pp. 570Ð578, July 1993.
+% \bibitem{c12} R. W. Lucky, ÒAutomatic equalization for digital communication,Ó Bell Syst. Tech. J., vol. 44, no. 4, pp. 547Ð588, Apr. 1965.
+% \bibitem{c13} S. P. Bingulac, ÒOn the compatibility of adaptive controllers (Published Conference Proceedings style),Ó in Proc. 4th Annu. Allerton Conf. Circuits and Systems Theory, New York, 1994, pp. 8Ð16.
+% \bibitem{c14} G. R. Faulhaber, ÒDesign of service systems with priority reservation,Ó in Conf. Rec. 1995 IEEE Int. Conf. Communications, pp. 3Ð8.
+% \bibitem{c15} W. D. Doyle, ÒMagnetization reversal in films with biaxial anisotropy,Ó in 1987 Proc. INTERMAG Conf., pp. 2.2-1Ð2.2-6.
+% \bibitem{c16} G. W. Juette and L. E. Zeffanella, ÒRadio noise currents n short sections on bundle conductors (Presented Conference Paper style),Ó presented at the IEEE Summer power Meeting, Dallas, TX, June 22Ð27, 1990, Paper 90 SM 690-0 PWRS.
+% \bibitem{c17} J. G. Kreifeldt, ÒAn analysis of surface-detected EMG as an amplitude-modulated noise,Ó presented at the 1989 Int. Conf. Medicine and Biological Engineering, Chicago, IL.
+% \bibitem{c18} J. Williams, ÒNarrow-band analyzer (Thesis or Dissertation style),Ó Ph.D. dissertation, Dept. Elect. Eng., Harvard Univ., Cambridge, MA, 1993. 
+% \bibitem{c19} N. Kawasaki, ÒParametric study of thermal and chemical nonequilibrium nozzle flow,Ó M.S. thesis, Dept. Electron. Eng., Osaka Univ., Osaka, Japan, 1993.
+% \bibitem{c20} J. P. Wilkinson, ÒNonlinear resonant circuit devices (Patent style),Ó U.S. Patent 3 624 12, July 16, 1990. 
+
+
+
+
+
+
+% \end{thebibliography}
+
+
+
+
+\end{document}

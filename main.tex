@@ -69,7 +69,7 @@
 
 \title{\LARGE \bf
 % Novel Benchmark for Navigation and Active Place Recognition in Confusing and Changing Environments
-{\simname} - Simulator for Benchmarking Robust Navigation and Place Recognition in Large, Confusing and Highly Dynamic Environments}
+Monocular-RGB Online 3D Sphere-Based Occupancy Mapping}
 
 
 % ORCID %%{
@@ -125,7 +125,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  beep boop
+  We present a new method of estimating inverse depth and using such estimates to build an occupancy map composed of spheres and points, using only a single RGB camera and even noisy localization. 
+  We then show how such map can be used for real-time planning and exploration on-board resource-constrained robots in the real world and simulation.
+  We open-source the code as a plug-and-play ROS module which constructs an occupancy map from RGB and odometry data suitable for path planning.
 
 Code--- %\href{
 \href{https://github.com/MrTomzor/navigation_unity_testbed}{https://github.com/MrTomzor/navigation\_unity\_testbed}
@@ -135,10 +137,65 @@ Code--- %\href{
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
+Autonomous navigation using only a single RGB camera and inertial/encoder sensors is highly desirable due to the low cost of such sensors.
+However, the majority of robotics research on autonomous mapping and autonomous navigation today is developed for robots equipped with strong depth sensors such as RGB-D cameras or LiDARs \cite{darpa_cerberus_wins}.
+
 Darpaa \cite{darpa_cerberus_wins}
 beep boop
 \section{RELATED WORKS}
-beep boop
+\subsection{Monocular Depth Estimation}
+TODO - neuro approaches - work, yes, but! domain, and training, and GPU
+
+TODO - flame, mention that its good, but very sensitive to wrong localization (our too? but can toggle on ROBUST method, which does own visual SLAM - contrib over them!)
+
+TODO - that one from Tom, similar to Flame
+\subsection{Occupancy Representations}
+TODO - octomap - standard, but many problems. On larger distances, using raycast updating (lidar/rgbd), can have sparse map! BUT! Can just use one or few spheres!!!
+
+TODO - spheremap - mention how shperes good! but this our work was imperfect cuz using octomap anyway!
+
+TODO - spheregraph - map is known!!! (SEARCH!!!!)
+
+\subsection{RGB-Only Autonomous Navigation}
+TODO - by navigation we mean all the things in those papers
+
+TODO - the paper where they fly indoor with drone
+
+TODO - dodging of obstacles using depth estim
+
+TODO - our method allows PLANNING over larger distances
+
+\section{Methodology}
+\subsection{Monocular Inverse-Depth Estimation}
+A great advantage of visual sensors over depth sensors such as RGB-D cameras, Time-Of-Flight Cameras or LiDARs, aside from their much lower cost, is the potential ability to estimate rough distances to very far away objects, which is present in most vision-based animals, but has not yet been well researched in robotics. 
+% RGB-D camera ranges are usually up to TODO meters, and LiDARs up to TODO meters.
+
+To utilize this advantage, we track keypoints in the RGB data and attempt to estimate their inverse-depth TODO-CITE, which is much better suited for larger distances than simple depth.
+
+% Compared to this, ani
+% In outdoor scenarios, for example on an open field, conventional depth sensors might often give no information about occupancy, as their range is usually up to 50m.
+% It is possible to 
+
+\subsection{Sphere-Based Occupancy Map}
+The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap TODO-CITE, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
+However, if we get very long-distance measurements in some direction, such raycasting approach might need many iterations to fully fill the free space in distant areas.
+
+We propose a different, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
+% Thus, even though raycasting might need tens of thousands of raycasts 
+
+\subsection{Path Planning}
+Another benefit of using spheres for free-space description is that by sampling a point inside any sphere, we immediately get a lower bound on the distance to obstalces, whereas this is not immediately available in a voxel-based representation.
+
+TODO - we use sampling?? Or connectivity?? DECIDE!!!
+
+\section{Experiments}
+\subsection{Real-World Monocular-Inertial Exploration}
+In this experiment we demonstrate that the proposed method of occupancy mapping using only a single monocular RGB camera and IMU is useful for path and exploration planning on a real-world UAV platform in a mixed indoor-outdoor warehouse setting.
+
+TODO - mention frontiers here???
+% \subsection{Comparison }
+
+\subsection{Performance Analysis}
 
 \section{CONCLUSION}
 aaaa

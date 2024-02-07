@@ -69,7 +69,8 @@
 
 \title{\LARGE \bf
 % Novel Benchmark for Navigation and Active Place Recognition in Confusing and Changing Environments
-Monocular-RGB Online 3D Sphere-Based Occupancy Mapping}
+% Monocular-RGB Online 3D Sphere-Based Occupancy Mapping}
+Sphere-Based Occupancy Mapping for Fast and Safe Navigation of Vision-Based UAV Systems}
 
 
 % ORCID %%{
@@ -125,7 +126,7 @@ Monocular-RGB Online 3D Sphere-Based Occupancy Mapping}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  We present a new method of estimating inverse depth and using such estimates to build an occupancy map composed of spheres and points, using only a single RGB camera and even noisy localization. 
+  We present a new method of estimating inverse depth and using such estimates to build an occupancy map composed of spheres and points from sparse point cloud data obtained from a single RGB camera, for example by visual-inertial SLAM.
   We then show how such map can be used for real-time planning and exploration on-board resource-constrained robots in the real world and simulation.
   We open-source the code as a plug-and-play ROS module which constructs an occupancy map from RGB and odometry data suitable for path planning.
 
@@ -143,20 +144,54 @@ However, the majority of robotics research on autonomous mapping and autonomous 
 Darpaa \cite{darpa_cerberus_wins}
 beep boop
 \section{RELATED WORKS}
-\subsection{Monocular Depth Estimation}
-TODO - neuro approaches - work, yes, but! domain, and training, and GPU
+\subsection{Monocular Inverse Depth Estimation}
+The task of estimating the depth, or distance of points in space, using just a single RGB camera is challenging.
+Recently, deep learning methods have been researched that can provide metric depth from RGB images only TODO-CITE, but such methods can be problematic to deploy on robotic systems.
+The ability to estimate depth up to metric scale is usually dependent on the network's knowledge of the metric sizes of objects or textures, and thus such networks can have problems when deployed in environments they haven't been trained on.
+Recently, NERF-based approaches for SLAM have also been proposed, which build a dense map of an environment in real-time.
+However, GPUs are required for running any of these efficiently, and they add weight and power consumption constraints, thus severely limiting flight time and adding cost, which is not suitable for low-cost UAV systems.
 
-TODO - flame, mention that its good, but very sensitive to wrong localization (our too? but can toggle on ROBUST method, which does own visual SLAM - contrib over them!)
+There are also learning-free methods for recovering depth from RGB images, but they also require the pose of the camera associated with each image as input.
+The most notable is FLAME TODO-CITE, in which the authors track a large amount of visual keypoints, estimate their inverse depth using the prior pose knowledge, and interpolate these points into a mesh, which is the output of the module. 
+The authors state that this method is highly dependent on the quality of the localization.
+Another similar method is TODO-FIND-AND-WRITE.
 
-TODO - that one from Tom, similar to Flame
-\subsection{Occupancy Representations}
+Traditional methods of obtaining distance measurements with an RGB camera is using visual SLAM algorithms, such as TODO-CITE.
+Using only a single camera though, one can build a map of an environment this way, but with the scale of the map being unmeasurable, and thus the map is unusable for path planning for a robot.
+% If a metric sensor, such as an 
+Adding a sensor that can recover the metric scale -- such as another RGB camera or an inertial measurement unit (IMU) -- allows one to run visual/visual-inertial SLAM algorithms, and thus obtain a map that is scaled correctly.
+However, any map built using visual/visual-inertial SLAM is usually very \textit{sparse}, compared to maps built using dense depth sensors, such as LiDARs or RGB-D cameras, which makes it difficult to use such map for any kind of autonomy.
+
+TODO - mention how pts from visual slam usually bad
+
+An important concept popularized for SLAM is using estimating and representing inverse depth of visual keypoints instead of simply the euclidean distance.
+This allows the system to represent and optimize points that are very far away, even points in infinity.
+Knowing that there are points \textit{very} far away in some direction is an essential piece of information, as it allows a UAV to know that it is safe to fly in that direction for large distances.
+However, implementing such reasoning has not yet been researched much in literature.
+
+Compared to the methods above, our inverse depth measurement module is essentially a simplified version of FLAME TODO-CITE with several changes that make it more suitable for our method of occupancy mapping.
+We also offer an alternative usage mode, where the system uses the triangulated points coming directly from the currently deployed visual/visual-inertial SLAM, but as discussed further in TODO-REF, these are usually only very near the robot and do not fully use the long range of visual sensors.
+% TODO - rgb to visual sensors, cuz can use greyscale!
+
+\subsection{Occupancy Mapping}
+TODO - standard is occupancy GRID. In many implementations - in 3D is most popular octomap
+
 TODO - octomap - standard, but many problems. On larger distances, using raycast updating (lidar/rgbd), can have sparse map! BUT! Can just use one or few spheres!!!
 
-TODO - spheremap - mention how shperes good! but this our work was imperfect cuz using octomap anyway!
+TODO - voronoi, topological/topometric representations (usually built out of octomap!!)
 
 TODO - spheregraph - map is known!!! (SEARCH!!!!)
 
-\subsection{RGB-Only Autonomous Navigation}
+TODO - spheremap - mention how shperes good! but this our work was imperfect cuz using octomap anyway!
+
+TODO - we use spheres cuz good for planning, AND! we circumvent the problem of having to build octomap and then abstract from it!
+AND! noone actually builds using SPARSE data!!! SO! we do that!
+
+Compared to the methods above, our method for occupancy mapping does not attempt to create dense map of environmental surfaces, but instead accepts the currently visible sparse point cloud from a visual/visual-inertial SLAM, which is already a necessary module for vision-based UAV systems without global positioning systems, makes a very rough depth approximation as in FLAME TODO-CITE, and estimates the visible free space with sampled spheres.
+
+\subsection{Vision-Based UAV Autonomy}
+TODO - the quality of a representation is given only by its usefulness for some end tasks. and how much effort it takes to build it?
+
 TODO - by navigation we mean all the things in those papers
 
 TODO - the paper where they fly indoor with drone
@@ -165,31 +200,40 @@ TODO - dodging of obstacles using depth estim
 
 TODO - our method allows PLANNING over larger distances
 
-\section{Methodology}
-\subsection{Monocular Inverse-Depth Estimation}
-A great advantage of visual sensors over depth sensors such as RGB-D cameras, Time-Of-Flight Cameras or LiDARs, aside from their much lower cost, is the potential ability to estimate rough distances to very far away objects, which is present in most vision-based animals, but has not yet been well researched in robotics. 
-% RGB-D camera ranges are usually up to TODO meters, and LiDARs up to TODO meters.
+% \section{Methodology}
+% \section{Inverse-Depth Estimation Module}
+% A great advantage of visual sensors over depth sensors such as RGB-D cameras, Time-Of-Flight Cameras or LiDARs, aside from their much lower cost, is the potential ability to estimate rough distances to very far away objects, which is present in most vision-based animals, but has not yet been well researched in robotics. 
+% % RGB-D camera ranges are usually up to TODO meters, and LiDARs up to TODO meters.
 
-To utilize this advantage, we track keypoints in the RGB data and attempt to estimate their inverse-depth TODO-CITE, which is much better suited for larger distances than simple depth.
+% To utilize this advantage, we track keypoints in the RGB data and attempt to estimate their inverse-depth TODO-CITE, which is much better suited for larger distances than simple depth.
 
 % Compared to this, ani
 % In outdoor scenarios, for example on an open field, conventional depth sensors might often give no information about occupancy, as their range is usually up to 50m.
 % It is possible to 
 
-\subsection{Sphere-Based Occupancy Map}
+\section{Sphere-Based Occupancy Map}
 The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap TODO-CITE, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
 However, if we get very long-distance measurements in some direction, such raycasting approach might need many iterations to fully fill the free space in distant areas.
 
 We propose a different, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
 % Thus, even though raycasting might need tens of thousands of raycasts 
 
-\subsection{Path Planning}
+\subsection{Representation}
+
+\subsection{From Sparse Visual Keypoints to Depth}
+\subsection{Map Updating}
+
+\subsection{Usability for Path Planning}
 Another benefit of using spheres for free-space description is that by sampling a point inside any sphere, we immediately get a lower bound on the distance to obstalces, whereas this is not immediately available in a voxel-based representation.
 
 TODO - we use sampling?? Or connectivity?? DECIDE!!!
 
+% \subsection{Runtime Analysis and }
+
 \section{Experiments}
-\subsection{Real-World Monocular-Inertial Exploration}
+\subsection{Effect of Distant Points on Map Quality}
+
+\subsection{Real-World UAV Monocular-Inertial Exploration}
 In this experiment we demonstrate that the proposed method of occupancy mapping using only a single monocular RGB camera and IMU is useful for path and exploration planning on a real-world UAV platform in a mixed indoor-outdoor warehouse setting.
 
 TODO - mention frontiers here???
@@ -199,7 +243,7 @@ TODO - mention strategy -- all frontiers near ground up to 50m away??
 TODO - make MRS sim work again!!!
 % \subsection{Comparison }
 
-\subsection{Performance Analysis}
+\subsection{Runtime Analysis and Octomap Comparison}
 
 \section{CONCLUSION}
 aaaa

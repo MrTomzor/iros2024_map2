@@ -143,6 +143,18 @@ However, the majority of robotics research on autonomous mapping and autonomous 
 
 Darpaa \cite{darpa_cerberus_wins}
 beep boop
+
+However, the vast majority of autonomous navigation in the real world has been deployed on UAVs equipped with powerful depth sensors such as LiDARs and RGB-D cameras, which drastically increase the cost of such systems compared to simple cameras.
+Enabling safe vision-based autonomous navigation for UAVs is especially exciting because such methods are critical for real-world large-scale deployment of UAVs, especially in search and rescue operations.
+
+To move towards the reality of robust vision-based autonomous navigation of UAVs, our paper offers the following contributions:
+\begin{itemize}
+    \item A method of building an occupancy map using only sparse visual points and odometry as inputs
+    \item A simple, rough inverse-depth estimator module as a frontend for the proposed occupancy mapping, designed to be used if only image and odometry data are available on a system (such as when the odometry is obtained from GPS). 
+    \item Experimental demonstration that the proposed methods are suitable for online safety-aware navigation and exploration using UAVs equipped with only low-cost visual-inertial sensors.
+    \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package.
+\end{itemize}
+
 \section{RELATED WORKS}
 \subsection{Monocular Inverse Depth Estimation}
 The task of estimating the depth, or distance of points in space, using just a single RGB camera is challenging.

@@ -223,10 +223,10 @@ In our paper, we demonstrate that our novel occupancy mapping approach allows a 
 % TODO - our method allows PLANNING over larger distances
 
 \section{Sphere-Based Occupancy Map}
-The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap TODO-CITE, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
-However, if we get very long-distance measurements in some direction, such raycasting approach might need many iterations to fully fill the free space in distant areas.
+% The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap TODO-CITE, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
+% However, if we get very long-distance measurements in some direction, such raycasting approach might need many iterations to fully fill the free space in distant areas.
 
-We propose a different, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
+% We propose a different, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
 % Thus, even though raycasting might need tens of thousands of raycasts 
 
 \subsection{Representation}
@@ -240,6 +240,28 @@ Another benefit of using spheres for free-space description is that by sampling 
 TODO - we use sampling?? Or connectivity?? DECIDE!!!
 
 % \subsection{Runtime Analysis and }
+\section{Simplified Visual Inverse-Depth Estimator}
+Our proposed occupancy mapping method takes as input triangulated visual keypoints.
+Most visual SLAM algorithms only use points close to the robot and optimize the points' 3D positions instead of an inverse-depth representation, which can be very useful for estimating occupancy.
+Without information about faraway points, occupancy mapping can be slow.
+% (TODO-CHECK)
+
+FLAME TODO-CITE is an available robotics module for estimating inverse depth using image data and 3D poses of the images, but as the authors state,
+% (TODO-CHECK)
+the module is highly dependent on correct pose inputs, and the method also has an issue that if there is little motion, the inverse depth is still updated, which can cause the estimated depth image to become corrupted after several seconds.
+
+For these reasons, and to focus more on occupancy mapping rather than precise mesh estimation as in FLAME, we propose and opensource a simplified version of the FLAME algorithm.
+Our module tracks visual keypoints and estimates their inverse depth in a bayesian manner, identically as in FLAME, but these updates are done only on keyframes after some pre-defined distance is traveled since the last keyframe.
+All previously triangulated points are tracked, but their distance measurement is updated only when the points have enough parallax and have been matched by the RANSAC homography estimation between keyframes.
+
+Furthermore, FLAME takes the metric scale from the poses of the two consecutive images, but under noisy odometry, this can cause significant problems.
+Our approach instead does very simple purely visual SLAM over several keyframes by simply aggregating the pose estimates between individual keyframes, thus providing an unscaled robocentric trajectory estimate.
+This trajectory of $N$ keyframes is then scaled so that the distance of the first and last tracked keyframe is the same as the odometry distance between the keyframes.
+% TODO - explain better
+This way, even if the odometry is locally noisy or imprecise, the scale estimate can be more robust over larger distances.
+The inverse depth estimates are added to the points using this scale.
+
+This module can then be used to enrich the short-distance visual points from visual-inertial SLAM to estimate free space further into the distance (as we demonstrate in TODO-REF), but it can also allow \textit{any} system with a camera and even noisy odometry to create our proposed occupancy map and allow it to autonomously navigate and explore. 
 
 \section{Experiments}
 \subsection{Effect of Distant Points on Map Quality}

@@ -148,12 +148,14 @@ However, the vast majority of autonomous navigation in the real world has been d
 Enabling safe vision-based autonomous navigation for UAVs is especially exciting because such methods are critical for real-world large-scale deployment of UAVs, especially in search and rescue operations.
 
 To move towards the reality of robust vision-based autonomous navigation of UAVs, our paper offers the following contributions:
-\begin{itemize}
-    \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-    \item A simple, rough inverse-depth estimator module as a frontend for the proposed occupancy mapping, designed to be used if only image and odometry data are available on a system (such as when the odometry is obtained from GPS)
-    \item Experimental demonstration that the proposed methods are suitable for online safety-aware navigation and exploration using UAVs equipped with only low-cost visual-inertial sensors
+\begin{enumerate}
+    % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
+    \item A novel occupancy mapping approach and representation -- an adaptation of SphereMap TODO-CITE, which does not require building an occupancy grid, and can be built using only odometry and sparse 3D point data from visual sensors as input
+    \item A simple visual inverse-depth estimator module as a frontend for the proposed occupancy mapping, designed to be used if only image and odometry data are available on a system 
+      % (such as when the odometry is obtained from GPS)
+    \item Experimental verification that the proposed methods are well suited for safety-aware navigation and frontier-based exploration on a UAV equipped with only visual-inertial sensors in unstructured, unknown environments
     \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package
-\end{itemize}
+\end{enumerate}
 
 \section{RELATED WORKS}
 \subsection{Monocular Inverse Depth Estimation}

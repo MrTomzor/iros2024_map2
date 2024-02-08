@@ -223,18 +223,42 @@ In our paper, we demonstrate that our novel occupancy mapping approach allows a 
 % TODO - our method allows PLANNING over larger distances
 
 \section{Sphere-Based Occupancy Map}
-% The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap TODO-CITE, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
+The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap TODO-CITE, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
+This is a general-purpose representation, but not much suitable for fast path planning.
+We propose to represent free space by spheres and obstacles by points, similarly to our previous work TODO-CITE-SPHEREMAP.
+In this section, we explain how such map can be built using only sparse 3D point data and how it is useful for UAV autonomy.
+% We propose an alternative, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
 % However, if we get very long-distance measurements in some direction, such raycasting approach might need many iterations to fully fill the free space in distant areas.
-
-% We propose a different, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
 % Thus, even though raycasting might need tens of thousands of raycasts 
 
-\subsection{Representation}
-
-\subsection{From Sparse Visual Keypoints to Depth}
 \subsection{Map Updating}
+\subsubsection{From Sparse Visual Keypoints to Depth}
+The input of our mapping system is odometry and sparse 3D points, which can be taken directly from visual or visual-inertial odometry, which is already a necessary module for robotic autonomy.
+We allow also inputting the inverse-depth covariance of individual points and correspondences of points between frames (so that a single point isn't added to the map twice, but rather just moved), but they are not necessary.
 
-\subsection{Usability for Path Planning}
+At each update iteration, we interpolate the visible input points with a mesh by projecting it to the camera's image plane, computing their Delaunay triangulation, and creating a temporary 3D mesh using the output of the Delaunay triangulation, as in FLAME TODO-CITE.
+We name this mesh as the \textit{obstacle mesh} $F_o$, and we also construct a \textit{visibility mesh} $F_v$ from the camera's focal point and the outer edges of $F_o$.
+Together, $F_o$ and $F_v$ form a \textit{bounding mesh} $F_t$, which is watertight and all these meshes are used for updating the map at each iteration, which is further divided into these parts:
+\subsubsection{Adding Points and Spheres}
+Adding new spheres is quite straightforward -- we sample points inside $F_t$ by raycasting from the camera and sampling at random distances.
+A potential new sphere's radius is determined by its distance to $F_t$.
+However, as in TODO-CITE-SPHEREMAP, we also perform a redundancy check for all potential spheres and add them only if they are not redundant (meaning that they would have a significant overlap with already existing spheres).
+As in TODO-CITE-SPHEREMAP, we also find nearby spheres and connect them if they intersect.
+New obstacle points are added to the map simply if their inverse-depth covariance is low (or not provided) and they are further from other points in the map by some predefined minimal distance, which specifies the resulting map surface detail.
+\subsubsection{Updating Existing Points and Spheres}
+Updating existing spheres and points is slightly more complex.
+An old sphere might lie only partially in $F_t$, but that does not mean we should reduce its radius.
+Thus, a sphere that intersects with $F_t$ or lies inside it has its radius updated to
+\begin{equation}
+  r_{new} = \min \left( \max \left( r_{prev}, d(x_s, F_{fov}) \right)
+  , d(x_s, F_{obs}) \right),
+\end{equation}
+where TODO.
+
+We give priority to the information provided by the meshes from the current frame, and so if any point lies deep enough by some constant in the currently observed free space described by $F_t$, it is deleted from the map.
+% Additionally, if point correspondences 
+
+\subsection{Rapid Safety-Aware Path Planning}
 Another benefit of using spheres for free-space description is that by sampling a point inside any sphere, we immediately get a lower bound on the distance to obstalces, whereas this is not immediately available in a voxel-based representation.
 
 TODO - we use sampling?? Or connectivity?? DECIDE!!!

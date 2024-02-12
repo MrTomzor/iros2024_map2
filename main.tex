@@ -174,9 +174,9 @@ Recently, NERF-based approaches for SLAM have also been proposed, which build a 
 However, GPUs are required for running any of these efficiently, and they add weight and power consumption constraints, thus severely limiting flight time and adding cost, which is not suitable for low-cost UAV systems.
 
 There are also learning-free methods for recovering depth from RGB images, but they also require the pose of the camera associated with each image as input.
-The most notable is FLAME TODO-CITE, in which the authors track a large amount of visual keypoints, estimate their inverse depth using the prior pose knowledge, and interpolate these points into a mesh, which is the output of the module. 
+The most notable is FLAME \cite{flame}, in which the authors track a large amount of visual keypoints, estimate their inverse depth using the prior pose knowledge, and interpolate these points into a mesh, which is the output of the module. 
 The authors state that this method is highly dependent on the quality of the localization.
-Another similar method is TODO-FIND-AND-WRITE.
+Another similar method is \cite{depth_dynamic}, TODO.
 
 Traditional methods of obtaining distance measurements with an RGB camera is using visual SLAM algorithms, such as TODO-CITE.
 Using only a single camera though, one can build a map of an environment this way, but with the scale of the map being unmeasurable, and thus the map is unusable for path planning for a robot.
@@ -205,21 +205,23 @@ Similar methods exist with slight variations, such as TODO.
 Topological representations, which are some sort of abstraction built from an occupancy map, are often used for UAV path planning to assure quick and safe path planning.
 An example is TODO-CITE-VOXGRAPH/SKELETON, in which TODO.
 
-In our previous work TODO-CITE-SPHEREMAP, we built a graph of spheres that describe the free space on top of Octomap \cite{octomap}.
+In our previous work \cite{spheremap}, we built a graph of spheres that describe the free space on top of Octomap \cite{octomap}.
 A graph of intersecting spheres can describe free space more compactly than voxels, while also explicitly storing the distance to obstacles, thus allowing fast and safety-aware planning.
 % In addition, in TODO-CITE-SPHEREMAP, we also segmented the graph of spheres into convex regions and allowed 
 
-However, in TODO-CITE-SPHEREMAP, we built the abstract representation \textit{on top} of Octomap \cite{octomap}, which takes considerable resources to update.
+However, in \cite{spheremap}, we built the abstract representation \textit{on top} of Octomap \cite{octomap}, which takes considerable resources to update.
 % In addition, 
 In the approach proposed in this paper, we skip this step entirely and build the occupancy map directly out of sparse point cloud data from visual sensors, thus increasing efficiency and enabling the use of such representation on vision-based systems.
 
 % Compared to the methods above, our method for occupancy mapping does not attempt to create dense map of environmental surfaces, but instead accepts the currently visible sparse point cloud from a visual/visual-inertial SLAM, which is already a necessary module for vision-based UAV systems without global positioning systems, makes a very rough depth approximation as in FLAME TODO-CITE, and estimates the visible free space with sampled spheres.
 
 \subsection{Vision-Based UAV Autonomy}
-As detailed in surveys such as TODO-CITE, constructing reliable vision-based autonomous UAV systems is still a challenge.
+As detailed in surveys such as \cite{drones_survey}, constructing reliable vision-based autonomous UAV systems is still a challenge.
 While with LiDARs and RGB-D cameras, today's robots are able to explore and build a precise map of environments that span several kilometers \cite{darpa_cerberus_wins} without human intervention, such autonomy has not yet been achieved in vision-based systems. 
 
 The notable achievements of vision-based UAV systems are TODO.
+\cite{nav_and_landing}.
+\cite{corridors_mono_nav_2009}
 
 Most of these systems are for reactive behavior or behavior in environments with a specific structure. 
 In our paper, we demonstrate that our novel occupancy mapping approach allows a UAV to perform real-time receding-horizon exploration and safety-aware path planning in unstructured environments, which has so far, to the authors' best knowledge, been researched only in robots with distance sensors such as LiDARs and RGB-D cameras.
@@ -244,7 +246,7 @@ In this section, we explain how such map can be built using only sparse 3D point
 The input of our mapping system is odometry and sparse 3D points, which can be taken directly from visual or visual-inertial odometry, which is already a necessary module for robotic autonomy.
 We allow also inputting the inverse-depth covariance of individual points and correspondences of points between frames (so that a single point isn't added to the map twice, but rather just moved), but they are not necessary.
 
-At each update iteration, we interpolate the visible input points with a mesh by projecting it to the camera's image plane, computing their Delaunay triangulation, and creating a temporary 3D mesh using the output of the Delaunay triangulation, as in FLAME TODO-CITE.
+At each update iteration, we interpolate the visible input points with a mesh by projecting it to the camera's image plane, computing their Delaunay triangulation, and creating a temporary 3D mesh using the output of the Delaunay triangulation, as in FLAME \cite{flame}.
 We name this mesh as the \textit{obstacle mesh} $F_o$, and we also construct a \textit{visibility mesh} $F_v$ from the camera's focal point and the outer edges of $F_o$.
 Together, $F_o$ and $F_v$ form a \textit{bounding mesh} $F_t$, which is watertight and all these meshes are used for updating the map at each iteration, which is further divided into these parts:
 \subsubsection{Adding Points and Spheres}
@@ -318,9 +320,9 @@ As you can see in TODO, by using the distant points, the UAV is able to quickly 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 In this experiment we demonstrate that the proposed method of occupancy mapping using only a single monocular RGB camera and IMU is useful for path and exploration planning on a real-world UAV platform in a mixed indoor-outdoor warehouse setting.
 
-The UAV is TODO-HARDWARE.
+The UAV is TODO-HARDWARE \cite{mrs_uav_robust_system}.
 
-The UAV is running OpenVINS TODO-CITE for odometry estimation, and our proposed inverse depth etstimator and occupancy mapper modules.
+The UAV is running OpenVINS \cite{openvins} for odometry estimation, and our proposed inverse depth etstimator and occupancy mapper modules.
 For demonstration purposes, we developed next-best-view frontier-based exploration using our proposed occupancy representation.
 The exploration module simply samples potential reachable viewpoints by RRT in its nearby space at a fixed rate and stores those.
 Upon reaching a viewpoint, the UAV selects a new one, by a combination of distance, path safety (same as in our previous work TODO-CITE), and the amount of visible frontiers.

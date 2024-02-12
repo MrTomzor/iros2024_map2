@@ -126,9 +126,13 @@ Sphere-Based Occupancy Mapping for Fast and Safe Navigation of Vision-Based UAV 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  We present a new method of estimating inverse depth and using such estimates to build an occupancy map composed of spheres and points from sparse point cloud data obtained from a single RGB camera, for example by visual-inertial SLAM.
-  We then show how such map can be used for real-time planning and exploration on-board resource-constrained robots in the real world and simulation.
-  We open-source the code as a plug-and-play ROS module which constructs an occupancy map from RGB and odometry data suitable for path planning.
+  % We present a new method of estimating inverse depth and using such estimates to build an occupancy map composed of spheres and points from sparse point cloud data obtained from a single RGB camera, for example by visual-inertial SLAM.
+  We present a method of building an occupancy representation using only a monocular camera and odometry data in unknown, unstructured 3D environments, and demonstrate the utility of this representation for rapid safety-aware planning for UAVs in simulation and in the real world.
+  Our method consists of a visual keypoint tracking and inverse-depth estimation module robust to odometry errors, connected to a module that builds a map of free-space spheres and obstacle points directly out of the sparse visual points.
+  % Our method consists of 
+  % We then show how such map can be used for real-time planning and exploration on-board resource-constrained robots in the real world and simulation.
+  % We open-source the code as a ROS module, which constructs an occupancy map from RGB and odometry data suitable for path planning.
+  We open-source the code as a ROS module.
 
 Code--- %\href{
 \href{https://github.com/MrTomzor/navigation_unity_testbed}{https://github.com/MrTomzor/navigation\_unity\_testbed}
@@ -145,16 +149,20 @@ Darpaa \cite{darpa_cerberus_wins}
 beep boop
 
 However, the vast majority of autonomous navigation in the real world has been deployed on UAVs equipped with powerful depth sensors such as LiDARs and RGB-D cameras, which drastically increase the cost of such systems compared to simple cameras.
-Enabling safe vision-based autonomous navigation for UAVs is especially exciting because such methods are critical for real-world large-scale deployment of UAVs, especially in search and rescue operations.
+In addition, RGB-D cameras usually have range up to TODO m and LiDARs up to TODO m, whereas with vision sensors, one can potentially see that some points lie extremely far away, and thus infer that there is vast free space up to those obstacles, such as when flying on a field and observing a tree line in the distance.
+% Enabling safe vision-based autonomous navigation for UAVs is especially exciting because such methods are critical for real-world large-scale deployment of UAVs, especially in search and rescue operations.
 
-To move towards the reality of robust vision-based autonomous navigation of UAVs, our paper offers the following contributions:
+Even though vision sensors are much cheaper and potentially have higher range, their use for robotic autonomous map building and navigation is still severely limited.
+Most such approaches in vision-based robotics are reactive behaviors TODO-CITE, or make strong assumptions about environmental structure TODO-CITE.
+
+To move towards the reality of vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper offers the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-    \item A novel occupancy mapping approach and representation -- an adaptation of SphereMap TODO-CITE, which does not require building an occupancy grid, and can be built using only odometry and sparse 3D point data from visual sensors as input
-    \item A simple visual inverse-depth estimator module as a frontend for the proposed occupancy mapping, designed to be used if only image and odometry data are available on a system 
+    \item A novel occupancy mapping module which constructs a sphere-based occupancy representation using only sparse 3D point data from visual sensors and odometry as input -- an iteration of our previous work TODO-CITE, which now however does not require the costly construction of an occupancy grid
+    \item A monocular-visual inverse-depth estimator module which tracks and triangulates visual keypoints, using metrically scaled odometry (visual-inertial, GPS, or others), while being robust to odometry errors by estimating a purely visual translations trajectory and scaling it to match the odometry.
       % (such as when the odometry is obtained from GPS)
-    \item Experimental verification that the proposed methods are well suited for safety-aware navigation and frontier-based exploration on a UAV equipped with only visual-inertial sensors in unstructured, unknown environments
-    \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package
+    \item Experimental verification that the proposed methods are well suited for safety-aware navigation and frontier-based exploration on a UAV equipped with only visual-inertial sensors in unstructured, unknown environments and an open-sourced system for such capabilities.
+    % \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package
 \end{enumerate}
 
 \section{RELATED WORKS}
@@ -260,8 +268,23 @@ We give priority to the information provided by the meshes from the current fram
 
 \subsection{Rapid Safety-Aware Path Planning}
 Another benefit of using spheres for free-space description is that by sampling a point inside any sphere, we immediately get a lower bound on the distance to obstalces, whereas this is not immediately available in a voxel-based representation.
+Thus, it is possible to use the SphereMap for sampling-based planning such as with RRT*.
+But because we also build a graph of intersecting spheres, our representation can be used for search-based planning with spheres as nodes. 
+The path planning can thus optimize not only path length, but also distance to obstacles, while also being several orders of magnitude faster due to the sparsity of spheres in wide areas, which we have already examined in our previous work CITE-SPHEREMAP.
 
-TODO - we use sampling?? Or connectivity?? DECIDE!!!
+The SphereMap has potential for agile fight as well, since it is possible to bias the sphere sampling to sample along/near the planned trajectory of a UAV, and thus rapidly build an occupancy map primarily in the flight direction.
+Testing this against random sampling is outside the scope of this paper.
+
+A potential problem is that in the case of a narrow field-of-view, all nearby spheres can be too small for safe navigation at the beginning of flight.
+For this reason, we specify a clearing distance $d$, so that the path planning can move through unsafe space up to $d$ away from the UAV, but after reaching safe space, cannot return to unsafe space.
+Thanks to explicitly penalizing distance to obstacles, TODO
+
+\subsection{Submap Separation and Close-Measurement Trusting}
+By using very distant points in the occupancy mapping, the errors in occupancy can be high over long distances.
+But instead of discarding such noisy information, we present a way of using it, and that is -- by separating the map into submaps, and for any point in space always trusting a closer measurement than a farther one.
+We implement the second feature by remembering the observation distance of any sphere or point in the map, and only allow updating the sphere if it is observed from a closer distance.
+This leads to the effect that if we first estimate the position of a wall and free space in front of it wrongly, but get closer and thus get better measurements, the map will be updated, but if the UAV gets further than 1.2x the closest measurement distance and observes the wall again, the map will not be changed, as shown in image TODO.
+% TODO - ???
 
 % \subsection{Runtime Analysis and }
 \section{Simplified Visual Inverse-Depth Estimator}
@@ -289,15 +312,24 @@ This module can then be used to enrich the short-distance visual points from vis
 
 \section{Experiments}
 \subsection{Effect of Distant Points on Map Quality}
+In this experiment, we demonstrate the performance of the proposed occupancy mapping while using distant points with high depth covariance, against using closer-range points, which are usually available from most visual SLAM algorithms.
+As you can see in TODO, by using the distant points, the UAV is able to quickly construct an estimate of 
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 In this experiment we demonstrate that the proposed method of occupancy mapping using only a single monocular RGB camera and IMU is useful for path and exploration planning on a real-world UAV platform in a mixed indoor-outdoor warehouse setting.
 
-TODO - mention frontiers here???
+The UAV is TODO-HARDWARE.
 
-TODO - mention strategy -- all frontiers near ground up to 50m away??
+The UAV is running OpenVINS TODO-CITE for odometry estimation, and our proposed inverse depth etstimator and occupancy mapper modules.
+For demonstration purposes, we developed next-best-view frontier-based exploration using our proposed occupancy representation.
+The exploration module simply samples potential reachable viewpoints by RRT in its nearby space at a fixed rate and stores those.
+Upon reaching a viewpoint, the UAV selects a new one, by a combination of distance, path safety (same as in our previous work TODO-CITE), and the amount of visible frontiers.
+We also take into account only frontier points that lie close to some obstacle points -- essentially points that lie close to some surfaces, so the UAV doesn't fly off exploring into the sky.
+Additionally, we only allow path planning where some map points would be visible, as discussed in TODO-REF, to not lose visual odometry tracking.
 
-TODO - make MRS sim work again!!!
+As can be seen from TODO-REF, and multimedia materials supporting the experiment, the occupancy representation is quite suited for such a task of vision-based autonomy.
+The UAV explored TODO.
+It is currently not possible to compare TODO.
 % \subsection{Comparison }
 
 \subsection{Runtime Analysis and Octomap Comparison}

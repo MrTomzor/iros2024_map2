@@ -242,6 +242,10 @@ While with LiDARs and RGB-D cameras, today's robots are able to explore and buil
 The notable achievements of vision-based UAV systems are TODO.
 \cite{nav_and_landing}.
 \cite{corridors_mono_nav_2009}
+UAV exploration using a 3D occupancy grid with range sensors has been widely researched in the past.
+Exploration on a UAV equipped with visual sensors has been achieved only with a stereo camera TODO-CITE-AUTONOMOUS, and in practically the same way as with depth sensors.
+
+On UAVs equipped with no primary range sensors and only a single camera, not much has yet been achieved in terms of autonomy except for short flights in 
 
 Most of these systems are for reactive behavior or behavior in environments with a specific structure. 
 In our paper, we demonstrate that our novel occupancy mapping approach allows a UAV to perform real-time receding-horizon exploration and safety-aware path planning in unstructured environments, which has so far, to the authors' best knowledge, been researched only in robots with distance sensors such as LiDARs and RGB-D cameras.
@@ -350,6 +354,24 @@ The inverse depth estimates are added to the points using this scale.
 
 % \section{Monocular-Inertial Exploration Using the Sphere-Based Occupancy Map}
 \section{Exploration Using the Sphere-Based Occupancy Map and Inverse-Depth Estimator}
+In this section, we detail how our proposed occupancy mapping method and representation are highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a single camera.
+
+In our approach, adapt the simple receding-horizon next-best-view frontier-based exploration.
+In other words, we search for reachable viewpoints, which should uncover some frontiers (updated continually in the occupancy mapping), assign values to them according to the length and safety (computed as in \cite{spheremap}) of the path leading to them, and then choose the best one.
+
+This is a fairly standard approach, with several important changes for monocular systems in outdoor environments.
+First, for depth sensors, it is enough to point the robot's sensors in the direction of the frontier, and it will usually uncover some free space.
+The case of a frontier not being uncovered -- due to e.g. nonreflective or distant surfaces -- is usually neglected in exploration approaches. 
+However, when we use visual keypoints as input for the depth estimation, such a situation can occur quite often, for example when trying to uncover textureless walls.
+
+For this reason, we keep a history of the number of times a frontier was "observed", by which we mean that the robot has chosen to view it and went to the corresponding viewpoint.
+We then simply discard any frontiers that have been viewed more than 2 times from any future selection, as shown in TODO-FIG.
+
+Second, triangulating points requires the robot to move, so we cannot simply point the robot's camera in the direction of the frontiers.
+We solve this by adding a short, several meter translation-only trajectory upon reaching any viewpoint, so that any potential points in the direction of the frontiers are triangulated and it can be uncovered.
+
+Thanks to using a sphere-based representation, we can find paths not only according to  TODO-PRAISE-SPHERES.
+% However, while using visual keypoints as input, there can 
 
 \section{Experiments}
 % \subsection{Effect of Distant Points on Map Quality}

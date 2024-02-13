@@ -198,23 +198,33 @@ Compared to the methods above, our inverse depth measurement module is essential
 We also offer an alternative usage mode, where the system uses the triangulated points coming directly from the currently deployed visual/visual-inertial SLAM, but as discussed further in TODO-REF, these are usually only very near the robot and do not fully use the long range of visual sensors.
 % TODO - rgb to visual sensors, cuz can use greyscale!
 
-\subsection{Occupancy and Topology Representations}
-For a UAV to be able to plan safe paths in an environment in a non-reactive way, it needs a representation that is suitable for such planning.
+\subsection{Occupancy Representations}
+For a UAV to be able to find plan paths through a previously unknown environment and not just reactively avoid obstacles, it needs to build a representation that is suitable for such planning.
+For 3D environments, Octomap \cite{octomap} is a popular octree-based implementation of an occupancy grid, in which the authors build an occupancy representation at a fixed highest resolution (smallest voxels), but collapse any 8 adjacent voxels with the same value into a single, larger voxel, which can considerably speed up many computations and save memory.
+Topological representations and higher-level abstractions, such as Voronoi Graphs TODO-CITE or TODO-CITE-TOPOMAP, can allow faster or safer path planning, but are nearly always built on top of an occupancy grid, sometimes even offline or offboard.
 
-The standard occupancy representation in robotics is an occupancy grid, which can be in 2D or 3D, depending on the robot and task.
-The most commonly used representation for any kind of robotic autonomy in 3D is Octomap \cite{octomap}, in which the authors build an occupancy representation at a fixed highest resolution (smallest voxels), but collapse any 8 adjacent voxels with the same value into a single, larger voxel, which can considerably speed up many computations.
-Similar methods exist with slight variations, such as TODO.
+% The standard approach is to use a sensor which provides a dense depth map, such as a depth camera or a stereo camera pair, or range sensors which provide dense point clouds, such as a LiDAR or time-of-flight camera, and integrate these measurements into an occupancy grid TODO-CITE.
+The standard approach for building an occupancy representation is to cast rays through an occupancy grid, using sensors which provide dense 3D point clouds, such as an RGB-D camera, LiDAR, time-of-flight camera, or a stereo camera pair. 
+Building an occupancy grid using only a single camera and some form of odometry is, to the author's best knowledge, still mostly unexplored in literature, and our proposed method achieves that.
+TODO-REF THE EXISTING BAD ONES!!
 
-Topological representations, which are some sort of abstraction built from an occupancy map, are often used for UAV path planning to assure quick and safe path planning.
-An example is TODO-CITE-VOXGRAPH/SKELETON, in which TODO.
+% Occupancy grids are very general-purpose for path planning purposes, or extracting higher-level topological information about environmental shape \cite{spheremap} TODO-CITE, but they can be problematic for path planning, and can be computationally expensive to construct if the range measurements are very far, due to the raycasting nature of occupancy updates.
 
-In our previous work \cite{spheremap}, we built a graph of spheres that describe the free space on top of Octomap \cite{octomap}.
-A graph of intersecting spheres can describe free space more compactly than voxels, while also explicitly storing the distance to obstacles, thus allowing fast and safety-aware planning.
-% In addition, in TODO-CITE-SPHEREMAP, we also segmented the graph of spheres into convex regions and allowed 
+In our previous work \cite{spheremap}, we demonstrated that representing free space with a graph of intersecting spheres can describe free space more compactly than an occupancy grid, and allow orders of magnitude faster path planning than A* or RRT* on an occupancy grid, in addition to explicitly describing the minimum distance to obstacles at each node.
+However, in \cite{spheremap}, we built the SphereMap incrementally out of an OctoMap.
+In this paper, we present a method to build the SphereMap \textit{directly out of sparse 3D point data from a monocular camera} and \textit{without needing to construct an occupancy grid}, thus enabling rapid safety-aware path planning for resource-constrained UAVs without costly range sensors.
 
-However, in \cite{spheremap}, we built the abstract representation \textit{on top} of Octomap \cite{octomap}, which takes considerable resources to update.
-% In addition, 
-In the approach proposed in this paper, we skip this step entirely and build the occupancy map directly out of sparse point cloud data from visual sensors, thus increasing efficiency and enabling the use of such representation on vision-based systems.
+% Topological representations, which are some sort of abstraction built from an occupancy map, are often used for UAV path planning to assure quick and safe path planning.
+% An example is TODO-CITE-VOXGRAPH/SKELETON, in which TODO.
+
+% In our previous work \cite{spheremap}, we built a graph of spheres that describe the free space on top of Octomap \cite{octomap}.
+% A graph of intersecting spheres can describe free space more compactly than voxels, while also explicitly storing the distance to obstacles, thus allowing fast and safety-aware planning.
+
+% % In addition, in TODO-CITE-SPHEREMAP, we also segmented the graph of spheres into convex regions and allowed 
+
+% However, in \cite{spheremap}, we built the abstract representation \textit{on top} of Octomap \cite{octomap}, which takes considerable resources to update.
+% % In addition, 
+% In the approach proposed in this paper, we skip this step entirely and build the occupancy map directly out of sparse point cloud data from visual sensors, thus increasing efficiency and enabling the use of such representation on vision-based systems.
 
 % Compared to the methods above, our method for occupancy mapping does not attempt to create dense map of environmental surfaces, but instead accepts the currently visible sparse point cloud from a visual/visual-inertial SLAM, which is already a necessary module for vision-based UAV systems without global positioning systems, makes a very rough depth approximation as in FLAME TODO-CITE, and estimates the visible free space with sampled spheres.
 

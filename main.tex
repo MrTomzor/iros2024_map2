@@ -348,6 +348,9 @@ This way, even if the odometry is locally noisy or imprecise, the scale estimate
 The inverse depth estimates are added to the points using this scale.
 % This module can then be used to enrich the short-distance visual points from visual-inertial SLAM to estimate free space further into the distance (as we demonstrate in TODO-REF), but it can also allow \textit{any} system with a camera and even noisy odometry to create our proposed occupancy map and allow it to autonomously navigate and explore. 
 
+% \section{Monocular-Inertial Exploration Using the Sphere-Based Occupancy Map}
+\section{Exploration Using the Sphere-Based Occupancy Map and Inverse-Depth Estimator}
+
 \section{Experiments}
 % \subsection{Effect of Distant Points on Map Quality}
 \subsection{Simulated Large-Scale Exploration}
@@ -375,12 +378,18 @@ As can be seen from TODO-REF, and multimedia materials supporting the experiment
 The UAV explored TODO.
 It is currently not possible to compare TODO.
 % \subsection{Comparison }
-% \subsection{Runtime Analysis and Octomap Comparison}
+% \subsection{Runtime Analysis}
+% Here we analyze the efficiency of the individual parts of the occupancy mapping, method and show thaa
 
 TODO - RUNTIME ANALYSIS NOTE
 
 \section{CONCLUSION}
-aaaa
+In this paper, we presented a novel sphere-based occupancy mapping method 
+% together with a robust monocular inverse-depth estimator,
+for sparse point cloud data from monocular visual sensors,
+and demonstrated how it can enable any UAV equipped with a single camera and any form of odometry to quickly and safely navigate and explore unknown, unstructured 3D environments.
+We have proven through extensive testing in simulation and in the real world, that robust autonomous navigation and exploration on UAVs without expensive, traditionally used range sensors, is possible.
+
 % \section{CONCLUSIONS}
 
 % A conclusion section is not required. Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance of the work or suggest applications and extensions. 

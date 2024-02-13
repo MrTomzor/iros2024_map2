@@ -239,22 +239,25 @@ Our occupancy mapping method can easily use dense point clouds as well, but is a
 As detailed in surveys such as \cite{drones_survey}, constructing reliable vision-based autonomous UAV systems is still a challenge.
 While with LiDARs and RGB-D cameras, today's robots are able to explore and build a precise map of environments that span several kilometers \cite{darpa_cerberus_wins} without human intervention, such autonomy has not yet been achieved in vision-based systems. 
 
-The notable achievements of vision-based UAV systems are TODO.
-\cite{nav_and_landing}.
-\cite{corridors_mono_nav_2009}
-UAV exploration using a 3D occupancy grid with range sensors has been widely researched in the past.
-Exploration on a UAV equipped with visual sensors has been achieved only with a stereo camera TODO-CITE-AUTONOMOUS, and in practically the same way as with depth sensors.
+% TODO - the paper where they fly indoor with drone, structured af
 
-On UAVs equipped with no primary range sensors and only a single camera, not much has yet been achieved in terms of autonomy except for short flights in 
+% TODO - autonomous STEREO exploration
 
-Most of these systems are for reactive behavior or behavior in environments with a specific structure. 
-In our paper, we demonstrate that our novel occupancy mapping approach allows a UAV to perform real-time receding-horizon exploration and safety-aware path planning in unstructured environments, which has so far, to the authors' best knowledge, been researched only in robots with distance sensors such as LiDARs and RGB-D cameras.
-
-% TODO - the paper where they fly indoor with drone
+% TODO - some reactive obstacle avoidance
 
 % TODO - dodging of obstacles using depth estim
 
-% TODO - our method allows PLANNING over larger distances
+
+% The notable achievements of vision-based UAV systems are TODO.
+% \cite{nav_and_landing}.
+% \cite{corridors_mono_nav_2009}
+% UAV exploration using a 3D occupancy grid with range sensors has been widely researched in the past.
+% Exploration on a UAV equipped with visual sensors has been achieved only with a stereo camera TODO-CITE-AUTONOMOUS, and in practically the same way as with depth sensors.
+
+% On UAVs equipped with no primary range sensors and only a single camera, not much has yet been achieved in terms of autonomy except for short flights in 
+
+Most of these systems are for reactive behavior or behavior in environments with a specific structure. 
+In our paper, we demonstrate that our novel occupancy mapping approach allows a UAV to perform real-time receding-horizon exploration and safety-aware path planning in unstructured environments, which has so far, to the authors' best knowledge, been researched only in robots with distance sensors such as LiDARs and RGB-D cameras.
 
 \section{Direct Sphere-Based Occupancy Mapping}
 The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap TODO-CITE, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.

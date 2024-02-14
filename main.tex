@@ -151,26 +151,28 @@ Code--- %\href{
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
-Autonomous navigation using only a single RGB camera and inertial/encoder sensors is highly desirable due to the low cost of such sensors.
-However, the majority of robotics research on autonomous mapping and autonomous navigation today is developed for robots equipped with strong depth sensors such as RGB-D cameras or LiDARs \cite{darpa_cerberus_wins}.
+% Autonomous navigation using only a single RGB camera and inertial/encoder sensors is highly desirable due to the low cost of such sensors.
+% However, the majority of robotics research on autonomous mapping and autonomous navigation today is developed for robots equipped with strong depth sensors such as RGB-D cameras or LiDARs \cite{darpa_cerberus_wins}.
 
-Darpaa \cite{darpa_cerberus_wins}
-beep boop
+% Darpaa \cite{darpa_cerberus_wins}
+% beep boop
 
-However, the vast majority of autonomous navigation in the real world has been deployed on UAVs equipped with powerful depth sensors such as LiDARs and RGB-D cameras, which drastically increase the cost of such systems compared to simple cameras.
-In addition, RGB-D cameras usually have range up to TODO m and LiDARs up to TODO m, whereas with vision sensors, one can potentially see that some points lie extremely far away, and thus infer that there is vast free space up to those obstacles, such as when flying on a field and observing a tree line in the distance.
+However, the vast majority of autonomous navigation research in the real world has been focused on robots equipped with costly sensors that provide dense depth data, such as LiDARs \cite{beneath}, depth cameras [TODO] or stereo camera pairs \cite{explor_stereo}.
+% In addition, RGB-D cameras usually have range up to TODO m and LiDARs up to TODO m, whereas with vision sensors, one can potentially see that some points lie extremely far away, and thus infer that there is vast free space up to those obstacles, such as when flying on a field and observing a tree line in the distance.
 % Enabling safe vision-based autonomous navigation for UAVs is especially exciting because such methods are critical for real-world large-scale deployment of UAVs, especially in search and rescue operations.
+Even though single vision sensors are much cheaper, their use for online map building and autonomous navigation on UAVs is still severely limited.
+Most such approaches in vision-based robotics are reactive behaviors \cite{avoidance_mono1}, or make strong assumptions about environmental structure \cite{corridors_mono_nav_2009}.
 
-Even though vision sensors are much cheaper and potentially have higher range, their use for robotic autonomous map building and navigation is still severely limited.
-Most such approaches in vision-based robotics are reactive behaviors TODO-CITE, or make strong assumptions about environmental structure TODO-CITE.
+TODO - about sparse pointclouds from mono cameras, how not used, how invdepth also not used much for occupancy
 
-To move towards the reality of vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper offers the following contributions:
+To move towards enabling vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper offers the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-    \item A novel occupancy mapping module which constructs a sphere-based occupancy representation using only sparse 3D point data from visual sensors and odometry as input -- an iteration of our previous work TODO-CITE, which now however does not require the costly construction of an occupancy grid
-    \item A monocular-visual inverse-depth estimator module which tracks and triangulates visual keypoints, using metrically scaled odometry (visual-inertial, GPS, or others), while being robust to odometry errors by estimating a purely visual translations trajectory and scaling it to match the odometry.
+  \item A novel occupancy mapping method which constructs a sphere-based occupancy representation using only sparse 3D point data from visual sensors and odometry as input -- an iteration of our previous work \cite{spheremap}, which now however does not require the costly construction of an occupancy grid
+    \item A monocular-visual inverse-depth estimator which tracks and triangulates visual keypoints, using metrically scaled odometry (visual-inertial, GPS, or others), while being robust to odometry errors by estimating a purely visual translations trajectory and scaling it to match the input odometry.
       % (such as when the odometry is obtained from GPS)
-    \item Experimental verification that the proposed methods are well suited for safety-aware navigation and frontier-based exploration on a UAV equipped with only visual-inertial sensors in unstructured, unknown environments and an open-sourced system for such capabilities.
+    % \item Experimental verification that the proposed methods are well suited for safety-aware navigation and frontier-based exploration on a UAV equipped with only visual-inertial sensors in unstructured, unknown environments and an open-sourced system for such capabilities.
+    \item An approach for monocular-inertial exploration on a UAV using the proposed occupancy mapping method and representation, experimentally verified in unstructured 3D environments on a UAV equipped with only a single camera and IMU as primary sensors, in simulation and in the real world.
     % \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package
 \end{enumerate}
 
@@ -208,6 +210,8 @@ We also offer an alternative usage mode, where the system uses the triangulated 
 For a UAV to be able to find plan paths through a previously unknown environment and not just reactively avoid obstacles, it needs to build a representation that is suitable for such planning.
 For 3D environments, Octomap \cite{octomap} is a popular octree-based implementation of an occupancy grid, in which the authors build an occupancy representation at a fixed highest resolution (smallest voxels), but collapse any 8 adjacent voxels with the same value into a single, larger voxel, which can considerably speed up many computations and save memory.
 Topological representations and higher-level abstractions, such as Voronoi Graphs TODO-CITE or TODO-CITE-TOPOMAP, can allow faster or safer path planning, but are nearly always built on top of an occupancy grid, sometimes even offline or offboard.
+
+TODO - MENTION VOXBLOX
 
 % The standard approach is to use a sensor which provides a dense depth map, such as a depth camera or a stereo camera pair, or range sensors which provide dense point clouds, such as a LiDAR or time-of-flight camera, and integrate these measurements into an occupancy grid TODO-CITE.
 The standard approach for building an occupancy representation is to cast rays through an occupancy grid, using sensors which provide dense 3D point clouds, such as an RGB-D camera, LiDAR, time-of-flight camera, or a stereo camera pair. 

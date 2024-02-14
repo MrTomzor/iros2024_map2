@@ -141,7 +141,7 @@ Monocular-Inertial Sphere-Based Occupancy Mapping and Safety-Aware Exploration o
   % Lastly, we demonstrate how our method can be used to enable a UAV to autonomously explore unstructured, 3D environments.
   % This is, to the best of our knowledge, the first existing UAV system that can perform 3D exploration using only a single camera and IMU.
   % We open-source the code for the 3 separable modules -- mapping, inverse-depth estimation and exploration.-- mapping, inverse-depth estimation and exploration.
-  We open-source the code for our approach to enable occupancy mapping and navigation on any UAV with a camera and a source of odometry.
+  We open-source the code for our approach to provide occupancy mapping and navigation to any UAV with a single camera and any odometry.
 
 Code--- %\href{
 \href{TODO}{TODO}
@@ -177,36 +177,7 @@ To move towards enabling vision-based autonomous navigation in unknown, unstruct
 \end{enumerate}
 
 \section{RELATED WORKS}
-\subsection{Monocular Inverse Depth Estimation}
-The task of estimating the depth, or distance of points in space, using just a single RGB camera is challenging.
-Recently, deep learning methods have been researched that can provide metric depth from RGB images only TODO-CITE, but such methods can be problematic to deploy on robotic systems.
-The ability to estimate depth up to metric scale is usually dependent on the network's knowledge of the metric sizes of objects or textures, and thus such networks can have problems when deployed in environments they haven't been trained on.
-Recently, NERF-based approaches for SLAM have also been proposed, which build a dense map of an environment in real-time.
-However, GPUs are required for running any of these efficiently, and they add weight and power consumption constraints, thus severely limiting flight time and adding cost, which is not suitable for low-cost UAV systems.
-
-There are also learning-free methods for recovering depth from RGB images, but they also require the pose of the camera associated with each image as input.
-The most notable is FLAME \cite{flame}, in which the authors track a large amount of visual keypoints, estimate their inverse depth using the prior pose knowledge, and interpolate these points into a mesh, which is the output of the module. 
-The authors state that this method is highly dependent on the quality of the localization.
-Another similar method is \cite{depth_dynamic}, TODO.
-
-Traditional methods of obtaining distance measurements with an RGB camera is using visual SLAM algorithms, such as TODO-CITE.
-Using only a single camera though, one can build a map of an environment this way, but with the scale of the map being unmeasurable, and thus the map is unusable for path planning for a robot.
-% If a metric sensor, such as an 
-Adding a sensor that can recover the metric scale -- such as another RGB camera or an inertial measurement unit (IMU) -- allows one to run visual/visual-inertial SLAM algorithms, and thus obtain a map that is scaled correctly.
-However, any map built using visual/visual-inertial SLAM is usually very \textit{sparse}, compared to maps built using dense depth sensors, such as LiDARs or RGB-D cameras, which makes it difficult to use such map for any kind of autonomy.
-
-TODO - mention how pts from visual slam usually bad
-
-An important concept popularized for SLAM is using estimating and representing inverse depth of visual keypoints instead of simply the euclidean distance.
-This allows the system to represent and optimize points that are very far away, even points in infinity.
-Knowing that there are points \textit{very} far away in some direction is an essential piece of information, as it allows a UAV to know that it is safe to fly in that direction for large distances.
-However, implementing such reasoning has not yet been researched much in literature.
-
-Compared to the methods above, our inverse depth measurement module is essentially a simplified version of FLAME \cite{flame} with several changes that make it more suitable for our method of occupancy mapping.
-We also offer an alternative usage mode, where the system uses the triangulated points coming directly from the currently deployed visual/visual-inertial SLAM, but as discussed further in TODO-REF, these are usually only very near the robot and do not fully use the long range of visual sensors.
-% TODO - rgb to visual sensors, cuz can use greyscale!
-
-\subsection{Occupancy Representations}
+\subsection{Occupancy Mapping}
 For a UAV to be able to find plan paths through a previously unknown environment and not just reactively avoid obstacles, it needs to build a representation that is suitable for such planning.
 For 3D environments, Octomap \cite{octomap} is a popular octree-based implementation of an occupancy grid, in which the authors build an occupancy representation at a fixed highest resolution (smallest voxels), but collapse any 8 adjacent voxels with the same value into a single, larger voxel, which can considerably speed up many computations and save memory.
 Topological representations and higher-level abstractions, such as Voronoi Graphs TODO-CITE or TODO-CITE-TOPOMAP, can allow faster or safer path planning, but are nearly always built on top of an occupancy grid, sometimes even offline or offboard.
@@ -245,6 +216,36 @@ Our occupancy mapping method can easily use dense point clouds as well, but is a
 
 % Compared to the methods above, our method for occupancy mapping does not attempt to create dense map of environmental surfaces, but instead accepts the currently visible sparse point cloud from a visual/visual-inertial SLAM, which is already a necessary module for vision-based UAV systems without global positioning systems, makes a very rough depth approximation as in FLAME TODO-CITE, and estimates the visible free space with sampled spheres.
 
+\subsection{Monocular Inverse Depth Estimation}
+The task of estimating the depth, or distance of points in space, using just a single RGB camera is challenging.
+Recently, deep learning methods have been researched that can provide metric depth from RGB images only TODO-CITE, but such methods can be problematic to deploy on robotic systems.
+The ability to estimate depth up to metric scale is usually dependent on the network's knowledge of the metric sizes of objects or textures, and thus such networks can have problems when deployed in environments they haven't been trained on.
+Recently, NERF-based approaches for SLAM have also been proposed, which build a dense map of an environment in real-time.
+However, GPUs are required for running any of these efficiently, and they add weight and power consumption constraints, thus severely limiting flight time and adding cost, which is not suitable for low-cost UAV systems.
+
+There are also learning-free methods for recovering depth from RGB images, but they also require the pose of the camera associated with each image as input.
+The most notable is FLAME \cite{flame}, in which the authors track a large amount of visual keypoints, estimate their inverse depth using the prior pose knowledge, and interpolate these points into a mesh, which is the output of the module. 
+The authors state that this method is highly dependent on the quality of the localization.
+Another similar method is \cite{depth_dynamic}, TODO.
+
+Traditional methods of obtaining distance measurements with an RGB camera is using visual SLAM algorithms, such as TODO-CITE.
+Using only a single camera though, one can build a map of an environment this way, but with the scale of the map being unmeasurable, and thus the map is unusable for path planning for a robot.
+% If a metric sensor, such as an 
+Adding a sensor that can recover the metric scale -- such as another RGB camera or an inertial measurement unit (IMU) -- allows one to run visual/visual-inertial SLAM algorithms, and thus obtain a map that is scaled correctly.
+However, any map built using visual/visual-inertial SLAM is usually very \textit{sparse}, compared to maps built using dense depth sensors, such as LiDARs or RGB-D cameras, which makes it difficult to use such map for any kind of autonomy.
+
+TODO - mention how pts from visual slam usually bad
+
+An important concept popularized for SLAM is using estimating and representing inverse depth of visual keypoints instead of simply the euclidean distance.
+This allows the system to represent and optimize points that are very far away, even points in infinity.
+Knowing that there are points \textit{very} far away in some direction is an essential piece of information, as it allows a UAV to know that it is safe to fly in that direction for large distances.
+However, implementing such reasoning has not yet been researched much in literature.
+
+Compared to the methods above, our inverse depth measurement module is essentially a simplified version of FLAME \cite{flame} with several changes that make it more suitable for our method of occupancy mapping.
+We also offer an alternative usage mode, where the system uses the triangulated points coming directly from the currently deployed visual/visual-inertial SLAM, but as discussed further in TODO-REF, these are usually only very near the robot and do not fully use the long range of visual sensors.
+% TODO - rgb to visual sensors, cuz can use greyscale!
+
+
 \subsection{Vision-Based UAV Autonomy}
 As detailed in surveys such as \cite{drones_survey}, constructing reliable vision-based autonomous UAV systems is still a challenge.
 While with LiDARs and RGB-D cameras, today's robots are able to explore and build a precise map of environments that span several kilometers \cite{darpa_cerberus_wins} without human intervention, such autonomy has not yet been achieved in vision-based systems. 
@@ -269,10 +270,10 @@ While with LiDARs and RGB-D cameras, today's robots are able to explore and buil
 Most of these systems are for reactive behavior or behavior in environments with a specific structure. 
 In our paper, we demonstrate that our novel occupancy mapping approach allows a UAV to perform real-time receding-horizon exploration and safety-aware path planning in unstructured environments, which has so far, to the authors' best knowledge, been researched only in robots with distance sensors such as LiDARs and RGB-D cameras.
 
-\section{Direct Sphere-Based Occupancy Mapping}
-The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap TODO-CITE, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
+\section{Sphere-Based Occupancy Mapping}
+The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap \cite{octomap}, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
 This is a general-purpose representation, but not much suitable for fast path planning.
-We propose to represent free space by spheres and obstacles by points, similarly to our previous work TODO-CITE-SPHEREMAP.
+We propose to represent free space by spheres and obstacles by points, similarly to our previous work \cite{spheremap}.
 In this section, we explain how such map can be built using only sparse 3D point data and how it is useful for UAV autonomy.
 % We propose an alternative, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
 % However, if we get very long-distance measurements in some direction, such raycasting approach might need many iterations to fully fill the free space in distant areas.
@@ -289,8 +290,8 @@ Together, $F_o$ and $F_v$ form a \textit{bounding mesh} $F_t$, which is watertig
 \subsubsection{Adding Points and Spheres}
 Adding new spheres is quite straightforward -- we sample points inside $F_t$ by raycasting from the camera and sampling at random distances.
 A potential new sphere's radius is determined by its distance to $F_t$.
-However, as in TODO-CITE-SPHEREMAP, we also perform a redundancy check for all potential spheres and add them only if they are not redundant (meaning that they would have a significant overlap with already existing spheres).
-As in TODO-CITE-SPHEREMAP, we also find nearby spheres and connect them if they intersect.
+However, as in \cite{spheremap}, we also perform a redundancy check for all potential spheres and add them only if they are not redundant (meaning that they would have a significant overlap with already existing spheres).
+As in \cite{spheremap}, we also find nearby spheres and connect them if they intersect.
 New obstacle points are added to the map simply if their inverse-depth covariance is low (or not provided) and they are further from other points in the map by some predefined minimal distance, which specifies the resulting map surface detail.
 \subsubsection{Updating Existing Points and Spheres}
 Updating existing spheres and points is slightly more complex.
@@ -309,7 +310,7 @@ We give priority to the information provided by the meshes from the current fram
 Another benefit of using spheres for free-space description is that by sampling a point inside any sphere, we immediately get a lower bound on the distance to obstalces, whereas this is not immediately available in a voxel-based representation.
 Thus, it is possible to use the SphereMap for sampling-based planning such as with RRT*.
 But because we also build a graph of intersecting spheres, our representation can be used for search-based planning with spheres as nodes. 
-The path planning can thus optimize not only path length, but also distance to obstacles, while also being several orders of magnitude faster due to the sparsity of spheres in wide areas, which we have already examined in our previous work CITE-SPHEREMAP.
+The path planning can thus optimize not only path length, but also distance to obstacles, while also being several orders of magnitude faster due to the sparsity of spheres in wide areas, which we have already examined in our previous work \cite{spheremap}.
 
 The SphereMap has potential for agile fight as well, since it is possible to bias the sphere sampling to sample along/near the planned trajectory of a UAV, and thus rapidly build an occupancy map primarily in the flight direction.
 Testing this against random sampling is outside the scope of this paper.

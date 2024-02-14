@@ -129,16 +129,22 @@ Monocular-Inertial Sphere-Based Occupancy Mapping and Safety-Aware Exploration o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
   % We present a new method of estimating inverse depth and using such estimates to build an occupancy map composed of spheres and points from sparse point cloud data obtained from a single RGB camera, for example by visual-inertial SLAM.
-  We present a method of building an occupancy representation using only a monocular camera and odometry data in unknown, unstructured 3D environments, and demonstrate the utility of this representation for rapid safety-aware planning for UAVs in simulation and in the real world.
-  Our method consists of a visual keypoint tracking and inverse-depth estimation module robust to odometry errors, connected to a module that builds a map of free-space spheres and obstacle points directly out of the sparse visual points.
+  We present a novel method of building an occupancy representation using only a monocular camera and odometry data, that enables fast, safety-aware navigation on inexpensive UAVs. 
+  % and demonstrate how our method enables inexpensive UAVs to navigate quickly in unknown, unstructured 3D environments in simulation and in the real world.
+  % Our approach consists of a visual keypoint tracking and inverse-depth estimation module robust to odometry errors, connected to a module that builds a map of free-space spheres and obstacle points directly out of the sparse visual points.
+  Our approach consists of two main parts -- first, we track visual keypoints and estimate their inverse-depth, even with noisy odometry.
+  Then, from thus obtained sparse 3D point clouds, we estimate visible free space by a bounding mesh, and incrementally fill free space with a graph of intersecting spheres, which are used for rapid safety-aware path planning.
   % Our method consists of 
   % We then show how such map can be used for real-time planning and exploration on-board resource-constrained robots in the real world and simulation.
   % We open-source the code as a ROS module, which constructs an occupancy map from RGB and odometry data suitable for path planning.
-  This is, to the best of our knowledge, the first existing UAV system that can perform 3D exploration using only a single camera and IMU.
-  We open-source the code for the 3 separable modules -- mapping, inverse-depth estimation and exploration.-- mapping, inverse-depth estimation and exploration.
+  We demonstrate how our method can be used to, to the best of our knowledge, achieve the first ever autonomous UAV exploration in unstructured 3D environments, using only a single camera and IMU as primary sensors.
+  % Lastly, we demonstrate how our method can be used to enable a UAV to autonomously explore unstructured, 3D environments.
+  % This is, to the best of our knowledge, the first existing UAV system that can perform 3D exploration using only a single camera and IMU.
+  % We open-source the code for the 3 separable modules -- mapping, inverse-depth estimation and exploration.-- mapping, inverse-depth estimation and exploration.
+  We open-source the code for our approach to enable occupancy mapping and navigation on any UAV with a camera and a source of odometry.
 
 Code--- %\href{
-\href{https://github.com/MrTomzor/navigation_unity_testbed}{https://github.com/MrTomzor/navigation\_unity\_testbed}
+\href{TODO}{TODO}
 
 \end{abstract}
 

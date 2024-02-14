@@ -139,7 +139,7 @@ Monocular-Inertial Sphere-Based Occupancy Mapping and Safety-Aware Exploration o
   % Our method consists of 
   % We then show how such map can be used for real-time planning and exploration on-board resource-constrained robots in the real world and simulation.
   % We open-source the code as a ROS module, which constructs an occupancy map from RGB and odometry data suitable for path planning.
-  We demonstrate how our method can be used to, to the best of our knowledge, achieve the first ever autonomous UAV exploration in unstructured 3D environments, using only a single camera and IMU as primary sensors.
+  We demonstrate how our method can be used to achieve, to the best of our knowledge, the first ever autonomous UAV exploration in unstructured 3D environments, using only a single camera and IMU as its sensors.
   % Lastly, we demonstrate how our method can be used to enable a UAV to autonomously explore unstructured, 3D environments.
   % This is, to the best of our knowledge, the first existing UAV system that can perform 3D exploration using only a single camera and IMU.
   % We open-source the code for the 3 separable modules -- mapping, inverse-depth estimation and exploration.-- mapping, inverse-depth estimation and exploration.
@@ -159,15 +159,15 @@ Code--- %\href{
 % Darpaa \cite{darpa_cerberus_wins}
 % beep boop
 
-However, the vast majority of autonomous navigation research in the real world has been focused on robots equipped with costly sensors that provide dense depth data, such as LiDARs \cite{beneath}, depth cameras [TODO] or stereo camera pairs \cite{explor_stereo}.
+The vast majority of autonomous navigation and exploration research in the real world, such as in the DARPA SubT Challenge \cite{darpa_cerberus_wins}, has so far been focused on robots equipped with costly sensors that provide dense range data, such as LiDARs \cite{beneath}, depth cameras [TODO] or stereo camera pairs \cite{explor_stereo}.
 % In addition, RGB-D cameras usually have range up to TODO m and LiDARs up to TODO m, whereas with vision sensors, one can potentially see that some points lie extremely far away, and thus infer that there is vast free space up to those obstacles, such as when flying on a field and observing a tree line in the distance.
 % Enabling safe vision-based autonomous navigation for UAVs is especially exciting because such methods are critical for real-world large-scale deployment of UAVs, especially in search and rescue operations.
-Even though single vision sensors are much cheaper, their use for online map building and autonomous navigation on UAVs is still severely limited.
-Most such approaches in vision-based robotics are reactive behaviors \cite{avoidance_mono1}, or make strong assumptions about environmental structure \cite{corridors_mono_nav_2009}.
+Even though single vision sensors are much cheaper, existing approaches for using them for online map building and autonomous navigation on UAVs is still severely limited.
+Most navigation approaches for UAVs with only a single camera and no range sensors are reactive behaviors \cite{avoidance_mono1}, or make strong assumptions about environmental structure \cite{corridors_mono_nav_2009}.
 
 TODO - about sparse pointclouds from mono cameras, how not used, how invdepth also not used much for occupancy
 
-To move towards enabling vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper offers the following contributions:
+To move towards enabling vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
   \item A novel occupancy mapping method which constructs a sphere-based occupancy representation using only sparse 3D point data from visual sensors and odometry as input -- an iteration of our previous work \cite{spheremap}, which now however does not require the costly construction of an occupancy grid
@@ -279,6 +279,8 @@ While with LiDARs and RGB-D cameras, today's robots are able to explore and buil
 
 Most of these systems are for reactive behavior or behavior in environments with a specific structure. 
 In our paper, we demonstrate that our novel occupancy mapping approach allows a UAV to perform real-time receding-horizon exploration and safety-aware path planning in unstructured environments, which has so far, to the authors' best knowledge, been researched only in robots with distance sensors such as LiDARs and RGB-D cameras.
+
+TODO - REWRITE
 
 \section{Sphere-Based Occupancy Mapping}
 The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap \cite{octomap}, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
@@ -436,8 +438,6 @@ It is currently not possible to compare TODO.
 % \subsection{Runtime Analysis}
 % Here we analyze the efficiency of the individual parts of the occupancy mapping, method and show thaa
 
-TODO - RUNTIME ANALYSIS NOTE
-
 \begin{figure}[!htb]
   \includegraphics[width=8.5cm]{fig/exper1.png}
   \includegraphics[width=8.5cm]{fig/exper4.png}
@@ -448,10 +448,16 @@ TODO - RUNTIME ANALYSIS NOTE
   \label{fig:exper_real}
 \end{figure}
 
+\subsection{Runtime analysis}
+Here we analyze the runtimes of this method, and TODO.
+
+TODO - tabulka
+
+
 \section{CONCLUSION}
 In this paper, we presented a novel sphere-based occupancy mapping method 
 % together with a robust monocular inverse-depth estimator,
-for sparse point cloud data from monocular visual sensors,
+using sparse point cloud data from monocular visual sensors,
 and demonstrated how it can enable any UAV equipped with a single camera and any form of odometry to quickly and safely navigate and explore unknown, unstructured 3D environments.
 We have proven through extensive testing in simulation and in the real world, that robust autonomous navigation and exploration on UAVs without expensive, traditionally used range sensors, is possible.
 

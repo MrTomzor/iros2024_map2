@@ -157,24 +157,7 @@ Code--- %\href{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 % Darpaa \cite{darpa_cerberus_wins}
-To actively map and navigate unknown environments, fully autonomous UAVs need to build and continuously update some internal representation of the environment, which allows them to find paths to different goals, to know which areas have or haven't been observed, and where the UAV should move to observe new areas.
-% The most commonly used type of such representation is an occupancy grid \cite{occupancy_moravec}.
-
-The autonomous UAV systems with the greatest capabilities documented in recent literature \cite{darpa_cerberus_wins, beneath} usually construct an occupancy grid \cite{occupancy_moravec}, commonly the efficient octree-based implementation of OctoMap \cite{octomap}, and use it as the base representation for planning, exploration or constructing higher-level spatial abstractions \cite{spheremap}.
-However, to build an occupancy grid, one needs to have dense pointclouds of range measurements due to the nature of occupancy grid updates - which is to cast rays towards the measurement points and update the occupancy of traversed cells.
-% TODO - check if all
-Thus, state-of-the-art exploration and navigation UAV systems have been constrained to expensive, heavy or limited-range sensors such as LiDARs, depth cameras or stereo-camera pairs, which can provide these dense point clouds.
-
-To the best of the authors' knowledge, there is currently no known way of building an occupancy grid (or a representation that would offer the same capabilities) on robots equipped with only a single monocular camera in combination with inexpensive sensors that can recover the metric scale, such as an IMU or a global-positioning system. 
-However, being able to build a representation that would allow safe and rapid exploration and navigation on-board UAVs with such inexpensive sensors would economically unlock many potential applications, such as swarms of  UAVs for search and rescue missions.
-In addition, RGB cameras are also useful for object recognition or other types of vision-based artificial intelligence, and thus it makes sense to have them on many UAVs by default.
-Furthermore, when moving, a single camera can also provide rough estimates on very distant objects distance, far beyond the \~50m range of LiDARs, but this advantage has not yet been fully utilized in existing research.
-
-In this paper, we present a novel approach to occupancy mapping that takes in a sparse pointcloud of tracked visual keypoints (already available if using some visual/visual-inertial odometry), and instead of traditionally raycasting and updating cells in a grid, we construct a polyhedron of approximate visible free space at each frame, inscribe spheres of free space inside that polyhedron, and connect them together to form a graph of intersecting spheres that allows for fast and safety-aware planning.
-We further show how out mapping method enables autonomous exploration and navigation in large-scale, unstructured environments on a UAV using only a single camera and IMU as its sensors, which, to the authors' best knowledge, has not yet been achieved in literature.
-% We open-source the code so that anyone with a UAV equipped with a single camera and a source of odometry can easily enable exploration and rapid, safety-aware navigation.
-% We open-source the code make a detailed analysis .
-% , and unlocks a wide variety potential low-cost UAV applications.
+To actively map and navigate unknown environments, fully autonomous UAVs need to build and continuously update some internal representation of the environment, which allows them to find paths to different goals, to know which areas have or haven¿t been observed, and where the UAV should move to observe new areas.
 
 % The vast majority of autonomous navigation and exploration research in the real world, such as in the DARPA SubT Challenge \cite{darpa_cerberus_wins}, has so far been focused on robots equipped with costly sensors that provide dense range data, such as LiDARs \cite{beneath}, depth cameras [TODO] or stereo camera pairs \cite{explor_stereo}.
 % Even though single vision sensors are much cheaper, existing approaches for using them for online map building and autonomous navigation on UAVs is still severely limited.
@@ -186,9 +169,10 @@ To move towards enabling vision-based autonomous navigation in unknown, unstruct
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
   \item A novel occupancy mapping method which constructs a sphere-based occupancy representation using only sparse 3D point data from visual sensors and odometry as input -- an iteration of our previous work \cite{spheremap}, which now however does not require the costly construction of an occupancy grid
-    % \item A monocular-visual inverse-depth estimator which tracks and triangulates visual keypoints, using metrically scaled odometry (visual-inertial, GPS, or others), while being robust to odometry errors by estimating a purely visual translations trajectory and scaling it to match the input odometry.
-    \item An approach for monocular-inertial exploration on a UAV using the proposed occupancy mapping method and representation, along with important changes to traditional exploration approaches necessary for using a monocular camera, experimentally verified in unstructured 3D environments on a UAV equipped with only a single camera and IMU as primary sensors, in simulation and in the real world.
-    \item Open-sourced code for the map-building method, along with path-planning and exploration functionalities and example scripts to quick-start inexpensive UAV autonomy.
+    \item A monocular-visual inverse-depth estimator which tracks and triangulates visual keypoints, using metrically scaled odometry (visual-inertial, GPS, or others), while being robust to odometry errors by estimating a purely visual translations trajectory and scaling it to match the input odometry.
+      % (such as when the odometry is obtained from GPS)
+    % \item Experimental verification that the proposed methods are well suited for safety-aware navigation and frontier-based exploration on a UAV equipped with only visual-inertial sensors in unstructured, unknown environments and an open-sourced system for such capabilities.
+    \item An approach for monocular-inertial exploration on a UAV using the proposed occupancy mapping method and representation, experimentally verified in unstructured 3D environments on a UAV equipped with only a single camera and IMU as primary sensors, in simulation and in the real world.
     % \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package
 \end{enumerate}
 

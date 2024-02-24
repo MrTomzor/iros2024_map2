@@ -189,13 +189,48 @@ We further show how out mapping method enables autonomous exploration and naviga
 % Even though single vision sensors are much cheaper, existing approaches for using them for online map building and autonomous navigation on UAVs is still severely limited.
 % Most navigation approaches for UAVs with only a single camera and no range sensors are reactive behaviors \cite{avoidance_mono1}, or make strong assumptions about environmental structure \cite{corridors_mono_nav_2009}.
 
-\subsection{Related Works}
+\subsection{Related Works -- Spatial Representations}
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
 In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
 In this paper, we represent the free space in the same way, but with the major difference that now \textit{we do not need to build the occupancy grid as an intermediate step}, which frees up significant computational resources.
 In addition, there is no current documented way to build an occupancy grid using sparse point clouds, although this could also be interesting to research.
 % TODO-CHECK
 Furthermore, in this paper, our map also represents obstacle points corresponding to triangulated visual keypoints with remembered measurement distance, which play an important role when updating the map at different measurement distances (see Sec. \ref{sec:distance-based}) and when performing perception-aware planning.
+
+% Traditional methods of obtaining distance measurements with an RGB camera is using visual SLAM algorithms, such as TODO-CITE.
+% Using only a single camera though, one can build a map of an environment this way, but with the scale of the map being unmeasurable, and thus the map is unusable for path planning for a robot.
+% % If a metric sensor, such as an 
+% Adding a sensor that can recover the metric scale -- such as another RGB camera or an inertial measurement unit (IMU) -- allows one to run visual/visual-inertial SLAM algorithms, and thus obtain a map that is scaled correctly.
+% However, any map built using visual/visual-inertial SLAM is usually very \textit{sparse}, compared to maps built using dense depth sensors, such as LiDARs or RGB-D cameras, which makes it difficult to use such map for any kind of autonomy.
+
+% An important concept popularized for SLAM is using estimating and representing inverse depth of visual keypoints instead of simply the euclidean distance.
+% This allows the system to represent and optimize points that are very far away, even points in infinity.
+% Knowing that there are points \textit{very} far away in some direction is an essential piece of information, as it allows a UAV to know that it is safe to fly in that direction for large distances.
+% However, implementing such reasoning has not yet been researched much in literature.
+
+% Compared to the methods above, our inverse depth measurement module is essentially a simplified version of FLAME \cite{flame} with several changes that make it more suitable for our method of occupancy mapping.
+% We also offer an alternative usage mode, where the system uses the triangulated points coming directly from the currently deployed visual/visual-inertial SLAM, but as discussed further in TODO-REF, these are usually only very near the robot and do not fully use the long range of visual sensors.
+% % TODO - rgb to visual sensors, cuz can use greyscale!
+
+\subsection{Related Works -- Vision-Based Autonomy}
+
+Vision-based UAV autonomy has so far, by far not reached the levels of autonomy using range sensors, and remains a challenge, as documented in recent surveys \cite{drones_survey}, but some progress has been made.
+% A large amount of research has been conducted on reactive behaviors, for example 
+% Most examples of vision-based autonomy are only reactive behaviors, or systems that make strong assumptions on the environmental structure, such as in \cite{corridors_mono_nav_2009} where the authors assume corridor-like environments.
+Existing research has mostly focused only on reactive behaviors, or systems that make strong assumptions on the environmental structure, such as in \cite{corridors_mono_nav_2009} where the authors assume corridor-like environments.
+
+
+For vision-based autonomous mapping and exploration in unstructured environments, some progress has been made. In \cite{explor_stereo}, the authors presented the first ever vision-based UAV system that can explore and build a map (a 3D occupancy grid) on a UAV equipped with stereo cameras and also a supporting downward-facing optical sensor for better odometry.
+
+With only a single camera however, the task is even more challenging, as obtaining correct depth estimates is harder than with stereo cameras.
+Most notable is the work of \cite{from_monoslam_to_explo}, where the authors build an occupancy grid map on top of points coming from semi-dense monocular SLAM, but only show exploration in a single room, and with offboard processing.
+
+Another approach to single-camera autonomy would be to use deep-learning methods for monocular depth estimation [TODO] and then using well-researched methods for mapping, exploration and planning as on systems with a depth camera.
+Some results have been achieved with this method, but they have also been mostly on obstacle avoidance, and not building large-scale navigable maps [TODO].
+Furthermore, this approach requires having a GPU on-board the UAV, which can strongly increase the system cost, and reduce flight time due to weight and power requirements.
+
+Compared to the above mentioned approaches, we demonstrate exploration and navigation in 3D using a single camera and an IMU, with no assumptions on the environmental structure, and in large-scale environments, with all of the computations running on-board the UAV without requiring a GPU.
+% other than that it has a reasonable amount of texture, but our approach can handle large textureless areas as well.
 
 \subsection{Contributions}
 To move towards enabling vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper brings the following contributions:
@@ -208,102 +243,6 @@ To move towards enabling vision-based autonomous navigation in unknown, unstruct
     \item Open-sourced code for the map-building method, along with path-planning and exploration functionalities and example scripts to quick-start inexpensive UAV autonomy.
     % \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package
 \end{enumerate}
-
-\section{RELATED WORKS}
-\subsection{Occupancy Mapping}
-For a UAV to be able to find plan paths through a previously unknown environment and not just reactively avoid obstacles, it needs to build a representation that is suitable for such planning.
-For 3D environments, Octomap \cite{octomap} is a popular octree-based implementation of an occupancy grid, in which the authors build an occupancy representation at a fixed highest resolution (smallest voxels), but collapse any 8 adjacent voxels with the same value into a single, larger voxel, which can considerably speed up many computations and save memory.
-Topological representations and higher-level abstractions, such as Voronoi Graphs TODO-CITE or TODO-CITE-TOPOMAP, can allow faster or safer path planning, but are nearly always built on top of an occupancy grid, sometimes even offline or offboard.
-
-TODO - MENTION VOXBLOX
-
-% The standard approach is to use a sensor which provides a dense depth map, such as a depth camera or a stereo camera pair, or range sensors which provide dense point clouds, such as a LiDAR or time-of-flight camera, and integrate these measurements into an occupancy grid TODO-CITE.
-The standard approach for building an occupancy representation is to cast rays through an occupancy grid, using sensors which provide dense 3D point clouds, such as an RGB-D camera, LiDAR, time-of-flight camera, or a stereo camera pair. 
-Building an occupancy grid using only a single camera and some form of odometry is, to the author's best knowledge, still mostly unexplored in literature, and our proposed method achieves that.
-TODO-REF THE EXISTING BAD ONES!!
-
-% Occupancy grids are very general-purpose for path planning purposes, or extracting higher-level topological information about environmental shape \cite{spheremap} TODO-CITE, but they can be problematic for path planning, and can be computationally expensive to construct if the range measurements are very far, due to the raycasting nature of occupancy updates.
-
-% TODO - jointly represents topology and occupancy?
-
-In our previous work \cite{spheremap}, we demonstrated that representing free space with a graph of intersecting spheres can describe free space more compactly than an occupancy grid, and allow orders of magnitude faster path planning than A* or RRT* on an occupancy grid, in addition to explicitly describing the minimum distance to obstacles at each node.
-It can thus be thought to represent both occupancy and topology.
-However, in \cite{spheremap}, the SphereMap was built out of an OctoMap, which had to also be constructed during flight, taking major computational resources.
-
-In this paper, we present a method to build the SphereMap occupancy representation \textit{directly} without needing to construct an occupancy grid and to construct it out of \textit{sparse} 3D point data from a monocular camera, 
-% thus enabling rapid safety-aware path planning for resource-constrained UAVs without costly range sensors.
-Thus, our proposed method enables any UAV equipped with a single camera and some form of odometry (e.g. visual-inertial or GPS) to quickly and safely navigate unknown, unstructured 3D environments, without any costly range sensors.
-Our occupancy mapping method can easily use dense point clouds as well, but is able to function with sparse ones, which would be problematic for the traditional raycasting approach of updating occupancy grids.
-
-% Topological representations, which are some sort of abstraction built from an occupancy map, are often used for UAV path planning to assure quick and safe path planning.
-% An example is TODO-CITE-VOXGRAPH/SKELETON, in which TODO.
-
-% In our previous work \cite{spheremap}, we built a graph of spheres that describe the free space on top of Octomap \cite{octomap}.
-% A graph of intersecting spheres can describe free space more compactly than voxels, while also explicitly storing the distance to obstacles, thus allowing fast and safety-aware planning.
-
-% % In addition, in TODO-CITE-SPHEREMAP, we also segmented the graph of spheres into convex regions and allowed 
-
-% However, in \cite{spheremap}, we built the abstract representation \textit{on top} of Octomap \cite{octomap}, which takes considerable resources to update.
-% % In addition, 
-% In the approach proposed in this paper, we skip this step entirely and build the occupancy map directly out of sparse point cloud data from visual sensors, thus increasing efficiency and enabling the use of such representation on vision-based systems.
-
-% Compared to the methods above, our method for occupancy mapping does not attempt to create dense map of environmental surfaces, but instead accepts the currently visible sparse point cloud from a visual/visual-inertial SLAM, which is already a necessary module for vision-based UAV systems without global positioning systems, makes a very rough depth approximation as in FLAME TODO-CITE, and estimates the visible free space with sampled spheres.
-
-\subsection{Monocular Inverse Depth Estimation}
-The task of estimating the depth, or distance of points in space, using just a single RGB camera is challenging.
-Recently, deep learning methods have been researched that can provide metric depth from RGB images only TODO-CITE, but such methods can be problematic to deploy on robotic systems.
-The ability to estimate depth up to metric scale is usually dependent on the network's knowledge of the metric sizes of objects or textures, and thus such networks can have problems when deployed in environments they haven't been trained on.
-Recently, NERF-based approaches for SLAM have also been proposed, which build a dense map of an environment in real-time.
-However, GPUs are required for running any of these efficiently, and they add weight and power consumption constraints, thus severely limiting flight time and adding cost, which is not suitable for low-cost UAV systems.
-
-There are also learning-free methods for recovering depth from RGB images, but they also require the pose of the camera associated with each image as input.
-The most notable is FLAME \cite{flame}, in which the authors track a large amount of visual keypoints, estimate their inverse depth using the prior pose knowledge, and interpolate these points into a mesh, which is the output of the module. 
-The authors state that this method is highly dependent on the quality of the localization.
-Another similar method is \cite{depth_dynamic}, TODO.
-
-Traditional methods of obtaining distance measurements with an RGB camera is using visual SLAM algorithms, such as TODO-CITE.
-Using only a single camera though, one can build a map of an environment this way, but with the scale of the map being unmeasurable, and thus the map is unusable for path planning for a robot.
-% If a metric sensor, such as an 
-Adding a sensor that can recover the metric scale -- such as another RGB camera or an inertial measurement unit (IMU) -- allows one to run visual/visual-inertial SLAM algorithms, and thus obtain a map that is scaled correctly.
-However, any map built using visual/visual-inertial SLAM is usually very \textit{sparse}, compared to maps built using dense depth sensors, such as LiDARs or RGB-D cameras, which makes it difficult to use such map for any kind of autonomy.
-
-TODO - mention how pts from visual slam usually bad
-
-An important concept popularized for SLAM is using estimating and representing inverse depth of visual keypoints instead of simply the euclidean distance.
-This allows the system to represent and optimize points that are very far away, even points in infinity.
-Knowing that there are points \textit{very} far away in some direction is an essential piece of information, as it allows a UAV to know that it is safe to fly in that direction for large distances.
-However, implementing such reasoning has not yet been researched much in literature.
-
-Compared to the methods above, our inverse depth measurement module is essentially a simplified version of FLAME \cite{flame} with several changes that make it more suitable for our method of occupancy mapping.
-We also offer an alternative usage mode, where the system uses the triangulated points coming directly from the currently deployed visual/visual-inertial SLAM, but as discussed further in TODO-REF, these are usually only very near the robot and do not fully use the long range of visual sensors.
-% TODO - rgb to visual sensors, cuz can use greyscale!
-
-
-\subsection{Vision-Based UAV Autonomy}
-As detailed in surveys such as \cite{drones_survey}, constructing reliable vision-based autonomous UAV systems is still a challenge.
-While with LiDARs and RGB-D cameras, today's robots are able to explore and build a precise map of environments that span several kilometers \cite{darpa_cerberus_wins} without human intervention, such autonomy has not yet been achieved in vision-based systems. 
-
-% TODO - the paper where they fly indoor with drone, structured af
-
-% TODO - autonomous STEREO exploration
-
-% TODO - some reactive obstacle avoidance
-
-% TODO - dodging of obstacles using depth estim
-
-
-% The notable achievements of vision-based UAV systems are TODO.
-% \cite{nav_and_landing}.
-% \cite{corridors_mono_nav_2009}
-% UAV exploration using a 3D occupancy grid with range sensors has been widely researched in the past.
-% Exploration on a UAV equipped with visual sensors has been achieved only with a stereo camera TODO-CITE-AUTONOMOUS, and in practically the same way as with depth sensors.
-
-% On UAVs equipped with no primary range sensors and only a single camera, not much has yet been achieved in terms of autonomy except for short flights in 
-
-Most of these systems are for reactive behavior or behavior in environments with a specific structure. 
-In our paper, we demonstrate that our novel occupancy mapping approach allows a UAV to perform real-time receding-horizon exploration and safety-aware path planning in unstructured environments, which has so far, to the authors' best knowledge, been researched only in robots with distance sensors such as LiDARs and RGB-D cameras.
-
-TODO - REWRITE
 
 \section{Sphere-Based Occupancy Mapping}
 The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap \cite{octomap}, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.

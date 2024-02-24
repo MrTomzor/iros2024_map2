@@ -180,6 +180,12 @@ We further show how out mapping method enables autonomous exploration and naviga
 % Even though single vision sensors are much cheaper, existing approaches for using them for online map building and autonomous navigation on UAVs is still severely limited.
 % Most navigation approaches for UAVs with only a single camera and no range sensors are reactive behaviors \cite{avoidance_mono1}, or make strong assumptions about environmental structure \cite{corridors_mono_nav_2009}.
 \subsection{Related Works}
+% The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
+In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
+In this paper, we represent the free space in the same way, but with the major difference that now \textit{we do not need to build the occupancy grid as an intermediate step}, which frees up significant computational resources.
+In addition, there is no current documented way to build an occupancy grid using sparse point clouds, although this could also be interesting to research.
+% TODO-CHECK
+Furthermore, in this paper, our map also represents obstacle points corresponding to triangulated visual keypoints with remembered measurement distance, which play an important role when updating the map at different measurement distances (see Sec. \ref{sec:distance-based}) and when performing perception-aware planning.
 
 \subsection{Contributions}
 To move towards enabling vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper brings the following contributions:
@@ -346,6 +352,7 @@ For this reason, we specify a clearing distance $d$, so that the path planning c
 Thanks to explicitly penalizing distance to obstacles, TODO
 
 \subsection{Submap Separation and Close-Measurement Trusting}
+\label{sec:distance-based}
 By using very distant points in the occupancy mapping, the errors in occupancy can be high over long distances.
 But instead of discarding such noisy information, we present a way of using it, and that is -- by separating the map into submaps, and for any point in space always trusting a closer measurement than a farther one.
 We implement the second feature by remembering the observation distance of any sphere or point in the map, and only allow updating the sphere if it is observed from a closer distance.

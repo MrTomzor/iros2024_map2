@@ -158,6 +158,7 @@ Code--- %\href{
 \section{INTRODUCTION}
 % Darpaa \cite{darpa_cerberus_wins}
 To actively map and navigate unknown environments, fully autonomous UAVs need to build and continuously update some internal representation of the environment, which allows them to find paths to different goals, to know which areas have or haven't been observed, and where the UAV should move to observe new areas.
+The main question addressed in this paper is -- "How to construct such a representation using only a single camera and inexpensive metric-scale sensors, such as an inertial-measurement-unit?"
 % The most commonly used type of such representation is an occupancy grid \cite{occupancy_moravec}.
 
 The autonomous UAV systems with the greatest capabilities documented in recent literature \cite{darpa_cerberus_wins, beneath} usually construct an occupancy grid \cite{occupancy_moravec}, commonly the efficient octree-based implementation of OctoMap \cite{octomap}, and use it as the base representation for planning, exploration or constructing higher-level spatial abstractions \cite{spheremap}.
@@ -170,6 +171,14 @@ However, being able to build a representation that would allow safe and rapid ex
 In addition, RGB cameras are also useful for object recognition or other types of vision-based artificial intelligence, and thus it makes sense to have them on many UAVs by default.
 Furthermore, when moving, a single camera can also provide rough estimates on very distant objects distance, far beyond the \~50m range of LiDARs, but this advantage has not yet been fully utilized in existing research.
 
+\begin{figure}[!t]
+  % \includegraphics[width=8.5cm]{fig/smap2.png}
+  \includegraphics[width=8.5cm]{fig/explor_forest2.png}
+  \centering
+  \caption{TEMPORARY IMG - The map resulting from the proposed occupancy mapping method after exploring in a simulated outdoor environment -- green spheres describe free space while red points correspond to triangulated visual keypoints, and green points are the currently visible ones.}
+  \label{fig:smap_intro}
+\end{figure}
+
 In this paper, we present a novel approach to occupancy mapping that takes in a sparse pointcloud of tracked visual keypoints (already available if using some visual/visual-inertial odometry), and instead of traditionally raycasting and updating cells in a grid, we construct a polyhedron of approximate visible free space at each frame, inscribe spheres of free space inside that polyhedron, and connect them together to form a graph of intersecting spheres that allows for fast and safety-aware planning.
 We further show how out mapping method enables autonomous exploration and navigation in large-scale, unstructured environments on a UAV using only a single camera and IMU as its sensors, which, to the authors' best knowledge, has not yet been achieved in literature.
 % We open-source the code so that anyone with a UAV equipped with a single camera and a source of odometry can easily enable exploration and rapid, safety-aware navigation.
@@ -179,6 +188,7 @@ We further show how out mapping method enables autonomous exploration and naviga
 % The vast majority of autonomous navigation and exploration research in the real world, such as in the DARPA SubT Challenge \cite{darpa_cerberus_wins}, has so far been focused on robots equipped with costly sensors that provide dense range data, such as LiDARs \cite{beneath}, depth cameras [TODO] or stereo camera pairs \cite{explor_stereo}.
 % Even though single vision sensors are much cheaper, existing approaches for using them for online map building and autonomous navigation on UAVs is still severely limited.
 % Most navigation approaches for UAVs with only a single camera and no range sensors are reactive behaviors \cite{avoidance_mono1}, or make strong assumptions about environmental structure \cite{corridors_mono_nav_2009}.
+
 \subsection{Related Works}
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
 In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
@@ -191,20 +201,13 @@ Furthermore, in this paper, our map also represents obstacle points correspondin
 To move towards enabling vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-  \item A novel occupancy mapping method which constructs a sphere-based occupancy representation using only sparse 3D point data from visual sensors and odometry as input -- an iteration of our previous work \cite{spheremap}, which now however does not require the costly construction of an occupancy grid
+  \item A novel occupancy mapping method which constructs a sphere-based occupancy representation using only sparse 3D point data from monocular visual feature tracking and odometry as input, easily extendable with dense point cloud data as well.
+    % -- an iteration of our previous work \cite{spheremap}, which now however does not require the costly construction of an occupancy grid
     % \item A monocular-visual inverse-depth estimator which tracks and triangulates visual keypoints, using metrically scaled odometry (visual-inertial, GPS, or others), while being robust to odometry errors by estimating a purely visual translations trajectory and scaling it to match the input odometry.
-    \item An approach for monocular-inertial exploration on a UAV using the proposed occupancy mapping method and representation, along with important changes to traditional exploration approaches necessary for using a monocular camera, experimentally verified in unstructured 3D environments on a UAV equipped with only a single camera and IMU as primary sensors, in simulation and in the real world.
+    \item An approach for monocular-inertial exploration on a UAV using the proposed occupancy mapping method and representation, along with important changes to traditional exploration approaches necessary for when using a monocular camera, experimentally verified in unstructured 3D environments on a UAV equipped with only a single camera and IMU as primary sensors, in simulation and in the real world.
     \item Open-sourced code for the map-building method, along with path-planning and exploration functionalities and example scripts to quick-start inexpensive UAV autonomy.
     % \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package
 \end{enumerate}
-
-\begin{figure}[t]
-  % \includegraphics[width=8.5cm]{fig/smap2.png}
-  \includegraphics[width=8.5cm]{fig/explor_forest2.png}
-  \centering
-  \caption{TEMPORARY IMG - The map resulting from the proposed occupancy mapping method after exploring in a simulated outdoor environment -- green spheres describe free space while red points correspond to triangulated visual keypoints, and green points are the currently visible ones.}
-  \label{fig:smap_intro}
-\end{figure}
 
 \section{RELATED WORKS}
 \subsection{Occupancy Mapping}

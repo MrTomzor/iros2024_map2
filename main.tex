@@ -74,7 +74,7 @@
 % Monocular-RGB Online 3D Sphere-Based Occupancy Mapping}
 % Sphere-Based Occupancy Mapping for Fast and Safe Navigation and Exploration on Monocular-Inertial UAV Systems}
 % Monocular-Inertial UAV Exploration of 3D Environments Using Lightweight Sphere-Based Occupancy Mapping}
-Monocular Sphere-Based Occupancy Mapping and Safety-Aware Exploration on a UAV}
+Monocular Sphere-Based Occupancy Mapping and Large-Scale Safety-Aware Exploration on a UAV}
 % Sphere-Based Occupancy Mapping using Monocular Vision for Navigation and Exploration}
 % Sphere-Based Occupancy Mapping using Monocular Vision for Rapid Safety-Aware Planning}
 % Sphere-Based Occupancy Mapping using Sparse Pointclouds from Monocular Cameras}
@@ -222,12 +222,14 @@ Existing research has mostly focused only on reactive behaviors, or systems that
 
 For vision-based autonomous mapping and exploration in unstructured environments, some progress has been made. In \cite{explor_stereo}, the authors presented the first ever vision-based UAV system that can explore and build a map (a 3D occupancy grid) on a UAV equipped with stereo cameras and also a supporting downward-facing optical sensor for better odometry.
 
-With only a single camera however, the task is even more challenging, as obtaining correct depth estimates is harder than with stereo cameras.
+With only a single camera however, building a reliable map for exploration and navigation is even more challenging, as obtaining correct depth estimates is harder than with stereo cameras.
 Most notable is the work of \cite{from_monoslam_to_explo}, where the authors build an occupancy grid map on top of points coming from semi-dense monocular SLAM, but only show exploration in a single room, and with offboard processing.
 
-Another approach to single-camera autonomy would be to use deep-learning methods for monocular depth estimation [TODO] and then using well-researched methods for mapping, exploration and planning as on systems with a depth camera.
-Some results have been achieved with this method, but they have also been mostly on obstacle avoidance, and not building large-scale navigable maps [TODO].
-Furthermore, this approach requires having a GPU on-board the UAV, which can strongly increase the system cost, and reduce flight time due to weight and power requirements.
+Another approach to single-camera autonomy would be to use deep-learning methods for monocular depth estimation and then using well-researched methods for mapping, exploration and planning as on systems with a depth camera.
+% Some results have been achieved with this method, but they have also been mostly on obstacle avoidance, and not building large-scale navigable maps [TODO].
+Such approach has been shown for example in \cite{simon2023mononav}, but there the authors only show successful map building and navigation in small-scale indoor environments.
+Additionally, learning-based monocular depth estimation models still have many unsolved challenges, most imporant for fully autonomous UAVs not providing real-time performance and domain independence, as discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}.
+Furthermore, any learning-based approach requires a GPU on-board the UAV, which can strongly increase the system cost, and reduce flight time due to weight and power requirements.
 
 Compared to the above mentioned approaches, we demonstrate exploration and navigation in 3D using a single camera and an IMU, with no assumptions on the environmental structure, and in large-scale environments, with all of the computations running on-board the UAV without requiring a GPU.
 % other than that it has a reasonable amount of texture, but our approach can handle large textureless areas as well.
@@ -248,17 +250,22 @@ To move towards enabling vision-based autonomous navigation in unknown, unstruct
 The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap \cite{octomap}, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
 This is a general-purpose representation, but not much suitable for fast path planning.
 We propose to represent free space by spheres and obstacles by points, similarly to our previous work \cite{spheremap}.
-In this section, we explain how such map can be built using only sparse 3D point data and how it is useful for UAV autonomy.
+In this section, we explain how such map can be built using only sparse 3D point data obtained from sparse visual SLAM.
+% and how it is useful for UAV autonomy.
 % We propose an alternative, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
 % However, if we get very long-distance measurements in some direction, such raycasting approach might need many iterations to fully fill the free space in distant areas.
 % Thus, even though raycasting might need tens of thousands of raycasts 
+\subsection{Obtaining Sparse Pointclouds from a Monocular Camera}
+TODO
+
+which can be taken directly from visual or visual-inertial odometry, which is already a necessary module for robotic autonomy.
 
 \subsection{Map Updating}
-\subsubsection{From Sparse Visual Keypoints to Depth}
-The input of our mapping system is odometry and sparse 3D points, which can be taken directly from visual or visual-inertial odometry, which is already a necessary module for robotic autonomy.
+\subsubsection{Sparse Points to Freespace Mesh}
+The input of a single map update is odometry and a sparse 3D pointcloud, 
 We allow also inputting the inverse-depth covariance of individual points and correspondences of points between frames (so that a single point isn't added to the map twice, but rather just moved), but they are not necessary.
 
-At each update iteration, we interpolate the visible input points with a mesh by projecting it to the camera's image plane, computing their Delaunay triangulation, and creating a temporary 3D mesh using the output of the Delaunay triangulation, as in FLAME \cite{flame}.
+At each update iteration, we interpolate the visible input points with a mesh by projecting it to the camera's image plane, computing their Delaunay triangulation for estimating depth between the sparse points as in \cite{stereo2, flame}, and creating a temporary 3D mesh using the output of the Delaunay triangulation, as in FLAME \cite{flame}.
 We name this mesh as the \textit{obstacle mesh} $F_o$, and we also construct a \textit{visibility mesh} $F_v$ from the camera's focal point and the outer edges of $F_o$.
 Together, $F_o$ and $F_v$ form a \textit{bounding mesh} $F_t$, which is watertight and all these meshes are used for updating the map at each iteration, which is further divided into these parts:
 \subsubsection{Adding Points and Spheres}
@@ -278,77 +285,45 @@ Thus, a sphere that intersects with $F_t$ or lies inside it has its radius updat
 where TODO.
 
 We give priority to the information provided by the meshes from the current frame, and so if any point lies deep enough by some constant in the currently observed free space described by $F_t$, it is deleted from the map.
-% Additionally, if point correspondences 
 
-\subsection{Rapid Safety-Aware Path Planning}
-Another benefit of using spheres for free-space description is that by sampling a point inside any sphere, we immediately get a lower bound on the distance to obstalces, whereas this is not immediately available in a voxel-based representation.
-Thus, it is possible to use the SphereMap for sampling-based planning such as with RRT*.
-But because we also build a graph of intersecting spheres, our representation can be used for search-based planning with spheres as nodes. 
-The path planning can thus optimize not only path length, but also distance to obstacles, while also being several orders of magnitude faster due to the sparsity of spheres in wide areas, which we have already examined in our previous work \cite{spheremap}.
-
-The SphereMap has potential for agile fight as well, since it is possible to bias the sphere sampling to sample along/near the planned trajectory of a UAV, and thus rapidly build an occupancy map primarily in the flight direction.
-Testing this against random sampling is outside the scope of this paper.
-
-A potential problem is that in the case of a narrow field-of-view, all nearby spheres can be too small for safe navigation at the beginning of flight.
-For this reason, we specify a clearing distance $d$, so that the path planning can move through unsafe space up to $d$ away from the UAV, but after reaching safe space, cannot return to unsafe space.
-Thanks to explicitly penalizing distance to obstacles, TODO
-
-\subsection{Submap Separation and Close-Measurement Trusting}
+\subsection{Handling Depth Estimation Errors over Large Distances}
 \label{sec:distance-based}
 By using very distant points in the occupancy mapping, the errors in occupancy can be high over long distances.
 But instead of discarding such noisy information, we present a way of using it, and that is -- by separating the map into submaps, and for any point in space always trusting a closer measurement than a farther one.
 We implement the second feature by remembering the observation distance of any sphere or point in the map, and only allow updating the sphere if it is observed from a closer distance.
 This leads to the effect that if we first estimate the position of a wall and free space in front of it wrongly, but get closer and thus get better measurements, the map will be updated, but if the UAV gets further than 1.2x the closest measurement distance and observes the wall again, the map will not be changed, as shown in image TODO.
+% Additionally, if point correspondences 
+
 % TODO - ???
 
-% \subsection{Runtime Analysis and }
-\section{Monocular Visual Keypoint Inverse-Depth Estimation with Noisy Odometry}
+% \section{Monocular Visual Keypoint Inverse-Depth Estimation with Noisy Odometry}
 
-\begin{figure}[!htb]
-  % \includegraphics[width=8.5cm]{fig/fire.png}
-    \adjincludegraphics[width=8.5cm, trim={{0.4\width} {0.2\height} {0.1\width} {0.1\height}}, clip=true]{fig/fire.png}
-  \centering
-  \caption{TEMPORARY IMG - Illustration of the function of the tracking and depth estimation module - TODO}
-  \label{fig:fire}
-\end{figure}
+% \begin{figure}[!htb]
+%   % \includegraphics[width=8.5cm]{fig/fire.png}
+%     \adjincludegraphics[width=8.5cm, trim={{0.4\width} {0.2\height} {0.1\width} {0.1\height}}, clip=true]{fig/fire.png}
+%   \centering
+%   \caption{TEMPORARY IMG - Illustration of the function of the tracking and depth estimation module - TODO}
+%   \label{fig:fire}
+% \end{figure}
 
-Ideally, the input of our occupancy mapping method can be the triangulated visual keypoints from some visual-inertial SLAM.
-Unfortunately, to obtain those, one would need to make modifications into the implementation for any SLAM currently deployed.
-In addition, when for example switching from visual to GNSS-based odometry in outdoor environments, the points from SLAM would become unavailable.
+% Ideally, the input of our occupancy mapping method can be the triangulated visual keypoints from some visual-inertial SLAM.
+% Unfortunately, to obtain those, one would need to make modifications into the implementation for any SLAM currently deployed.
+% In addition, when for example switching from visual to GNSS-based odometry in outdoor environments, the points from SLAM would become unavailable.
 
-For these reasons, we also present a new module that tracks visual keypoints and estimates their inverse depth, using only monocular camera data and \textit{any} form of odometry, even with noise.
-Our method is heavily inspired by FLAME \cite{flame}, as in our method we also estimate the inverse-depth of visually tracked keypoints, and then interpolate the depth between them using Delaunay triangulation in the same way, but our method makes significant improvements for the sake of robustness to odometry errors.
+% For these reasons, we also present a new module that tracks visual keypoints and estimates their inverse depth, using only monocular camera data and \textit{any} form of odometry, even with noise.
+% Our method is heavily inspired by FLAME \cite{flame}, as in our method we also estimate the inverse-depth of visually tracked keypoints, and then interpolate the depth between them using Delaunay triangulation in the same way, but our method makes significant improvements for the sake of robustness to odometry errors.
 
-First, FLAME is a keyframeless method, and updates at a fixed rate.
-However, when the UAV is stationary, this causes the inverse depth estimates to drift and become unusable.
-Thus, our method only updates the keyframes' inverse depth estimates when enough translational motion has been made, according to the odometry.
-Because we are also not trying to estimate a precise mesh, we do not perform the variational mesh smoothing as in FLAME, thus freeing up computational resources.
+% First, FLAME is a keyframeless method, and updates at a fixed rate.
+% However, when the UAV is stationary, this causes the inverse depth estimates to drift and become unusable.
+% Thus, our method only updates the keyframes' inverse depth estimates when enough translational motion has been made, according to the odometry.
+% Because we are also not trying to estimate a precise mesh, we do not perform the variational mesh smoothing as in FLAME, thus freeing up computational resources.
 
-% Second, the authors of FLAME state that their method is sensitive to odometry errors.
-% As that can happen quite often in real-world deployment, we address this issue by running our inverse-depth estimation in a scale-less manner, and then scaling the estimated trajectory and depth estimates according to the odometry up to some amount of keyframes in the past.
-
-% TODO - better explain!!
-
-% Our proposed occupancy mapping method takes as input triangulated visual keypoints.
-% Our proposed occupancy mapping method takes as input triangulated visual keypoints.
-% Most visual SLAM algorithms only use points close to the robot and optimize the points' 3D positions instead of an inverse-depth representation, which can be very useful for estimating occupancy.
-% Without information about faraway points, occupancy mapping can be slow.
-% % (TODO-CHECK)
-
-% FLAME \cite{flame} is an available robotics module for estimating inverse depth using image data and 3D poses of the images, but as the authors state,
-% % (TODO-CHECK)
-% the module is highly dependent on correct pose inputs, and the method also has an issue that if there is little motion, the inverse depth is still updated, which can cause the estimated depth image to become corrupted after several seconds.
-% For these reasons, and to focus more on occupancy mapping rather than precise mesh estimation as in FLAME, we propose and opensource a simplified version of the FLAME algorithm.
-% Our module tracks visual keypoints and estimates their inverse depth in a bayesian manner, identically as in FLAME, but these updates are done only on keyframes after some pre-defined distance is traveled since the last keyframe.
-% All previously triangulated points are tracked, but their distance measurement is updated only when the points have enough parallax and have been matched by the RANSAC homography estimation between keyframes.
-
-Second, FLAME takes the metric scale from the poses of the two consecutive images, but under noisy odometry, this can cause significant problems.
-Our approach instead does very simple purely visual SLAM over several keyframes, by simply aggregating the pose estimates between individual keyframes (as long as some keypoints are tracked and triangulated), thus providing an unscaled robocentric trajectory estimate.
-This trajectory of $N$ keyframes is then scaled so that the distance of the first and last tracked keyframe is the same as the odometry distance between the keyframes, as shown in TODO-FIG.
-% TODO - explain better
-This way, even if the odometry is locally noisy or imprecise, the scale estimate can be more robust over larger distances.
-The inverse depth estimates are added to the points using this scale.
-% This module can then be used to enrich the short-distance visual points from visual-inertial SLAM to estimate free space further into the distance (as we demonstrate in TODO-REF), but it can also allow \textit{any} system with a camera and even noisy odometry to create our proposed occupancy map and allow it to autonomously navigate and explore. 
+% Second, FLAME takes the metric scale from the poses of the two consecutive images, but under noisy odometry, this can cause significant problems.
+% Our approach instead does very simple purely visual SLAM over several keyframes, by simply aggregating the pose estimates between individual keyframes (as long as some keypoints are tracked and triangulated), thus providing an unscaled robocentric trajectory estimate.
+% This trajectory of $N$ keyframes is then scaled so that the distance of the first and last tracked keyframe is the same as the odometry distance between the keyframes, as shown in TODO-FIG.
+% % TODO - explain better
+% This way, even if the odometry is locally noisy or imprecise, the scale estimate can be more robust over larger distances.
+% The inverse depth estimates are added to the points using this scale.
 
 % \section{Monocular-Inertial Exploration Using the Sphere-Based Occupancy Map}
 \section{Exploration Using the Sphere-Based Occupancy Map and Inverse-Depth Estimator}
@@ -369,6 +344,20 @@ Second, triangulating points requires the robot to move, so we cannot simply poi
 We solve this by adding a short, several meter translation-only trajectory upon reaching any viewpoint, so that any potential points in the direction of the frontiers are triangulated and it can be uncovered.
 
 Thanks to using a sphere-based representation, we can find paths not only according to  TODO-PRAISE-SPHERES.
+
+\subsection{Rapid Safety-Aware Path Planning}
+Another benefit of using spheres for free-space description is that by sampling a point inside any sphere, we immediately get a lower bound on the distance to obstalces, whereas this is not immediately available in a voxel-based representation.
+Thus, it is possible to use the SphereMap for sampling-based planning such as with RRT*.
+But because we also build a graph of intersecting spheres, our representation can be used for search-based planning with spheres as nodes. 
+The path planning can thus optimize not only path length, but also distance to obstacles, while also being several orders of magnitude faster due to the sparsity of spheres in wide areas, which we have already examined in our previous work \cite{spheremap}.
+
+The SphereMap has potential for agile fight as well, since it is possible to bias the sphere sampling to sample along/near the planned trajectory of a UAV, and thus rapidly build an occupancy map primarily in the flight direction.
+Testing this against random sampling is outside the scope of this paper.
+
+A potential problem is that in the case of a narrow field-of-view, all nearby spheres can be too small for safe navigation at the beginning of flight.
+For this reason, we specify a clearing distance $d$, so that the path planning can move through unsafe space up to $d$ away from the UAV, but after reaching safe space, cannot return to unsafe space.
+Thanks to explicitly penalizing distance to obstacles, TODO
+
 % However, while using visual keypoints as input, there can 
 
 \section{Experiments}

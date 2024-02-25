@@ -191,6 +191,17 @@ We further show how out mapping method enables autonomous exploration and naviga
 
 \subsection{Related Works -- Spatial Representations}
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
+In robotic exploration, the vast majority of approaches use a grid-based representation of occupied, unknown and free space, either in the form of an euclidean signed distance field (ESDF) \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
+
+A grid-based representation, while being the basis for a substantial amount of robotic path planning and higher-level spatial abstraction methods, has several drawbacks for usage on UAVs equipped with monocular sensors in large-scale environments.
+Firstly, an occupancy grid is updated by raycasting towards measured obstacle points.
+This becomes problematic when the available measured points are very sparse, such as when using monocular SLAM.
+Some works overcome this limitation to some degree -- in [MONO-EXPLO], the authors TODO and in [ROOM-DENSEDEPTH], the authors essentially perform dense pixel-based estimation with known poses from sparse SLAM, which works in well-illuminated rooms and may have problems in larger-scale or texture-poor environments.
+In [ROOM-EXPLO], the authors deal with this by making the voxel size 0.5m, which might not capture narrow passages well, and only show the approach work in indoor environments.
+
+Second, even though memory-efficient octree-based representations of 3D grids are available, most notably the OctoMap library \cite{octomap}, a fundamental problem of grids is that the smallest-voxel size must be set by the user.
+If this is set as too large, narrow passages will not be captured in the map, and if it is too small, the map may take considerably longer to update using the raycasting methods.
+
 In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
 In this paper, we represent the free space in the same way, but with the major difference that now \textit{we do not need to build the occupancy grid as an intermediate step}, which frees up significant computational resources.
 In addition, there is no current documented way to build an occupancy grid using sparse point clouds, although this could also be interesting to research.

@@ -313,6 +313,14 @@ We implement the second feature by remembering the observation distance of any s
 This leads to the effect that if we first estimate the position of a wall and free space in front of it wrongly, but get closer and thus get better measurements, the map will be updated, but if the UAV gets further than 1.2x the closest measurement distance and observes the wall again, the map will not be changed, as shown in image TODO.
 % Additionally, if point correspondences 
 
+\begin{figure}[!t]
+  % \includegraphics[width=8.5cm]{fig/smap2.png}
+  \includegraphics[width=8.5cm]{fig/distbased3.pdf}
+  \centering
+  \caption{TODO}
+  \label{fig:distbased}
+\end{figure}
+
 % TODO - ???
 
 % \section{Monocular Visual Keypoint Inverse-Depth Estimation with Noisy Odometry}

@@ -317,7 +317,24 @@ This leads to the effect that if we first estimate the position of a wall and fr
   % \includegraphics[width=8.5cm]{fig/smap2.png}
   \includegraphics[width=8.5cm]{fig/distbased3.pdf}
   \centering
-  \caption{TODO}
+  % \caption{Diagram of sphere sampling and map point management, simplified to 2D. The crosses in the image correspond to triangulated visual keypoints and their size is determined by the lowest distance they have been observed at. 
+  % Red keypoints have been added to the map from the red camera pose at some previous time, and black ones are currently visible. 
+  % The big red dotted keypoint was observed from a large distance, and because it is not visible now at a close distance, it is deleted.
+  % The small red points have been observed from a significantly lower distance than where the camera is now, and thus they are now used for constraining sphere radii and not deleted.
+  % The dotted black points are not added to the map, because there are more accurately measured points near their position.
+  \caption{Diagram of sphere sampling and map point management: 
+  % The crosses in the image correspond to triangulated visual keypoints and their size is determined by the lowest distance they have been observed at. 
+  Visible free-space polygon (-);
+  Newly sampled spheres (O);
+  Triangulated keypoints visible at current frame (X); 
+  % Points added to the map previously (X). 
+  Points already in the map (X). 
+  % The size of each cross corresponds to the minimal distance from which the point has been observed.
+  Smaller points and higher-opacity spheres have been observed from lower distances.
+  % Point size and sphere opacity correspond to their lowest measurement distance.
+  % Point size and sphere opacity correspond to the lowest distance they were seen from.
+  Dashed crosses correspond to points that will be deleted or not added to the map.
+  }
   \label{fig:distbased}
 \end{figure}
 

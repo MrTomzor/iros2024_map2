@@ -262,20 +262,29 @@ To move towards enabling vision-based autonomous navigation in unknown, unstruct
 \section{Sphere-Based Occupancy Mapping}
 % The most common way of occupancy mapping today is to use a voxel-based representations, such as OctoMap \cite{octomap}, and then set the voxel occupancy probabilities by raycasting through the map, according to distance measurements from depth sensors.
 % This is a general-purpose representation, but not much suitable for fast path planning.
-We propose to represent free space by a graph of intersecting spheres, similarly to our previous work \cite{spheremap} and obstacles by points corresponding to triangulated visual keypoints from monocular SLAM (or, in the future, input points from dense range sensors).
-In this section, we explain how such map can be built using only sparse 3D point data obtained from sparse visual SLAM.
+We propose to represent free space by a graph of intersecting spheres, similarly to our previous work \cite{spheremap}, and obstacles by points corresponding to triangulated visual keypoints from monocular SLAM.
+% (or, in the future, input points from dense range sensors).
+% In this section, we explain how such map can be built using only sparse 3D point data obtained from sparse visual SLAM.
+In this section, we explain how such map can be built directly from the outputs of monocular SLAM, without needing any intermediate occupancy grid computation, and how the sparsity and high depth uncertainty of the input pointclouds is handled. 
 % and how it is useful for UAV autonomy.
 % We propose an alternative, more lightweight approach to estimating free space over large distances, by constructing a polyhedron from the measured points and the robot, and inscribing spheres in that polyhedron, as shown in image TODO.
 % However, if we get very long-distance measurements in some direction, such raycasting approach might need many iterations to fully fill the free space in distant areas.
 % Thus, even though raycasting might need tens of thousands of raycasts 
 \subsection{Obtaining Sparse Pointclouds from a Monocular Camera}
-The proposed occupancy mapping pipeline takes as input 1) a sparse pointcloud, ideally with ids of individual points, so that when a visual keypoint is observed at two different positions in two different frames, we can move it in the map, instead of adding it to the map twice, but this is not required, and 2) a pose estimate of the UAV.
-Both of these can be obtained by running visual-inertial SLAM \cite{orbslam3, openvins}, which is already a necessity when no global positioning system is available.
-In the experiments in this paper, we build on top of OpenVINS, using its mode of estimating inverse depth estimates.
+A single map update takes as input 1) a 3D pointcloud corresponding to visual keypoints, potentially sparse, at metric scale, which can be obtained from monocular-inertial SLAM \cite{openvins, orbslam3}, or for example by fusing purely monocular SLAM with a global positioning system, and 2) a pose estimate of the UAV.
+% The proposed occupancy mapping pipeline takes as input 1) a sparse pointcloud, ideally with ids of individual points, so that when a visual keypoint is observed at two different positions in two different frames, we can move it in the map, instead of adding it to the map twice, but this is not required, and 2) a pose estimate of the UAV.
+% Both of these can be obtained by running visual-inertial SLAM \cite{orbslam3, openvins}, which is already a necessity when no global positioning system is available.
+In the experiments in this paper, we obtain the pointclouds and pose estimates from OpenVINS \cite{openvins}, using its mode of estimating inverse depth estimates.
 
-Estimating inverse depth of visual keypoints [INVERSE] bring considerable advantages occupancy mapping compared to estimating keypoint 3D positions, as this method of estimation allows the UAV to know that there are points in nearly infinite distance in some direction.
-We do not add such distant points to the map, but we can use them to estimate that up to some distance, there is free space in that direction, such as when a UAV sees a tree line in the distance, or flies between skyscrapers.
-There can be object that are too small to be detected by the visual SLAM, so the free-space estimates might be wrong, but we deal with that as well, in Sec \ref{sec:distance-based}.
+% One great advantage of our method is that we can utilize points with very high distance uncertainty when using inverse-depth estimation in the visual SLAM.
+Our method works best when using inverse-depth parametrization [INV] of point locations instead of estimating full 3D positions of visual keypoints in the SLAM.
+Utilizing the inverse-depth parametrization allows the UAV to know that there are points in nearly infinite distance in some direction.
+We do not add such distant points to the map, but we can use them to estimate that up to some distance, there is likely free space in that direction, such as when a UAV sees a tree line in the distance, or flies towards a distant building.
+There can be object that are too small to be detected by the visual SLAM at large distnaces, so the free-space estimates might be wrong, but we deal with that in Sec \ref{sec:distance-based}.
+
+Our method can, in principle, work with pointclouds from any source, even dense sensors such as depth cameras or LiDARs, and representing everything as elements in space allows storing information about e.g. some space looking as free using camera data, but occupied according to a depth camera (such as in a window).
+However, we leave it for future work to fully utilize this potential for multimodality.
+
 % We however designed our method so that it works even if the robot pose is obtained from another source, such as when using GPS, so that occupancy mapping works even if odometry sources are switched -- 
 % which can be taken directly from visual or visual-inertial odometry, which is already a necessary module for robotic autonomy.
 

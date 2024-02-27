@@ -134,15 +134,15 @@ Monocular Sphere-Based Occupancy Mapping and Large-Scale Safety-Aware Exploratio
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
   % We present a new method of estimating inverse depth and using such estimates to build an occupancy map composed of spheres and points from sparse point cloud data obtained from a single RGB camera, for example by visual-inertial SLAM.
-  We present a novel method of building an occupancy representation using only a monocular camera and odometry data, that enables fast, safety-aware navigation on inexpensive UAVs. 
+  We present a novel method of building a sphere-based occupancy representation using only a monocular camera and odometry data, which enables large-scale exploration and navigation on inexpensive UAVs. 
   % and demonstrate how our method enables inexpensive UAVs to navigate quickly in unknown, unstructured 3D environments in simulation and in the real world.
   % Our approach consists of a visual keypoint tracking and inverse-depth estimation module robust to odometry errors, connected to a module that builds a map of free-space spheres and obstacle points directly out of the sparse visual points.
-  Our approach consists of two main parts -- first, we track visual keypoints and estimate their inverse-depth, even with noisy odometry.
-  Then, from thus obtained sparse 3D point clouds, we estimate visible free space by a bounding mesh, and incrementally fill free space with a graph of intersecting spheres, which are used for rapid safety-aware path planning.
+  Our approach consists of two main parts -- first, we track visual keypoints and estimate their inverse depth using standard monocular SLAM.
+  Then, from thus obtained sparse 3D point clouds, we estimate visible free space by a polyhedron, and inscribe spheres inside it, which are then connected to a graph that is used for efficient and safety-aware path planning.
   % Our method consists of 
   % We then show how such map can be used for real-time planning and exploration on-board resource-constrained robots in the real world and simulation.
   % We open-source the code as a ROS module, which constructs an occupancy map from RGB and odometry data suitable for path planning.
-  We demonstrate how our method can be used to achieve, to the best of our knowledge, the first ever autonomous UAV exploration in unstructured 3D environments, using only a single camera and IMU as its sensors.
+  We demonstrate how our method can be used to achieve, to the best of our knowledge, the first ever autonomous UAV exploration in large-scale outdoor 3D environments, using only a single camera and an IMU as the UAV's sensors.
   % Lastly, we demonstrate how our method can be used to enable a UAV to autonomously explore unstructured, 3D environments.
   % This is, to the best of our knowledge, the first existing UAV system that can perform 3D exploration using only a single camera and IMU.
   % We open-source the code for the 3 separable modules -- mapping, inverse-depth estimation and exploration.-- mapping, inverse-depth estimation and exploration.
@@ -175,7 +175,7 @@ Furthermore, when moving, a single camera can also provide rough estimates on ve
   % \includegraphics[width=8.5cm]{fig/smap2.png}
   \includegraphics[width=8.5cm]{fig/explor_forest2.png}
   \centering
-  \caption{TEMPORARY IMG - The map resulting from the proposed occupancy mapping method after exploring in a simulated outdoor environment -- green spheres describe free space while red points correspond to triangulated visual keypoints, and green points are the currently visible ones.}
+  \caption{TEMPORARY IMG - WILL HAVE FREESPACE POLYHEDRON - The map resulting from the proposed occupancy mapping method after exploring in a simulated outdoor environment -- green spheres describe free space while red points correspond to triangulated visual keypoints, and green points are the currently visible ones.}
   \label{fig:smap_intro}
 \end{figure}
 
@@ -303,7 +303,7 @@ There, the authors focus on constructing a precise mesh from visual keypoint mea
 We project the currently tracked triangulated points $X$ from visual SLAM into the image plane, and compute their Delaunay triangulation. 
 By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $F_o$ that we call an \textit{obstacle mesh}, which is used only for the current frame.
 We estimate the currently visible free space as the volume between the camera's focal point and all points on $F_o$.
-We enclose this space by connecting all points that lie on the edge of $F_o$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $P_f$, visualized in TODO-REF.
+We enclose this space by connecting all points that lie on the edge of $F_o$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $P_f$, visualized in Fig.\ref{fig:smap_intro}.
 
 \subsubsection{Updating Existing Spheres}
 \label{sec:distance-based}

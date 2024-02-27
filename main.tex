@@ -281,7 +281,7 @@ A single map update takes as input 1) a 3D pointcloud corresponding to visual ke
 In the experiments in this paper, we obtain the pointclouds and pose estimates from OpenVINS \cite{openvins}, using its mode of estimating inverse depth estimates.
 
 % One great advantage of our method is that we can utilize points with very high distance uncertainty when using inverse-depth estimation in the visual SLAM.
-Our method works best when using inverse-depth parametrization [INV] of point locations instead of estimating full 3D positions of visual keypoints in the SLAM.
+Our method works best when using inverse-depth parametrization \cite{inverse_depth} of point locations instead of estimating full 3D positions of visual keypoints in the SLAM.
 Utilizing the inverse-depth parametrization allows the UAV to know that there are points in nearly infinite distance in some direction.
 We do not add such distant points to the map, but we can use them to estimate that up to some distance, there is likely free space in that direction, such as when a UAV sees a tree line in the distance, or flies towards a distant building.
 There can be object that are too small to be detected by the visual SLAM at large distnaces, so the free-space estimates might be wrong, but we deal with that in Sec \ref{sec:distance-based}.
@@ -294,8 +294,8 @@ However, we leave it for future work to fully utilize this potential for multimo
 
 \subsection{Map Updating}
 \subsubsection{Sparse Points to Freespace Mesh}
-The input of a single map update is odometry and a sparse 3D pointcloud, 
-We allow also inputting the inverse-depth covariance of individual points and correspondences of points between frames (so that a single point isn't added to the map twice, but rather just moved), but they are not necessary.
+% The input of a single map update is odometry and a sparse 3D pointcloud, 
+% We allow also inputting the inverse-depth covariance of individual points and correspondences of points between frames (so that a single point isn't added to the map twice, but rather just moved), but they are not necessary.
 
 At each update iteration, we interpolate the visible input points with a mesh by projecting it to the camera's image plane, computing their Delaunay triangulation for estimating depth between the sparse points as in \cite{stereo2, flame}, and creating a temporary 3D mesh using the output of the Delaunay triangulation, as in FLAME \cite{flame}.
 We name this mesh as the \textit{obstacle mesh} $F_o$, and we also construct a \textit{visibility mesh} $F_v$ from the camera's focal point and the outer edges of $F_o$.

@@ -306,6 +306,7 @@ We estimate the currently visible free space as the volume between the camera's 
 We enclose this space by connecting all points that lie on the edge of $F_o$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $P_f$, visualized in TODO-REF.
 
 \subsubsection{Updating Existing Spheres}
+\label{sec:distance-based}
 % Updating existing spheres and points is slightly more complex.
 % An old sphere might lie only partially in $F_t$, but that does not mean we should reduce its radius.
 % Thus, a sphere that intersects with $F_t$ or lies inside it has its radius updated to
@@ -316,8 +317,10 @@ Then, for any remaining sphere with a center $x$ and radius $r_{k}$, the updated
 \begin{equation}
   r_{k+1} = \min \left( \max \left( r_{k}, d(x, P_f) \right)
   , d(x, X \cup X_p), r_{max} \right),
+  \label{eq:update}
 \end{equation}
-where $d(x, P_f)$ is the signed distance to $P_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(x,X \cup X_p)$ is the minimum distance to all input obstacle points $X$, and to obstacle points $X_p$ which lie in the map, fall into $P_f$, but are not deleted in the current frame, as described more in Sec. \ref{sec:distance-based}.
+where $d(x, P_f)$ is the signed distance to $P_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(x,X \cup X_p)$ is the minimum distance to all input obstacle points $X$, and to obstacle points $X_p$ which lie in the map, fall into $P_f$, but are not deleted in the current frame, as described more in Sec. \ref{sec:distance-based-points}.
+Finally, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest allowed sphere radius specified by the user. 
 
 
 % where TODO.
@@ -331,24 +334,41 @@ where $d(x, P_f)$ is the signed distance to $P_f$ (positive if the point is insi
 % Together, $F_o$ and $F_v$ form a \textit{bounding mesh} $F_t$, which is watertight and all these meshes are used for updating the map at each iteration, which is further divided into these parts:
 
 \subsubsection{Sampling New Spheres}
-Adding new spheres is quite straightforward -- we sample points inside $F_t$ by raycasting from the camera and sampling at random distances.
-A potential new sphere's radius is determined by its distance to $F_t$.
-However, as in \cite{spheremap}, we also perform a redundancy check for all potential spheres and add them only if they are not redundant (meaning that they would have a significant overlap with already existing spheres).
-As in \cite{spheremap}, we also find nearby spheres and connect them if they intersect.
-New obstacle points are added to the map simply if their inverse-depth covariance is low (or not provided) and they are further from other points in the map by some predefined minimal distance, which specifies the resulting map surface detail.
+To introduce new spheres into the map, we sample a fixed number of points inside $P_f$ at random distances between the camera and the obstacle mesh $F_o$.
+This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.
+A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
+If the potential radius is larger than $r_{min}$, the sphere is added to the map.
+% However, as in \cite{spheremap}, we also perform a redundancy check for all potential spheres and add them only if they are not redundant (meaning that they would have a significant overlap with already existing spheres).
+% As in \cite{spheremap}, we also find nearby spheres and connect them if they intersect.
+% New obstacle points are added to the map simply if their inverse-depth covariance is low (or not provided) and they are further from other points in the map by some predefined minimal distance, which specifies the resulting map surface detail.
 
 \subsubsection{Recomputing and Sparsifying Sphere Graph}
-TODO
+After all the sphere radii updates have been made, we update the graph of spheres used for path planning, so that all intersecting spheres are connected in the graph.
+% TODO - EXPLAIN???
+Furthermore, to constrain map update time and path planning time, we perform a redundancy check on the updated and added spheres in the same way as in our previous work \cite{spheremap}.
+If any sphere TODO, it is deleted from the map.
+This way, large open areas are covered by only a few spheres and can be planned over quickly, and tight corridors have a higher density of spheres, capturing the information about potential paths and distances to obstacles in more detail.
+\subsubsection{Updating Obstacle Points}
+\label{sec:distance-based-points}
+As the final step of the update, we decide which visible points $X$ to add into the map, and which points in the map to delete.
+An important part of our method is that we store the minimum of the distances that any point $x$ has been observed from, denoted further as $d_{m, x}$.
+This is due to the fact that the distance uncertainty of any point grows drastically with the distance from camera in monocular SLAM \cite{inverse_depth}.
 
-\subsubsection{Updating Obstacle and Frontier Points}
-TODO
+An apparent problem can thus arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 50m).
+The newly visible points corresponding to the wall can have large position errors, as shown in Fig.\ref{fig:distbased}.
+We also cannot simply delete every map point that falls into $P_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
 
-\subsection{Handling Depth Estimation Errors over Large Distances}
-\label{sec:distance-based}
-By using very distant points in the occupancy mapping, the errors in occupancy can be high over long distances.
-But instead of discarding such noisy information, we present a way of using it, and that is -- by separating the map into submaps, and for any point in space always trusting a closer measurement than a farther one.
-We implement the second feature by remembering the observation distance of any sphere or point in the map, and only allow updating the sphere if it is observed from a closer distance.
-This leads to the effect that if we first estimate the position of a wall and free space in front of it wrongly, but get closer and thus get better measurements, the map will be updated, but if the UAV gets further than 1.2x the closest measurement distance and observes the wall again, the map will not be changed, as shown in image TODO.
+We solve both these problems by deleting map point $x$ that falls into $P_f$ only if
+\begin{equation}
+  |x - p_{cam}| < 0.75 \cdot d_{m,x}
+\end{equation}
+where $p_{cam}$ is the position of the camera.
+% Thus, map points are only deleted if they are not seen from a clo
+Additionally, points seen from a closer distance can erase points seen at larger distances, if they fall close enough to them, and in the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in Fig.\ref{fig:distbased}.
+\subsection{Rapid Safety-Aware Path Planning}
+TODO it be fast, equation
+
+TODO - bash grids cuz would have to comp. time to the EDGE OF FREESPACE, so finding frontiers always!!! (not in most grid implementations)
 % Additionally, if point correspondences 
 
 \begin{figure}[!t]

@@ -293,30 +293,55 @@ However, we leave it for future work to fully utilize this potential for multimo
 % which can be taken directly from visual or visual-inertial odometry, which is already a necessary module for robotic autonomy.
 
 \subsection{Map Updating}
-\subsubsection{Sparse Points to Freespace Mesh}
-% The input of a single map update is odometry and a sparse 3D pointcloud, 
-% We allow also inputting the inverse-depth covariance of individual points and correspondences of points between frames (so that a single point isn't added to the map twice, but rather just moved), but they are not necessary.
+A single update iteration of the map can be broken down into these consecutive steps:
+% \subsubsection{Visible Free Space Polygon Construction}
+\subsubsection{Constructing the Visible Free Space Polygon}
+The first step is to construct a polygon of space that is estimated to be free in the current timestep.
+To interpolate depth between the sparse keypoints, we employ a simplified version of the approach described in FLAME \cite{flame}.
+There, the authors focus on constructing a precise mesh from visual keypoint measurements, but here, we care primarily about mapping the free space, for planning purposes, and thus we do not perform the mesh optimization or splitting the 2D interpolations done in \cite{flame}.
 
-At each update iteration, we interpolate the visible input points with a mesh by projecting it to the camera's image plane, computing their Delaunay triangulation for estimating depth between the sparse points as in \cite{stereo2, flame}, and creating a temporary 3D mesh using the output of the Delaunay triangulation, as in FLAME \cite{flame}.
-We name this mesh as the \textit{obstacle mesh} $F_o$, and we also construct a \textit{visibility mesh} $F_v$ from the camera's focal point and the outer edges of $F_o$.
-Together, $F_o$ and $F_v$ form a \textit{bounding mesh} $F_t$, which is watertight and all these meshes are used for updating the map at each iteration, which is further divided into these parts:
-\subsubsection{Adding Points and Spheres}
+We project the currently tracked triangulated points $X$ from visual SLAM into the image plane, and compute their Delaunay triangulation. 
+By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $F_o$ that we call an \textit{obstacle mesh}, which is used only for the current frame.
+We estimate the currently visible free space as the volume between the camera's focal point and all points on $F_o$.
+We enclose this space by connecting all points that lie on the edge of $F_o$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $P_f$, visualized in TODO-REF.
+
+\subsubsection{Updating Existing Spheres}
+% Updating existing spheres and points is slightly more complex.
+% An old sphere might lie only partially in $F_t$, but that does not mean we should reduce its radius.
+% Thus, a sphere that intersects with $F_t$ or lies inside it has its radius updated to
+% Next, $P_f$ is used to attempt to increase the radii of spheres already in the map, and the visible 
+Next, we update the radii of spheres that could be updated by $P_f$ or $X$.
+To bound the update time of this step, we specify a maximum allowed sphere radius $r_{max}$, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $P_f$, inflated by $r_{max}$. 
+Then, for any remaining sphere with a center $x$ and radius $r_{k}$, the updated radius is computed as
+\begin{equation}
+  r_{k+1} = \min \left( \max \left( r_{k}, d(x, P_f) \right)
+  , d(x, X \cup X_p), r_{max} \right),
+\end{equation}
+where $d(x, P_f)$ is the signed distance to $P_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(x,X \cup X_p)$ is the minimum distance to all input obstacle points $X$, and to obstacle points $X_p$ which lie in the map, fall into $P_f$, but are not deleted in the current frame, as described more in Sec. \ref{sec:distance-based}.
+
+
+% where TODO.
+
+% We give priority to the information provided by the meshes from the current frame, and so if any point lies deep enough by some constant in the currently observed free space described by $F_t$, it is deleted from the map.
+
+
+% \subsubsection{Sparse Points to Freespace Mesh}
+% At each update iteration, we interpolate the visible input points with a mesh by projecting it to the camera's image plane, computing their Delaunay triangulation for estimating depth between the sparse points as in \cite{stereo2, flame}, and creating a temporary 3D mesh using the output of the Delaunay triangulation, as in FLAME \cite{flame}.
+% We name this mesh as the \textit{obstacle mesh} $F_o$, and we also construct a \textit{visibility mesh} $F_v$ from the camera's focal point and the outer edges of $F_o$.
+% Together, $F_o$ and $F_v$ form a \textit{bounding mesh} $F_t$, which is watertight and all these meshes are used for updating the map at each iteration, which is further divided into these parts:
+
+\subsubsection{Sampling New Spheres}
 Adding new spheres is quite straightforward -- we sample points inside $F_t$ by raycasting from the camera and sampling at random distances.
 A potential new sphere's radius is determined by its distance to $F_t$.
 However, as in \cite{spheremap}, we also perform a redundancy check for all potential spheres and add them only if they are not redundant (meaning that they would have a significant overlap with already existing spheres).
 As in \cite{spheremap}, we also find nearby spheres and connect them if they intersect.
 New obstacle points are added to the map simply if their inverse-depth covariance is low (or not provided) and they are further from other points in the map by some predefined minimal distance, which specifies the resulting map surface detail.
-\subsubsection{Updating Existing Points and Spheres}
-Updating existing spheres and points is slightly more complex.
-An old sphere might lie only partially in $F_t$, but that does not mean we should reduce its radius.
-Thus, a sphere that intersects with $F_t$ or lies inside it has its radius updated to
-\begin{equation}
-  r_{new} = \min \left( \max \left( r_{prev}, d(x_s, F_{fov}) \right)
-  , d(x_s, F_{obs}) \right),
-\end{equation}
-where TODO.
 
-We give priority to the information provided by the meshes from the current frame, and so if any point lies deep enough by some constant in the currently observed free space described by $F_t$, it is deleted from the map.
+\subsubsection{Recomputing and Sparsifying Sphere Graph}
+TODO
+
+\subsubsection{Updating Obstacle and Frontier Points}
+TODO
 
 \subsection{Handling Depth Estimation Errors over Large Distances}
 \label{sec:distance-based}

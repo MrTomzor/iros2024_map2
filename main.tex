@@ -250,12 +250,16 @@ Compared to the above mentioned approaches, we demonstrate exploration and navig
 To move towards enabling vision-based autonomous navigation in unknown, unstructured 3D environments for UAVs, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-  \item A novel occupancy mapping method which constructs a sphere-based occupancy representation from sparse 3D point data obtained from monocular SLAM, and odometry as input, easily extendable with dense point cloud data from depth sensors as well.
+  \item A novel occupancy mapping approach, which constructs a sphere-based occupancy map using very sparse pointclouds obtained from monocular SLAM as the only depth information.
+  % \item A novel occupancy mapping approach, which constructs a sphere-based occupancy representation that offers the same information as an occupancy grid, but is more suitable for path planning, using odometry and sparse pointclouds obtained from monocular SLAM.
+    % , easily extendable with dense point cloud data from depth sensors as well.
     % -- an iteration of our previous work \cite{spheremap}, which now however does not require the costly construction of an occupancy grid
     % \item A monocular-visual inverse-depth estimator which tracks and triangulates visual keypoints, using metrically scaled odometry (visual-inertial, GPS, or others), while being robust to odometry errors by estimating a purely visual translations trajectory and scaling it to match the input odometry.
-    \item A demonstration of large-scale 3D outdoor exploration on a UAV equipped with only monocular-inertial sensors, enabled by the proposed occupancy mapping method, along with important changes to traditional exploration approaches necessary for when using a monocular camera, experimentally verified in simulation and in the real world.
+    \item A demonstration of large-scale 3D outdoor exploration on a UAV equipped with only a single camera and IMU as its sensors, enabled by the proposed occupancy mapping method, 
+      % along with important changes to traditional exploration approaches necessary for when using a monocular camera, 
+      experimentally verified in simulation and in the real world.
       % on a UAV equipped with only a single camera and IMU as primary sensors, in simulation and in the real world.
-    \item Open-sourced code for the novel occupancy mapping, along with path-planning and exploration functionalities and example scripts for effortlessly enabling affordable UAV autonomy.
+    \item Open-sourced code for the novel occupancy mapping method, along with path-planning and exploration functionalities and example scripts for effortlessly enabling affordable UAV autonomy.
     % \item We opensource the code for building the SphereMap, using odometry and a sparse 3D pointcloud (or points from the proposed inverse depth estimator) as input, along with example code for using the new occupancy map for path planning, as a ROS package
 \end{enumerate}
 

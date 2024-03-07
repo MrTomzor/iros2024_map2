@@ -173,7 +173,9 @@ Furthermore, a single moving camera can provide rough distance estimates on very
 
 \begin{figure}[!t]
   % \includegraphics[width=8.5cm]{fig/smap2.png}
-  \includegraphics[width=8.5cm]{fig/explor_forest2.png}
+  % \includegraphics[width=8.5cm]{fig/explor_forest2.png}
+  % \includegraphics[width=8.5cm]{fig/intro_poly.png}
+    \adjincludegraphics[width=8.5cm, trim={{0.4\width} {0.05\height} {0.05\width} {0.1\height}}, clip=true]{fig/intro_poly.png}
   \centering
   \caption{TEMPORARY IMG - WILL HAVE FREESPACE POLYHEDRON - The map resulting from the proposed occupancy mapping method after exploring in a simulated outdoor environment -- green spheres describe free space while red points correspond to triangulated visual keypoints, and green points are the currently visible ones.}
   \label{fig:smap_intro}
@@ -473,6 +475,17 @@ TODO - RUN, EVALUATE, ADD TABLE AND IMGS
 TODO - RUNTIME ANALYSIS NOTE
 % In this experiment, we demonstrate the performance of the proposed occupancy mapping while using distant points with high depth covariance, against using closer-range points, which are usually available from most visual SLAM algorithms.
 % As you can see in TODO, by using the distant points, the UAV is able to quickly construct an estimate of 
+
+\begin{figure}[!htb]
+  \includegraphics[width=8.5cm]{fig/sim_exper_gazebo.png}
+  \includegraphics[width=8.5cm]{fig/sim_exper_end.png}
+  % \includegraphics[width=8.5cm]{fig/exper3.png}
+  % \includegraphics[width=8.5cm]{fig/exper4.png}
+  \centering
+  % \caption{TEMPORARY IMG - Exploration experiment visualization}
+  \caption{The proposed map (bottom) after 20min of exploring an urban environment (top) in simulation, explained in more detail in TODO-REF. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points.}
+  \label{fig:exper_sim}
+\end{figure}
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 In this experiment we demonstrate that the proposed method of occupancy mapping using only a single monocular RGB camera and IMU is useful for path and exploration planning on a real-world UAV platform in a mixed indoor-outdoor warehouse setting.

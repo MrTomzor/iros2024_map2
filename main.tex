@@ -139,33 +139,11 @@ Sphere-Based Occupancy Mapping using Sparse Monocular SLAM for Robust Large-Scal
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  % TODO - cely prepsat, nova iterace!
-  % We present a new method of estimating inverse depth and using such estimates to build an occupancy map composed of spheres and points from sparse point cloud data obtained from a single RGB camera, for example by visual-inertial SLAM.
   We present a novel approach to describing 3D occupancy, using only a monocular camera and pose estimates.
-  % and demonstrate how our method enables safe exploration and navigation in unstructured environments on inexpensive UAVs.
   Our main contribution is representing environments by a graph of free-space spheres and a set of triangulated visual keypoints with remembered measurement uncertainty, which is fundamentally different from grid-based environment maps. 
-  % We present a way of building this representation in real-time using only sparse 3D point data obtained from sparse monocular SLAM onboard inexpensive UAVs.
   We present a method of building this representation in real-time, using only sparse 3D point data obtained from monocular SLAM by inscribing spheres inside the estimated visible free-space polyhedron formed by the visual keypoints and the camera position.
-  % We describe an exploration and navigation system that takes advantage of the proposed representation, and demonstrate 
-  We describe an exploration system that uses the advantages of the proposed representation to overcome some of the challenges of monocular vision-based UAV autonomy, and demonstrate 
+  We describe an exploration system that uses the advantages of the proposed representation to overcome some of the challenges of monocular vision-based UAV autonomy and demonstrate 
 large-scale autonomous UAV exploration in unstructured indoor/outdoor 3D environments, using only a single onboard monocular camera and an IMU, in simulation and in the real world.
-  % , which enables large-scale exploration and navigation on inexpensive UAVs. 
-  % and demonstrate how our method enables inexpensive UAVs to navigate quickly in unknown, unstructured 3D environments in simulation and in the real world.
-  % Our approach consists of a visual keypoint tracking and inverse-depth estimation module robust to odometry errors, connected to a module that builds a map of free-space spheres and obstacle points directly out of the sparse visual points.
-  % Our approach consists of two main parts -- first, we track visual keypoints and estimate their inverse depth using standard monocular SLAM.
-  % Our approach consists of two main parts -- first, we obtain sparse visual keypoints with inverse depth estimates using monocular or monocular-inertial SLAM.
-  % Depth is interpolated between visible keypoints at any keyframe, which is a large simplification that can miss objects not seen by the sparse visual SLAM, but we propose methods to deal with this problem in a robust manner.
-  % We then estimate measured free space at any keyframe by forming a polygon between the camera and the visible keypoints, and inscribe spheres inside it, which are then used for fast safety-aware path planning.
-  % Visual points visible at some keyframe 
-  % Then, from thus obtained sparse point clouds, we estimate visible free space by a polyhedron, and inscribe spheres inside it, which are then connected to a graph that is used for efficient and safety-aware path planning.
-  % Our method consists of 
-  % We then show how such map can be used for real-time planning and exploration on-board resource-constrained robots in the real world and simulation.
-  % We open-source the code as a ROS module, which constructs an occupancy map from RGB and odometry data suitable for path planning.
-  % We demonstrate how our method can be used to achieve, to the best of the authors' knowledge, the first repeatable autonomous UAV exploration in unstructured outdoor 3D environments, using only a single onboard monocular camera and an IMU.
-% [TODO - o experimentech]
-  % Lastly, we demonstrate how our method can be used to enable a UAV to autonomously explore unstructured, 3D environments.
-  % This is, to the best of our knowledge, the first existing UAV system that can perform 3D exploration using only a single camera and IMU.
-  % We open-source the code for the 3 separable modules -- mapping, inverse-depth estimation and exploration.-- mapping, inverse-depth estimation and exploration.
   We open-source the code for our approach to provide occupancy mapping and navigation to any UAV with a single camera and any pose estimation.
 
 Code--- %\href{
@@ -199,7 +177,7 @@ Furthermore, a single moving camera can provide rough distance estimates on very
   % \includegraphics[width=8.5cm]{fig/intro_poly.png}
     \adjincludegraphics[width=8.5cm, trim={{0.4\width} {0.05\height} {0.05\width} {0.1\height}}, clip=true]{fig/intro_poly.png}
   \centering
-  \caption{\todocaption{TEMPORARY IMG - WILL HAVE FREESPACE POLYHEDRON - The map resulting from the proposed occupancy mapping method after exploring in a simulated outdoor environment -- green spheres describe free space while red points correspond to triangulated visual keypoints, and green points are the currently visible ones.}}
+  \caption{Visualization of the proposed map representation and how it is updated. The green polyhedron is an estimate of currently visible free space and is formed by the visible triangulated keypoints and the camera's position (axes). The mapped spheres (green), obstacle points (red) and frontier points (purple) are updated by the polyhedron and visible keypoints, as described in Sec. \ref{sec:map_building}}
   \label{fig:smap_intro}
 \end{figure}
 

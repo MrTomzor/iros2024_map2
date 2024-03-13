@@ -140,11 +140,11 @@ Sphere-Based Occupancy Mapping using Sparse Monocular SLAM for Robust Large-Scal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
   We present a novel approach to describing 3D occupancy, using only a monocular camera and pose estimates.
-  Our main contribution is representing environments by a graph of free-space spheres and a set of triangulated visual keypoints with remembered measurement uncertainty, which is fundamentally different from grid-based environment maps. 
+  Our main contribution is representing an environment by a graph of intersecting free-space spheres and a set of triangulated visual keypoints with remembered measurement uncertainty, which is fundamentally different from grid-based occupancy maps. 
   We present a method of building this representation in real-time, using only sparse 3D point data obtained from monocular SLAM by inscribing spheres inside the estimated visible free-space polyhedron formed by the visual keypoints and the camera position.
-  We describe an exploration system that uses the advantages of the proposed representation to overcome some of the challenges of monocular vision-based UAV autonomy and demonstrate 
-large-scale autonomous UAV exploration in unstructured indoor/outdoor 3D environments, using only a single onboard monocular camera and an IMU, in simulation and in the real world.
-  We open-source the code for our approach to provide occupancy mapping and navigation to any UAV with a single camera and any pose estimation.
+  We further describe an exploration system that uses the advantages brought by the novel representation to overcome some of the challenges of monocular vision-based UAV autonomy and demonstrate
+large-scale autonomous exploration in unstructured indoor/outdoor 3D environments, using only a single monocular camera and an IMU onboard an inexpensive UAV in simulation and in the real world.
+  We open-source the code for our methods to provide occupancy mapping and exploration capabilities to any UAV with a monocular camera and available pose estimation.
 
 Code--- %\href{
 \href{TODO}{TODO}
@@ -155,8 +155,8 @@ Code--- %\href{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 % Darpaa \cite{darpa_cerberus_wins}
-To actively map and navigate unknown environments, fully autonomous UAVs need to build and continuously update some internal representation of the environment, which allows them to find paths to different goals, to know which areas have or haven't been observed, and where the UAV should move to observe new areas.
-The main question addressed in this paper is -- "How to construct such a representation using only a single camera and inexpensive metric-scale sensors, such as an inertial-measurement-unit (IMU)?"
+% To actively map and navigate unknown environments, fully autonomous UAVs need to build and continuously update some internal representation of the environment, which allows them to find paths to different goals, to know which areas have or haven't been observed, and where the UAV should move to observe new areas.
+% The main question addressed in this paper is -- "How to actively construct such a representation using only a single camera and inexpensive metric-scale sensors, such as an inertial-measurement-unit (IMU)?"
 % The most commonly used type of such representation is an occupancy grid \cite{occupancy_moravec}.
 
 The autonomous UAV systems with the greatest capabilities documented in recent literature \cite{darpa_cerberus_wins, beneath} usually construct an occupancy grid \cite{occupancy_moravec}, commonly the efficient octree-based implementation of OctoMap \cite{octomap}, and use it as the base representation for planning, exploration or constructing higher-level spatial abstractions \cite{spheremap}.

@@ -164,8 +164,10 @@ However, building a detailed occupancy grid requires dense pointclouds of range 
 % TODO - check if all
 Thus, state-of-the-art exploration and navigation UAV systems have been constrained to expensive, heavy or limited-range sensors such as LiDARs, depth cameras or stereo-camera pairs, which can provide these dense point clouds.
 
-To the best of the authors' knowledge, \todo{there is currently no known way of building a 3D occupancy grid (or a representation that would offer the same capabilities) on robots equipped with only a single monocular camera in combination with inexpensive sensors that can recover the metric scale, such as an IMU or a global-positioning system.}
-However, being able to build a representation that would allow safe and rapid exploration and navigation on-board UAVs with such affordable sensors would unlock many potential applications, such as swarms of inexpensive and disposable UAVs for search and rescue missions.
+% To the best of the authors' knowledge, \todo{there is currently no known way of building a 3D occupancy grid (or a representation that would offer the same capabilities) on robots equipped with only a single monocular camera in combination with inexpensive sensors that can recover the metric scale, such as an IMU or a global-positioning system.}
+Building an occupancy representation using a monocular camera with additional low-cost sensors is challenging for many reasons, and has so far been demonstrated only in small-scale, highly controlled environments, and has only allowed limited autonomy.
+\todo{TODO-REF}
+However, being able to build a representation that would allow safe and rapid exploration and navigation on-board UAVs with such inexpensive sensors would unlock many potential applications, such as swarms of disposable UAVs for search and rescue missions.
 In addition, cameras are useful for object recognition or other types of vision-based artificial intelligence, and thus 
 % it makes sense to have them equipped on many UAV applications already.
 they are already equipped on UAVs in most real-world applications.
@@ -182,7 +184,7 @@ Furthermore, a single moving camera can provide rough distance estimates on very
 \end{figure}
 
 In this paper, we present a novel approach to occupancy mapping that takes in a sparse pointcloud of visual keypoints tracked by visual SLAM (already a necessary part of many vision-based UAV systems), and instead of traditionally casting rays through a grid and updating its cells, we construct a polyhedron of approximate visible free space at each frame, inscribe spheres of free space inside that polyhedron, and connect them together to form a graph of intersecting spheres that allows for fast and safety-aware planning.
-We further show how our mapping method enables autonomous exploration and navigation in large-scale, unstructured environments on a UAV using only a single camera and IMU as its sensors, which, to the authors' best knowledge, has not yet been achieved in literature.
+We further show how our mapping method enables autonomous exploration and navigation in large-scale, unstructured environments on a UAV using only a single camera and IMU as its sensors, which, to the authors' best knowledge, has not yet been achieved in literature at this scale.
 % We open-source the code so that anyone with a UAV equipped with a single camera and a source of odometry can easily enable exploration and rapid, safety-aware navigation.
 % We open-source the code make a detailed analysis .
 % , and unlocks a wide variety potential low-cost UAV applications.

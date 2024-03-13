@@ -196,27 +196,35 @@ We further show how our mapping method enables autonomous exploration and naviga
 \subsection{Related Works -- Spatial Representations}
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
 In robotic exploration, the vast majority of approaches use a grid-based representation of occupied, unknown and free space, either in the form of an euclidean signed distance field (ESDF) \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
-A grid-based representation, while being the basis for a substantial amount of robotic path planning \todo{[SOME PLANNING]} and higher-level spatial abstraction methods \todo{[VOXGRAPH, SKELETONS, SPHEMAP, TOPOMAP]}, has several drawbacks for usage on UAVs without dense range sensors in large-scale environments.
+A grid-based representation, while being the basis for a substantial amount of robotic path planning and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}, has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
 
-Firstly, an occupancy grid is updated by raycasting towards measured obstacle points.
-This becomes problematic when the available measured points are very sparse, such as points coming from monocular SLAM.
-Some works overcome this limitation to some degree -- in \todo{[MONO-EXPLO]}, the authors \todo{TODO and in [ROOM-DENSEDEPTH]}, the authors essentially perform dense pixel-based estimation with known poses from sparse SLAM, which works in well-illuminated rooms but may have problems in larger-scale or texture-poor environments.
-In \todo{[ROOM-EXPLO]}, the authors deal with this by making the voxel size 0.5m, which might not capture narrow passages well, and they only show the approach work in indoor environments.
+Firstly, both ESDFs and occupancy grids are most commonly updated by raycasting towards measured obstacle points.
+This becomes problematic when the available measured points are very sparse, such as points tracked by sparse monocular SLAM.
+Some works overcome this limitation to some degree -- 
+in \cite{from_monoslam_to_explo}, the authors take points from semi-dense monocular SLAM and raycast towards them to build an OctoMap \cite{octomap} occupancy grid, but only demonstrate their local exploration approach building on top of this mapping pipeline to work inside a single room.
+
+Compared to \cite{from_monoslam_to_explo}, the authors of \cite{los_maps} use sparse monocular SLAM, they also cast rays towards the measured points to build an occupancy grid, and show exploration on a UAV across multiple rooms.
+They set the occupancy grid cell size to be 0.5m, which is relatively large compared to the UAV size. 
+Such rough voxel size cannot represent the distance to obstacles in high resolution, and if the grid is misaligned with the building, narrow passages can be represented as non-traversible.
+% and in [ROOM-DENSEDEPTH], the authors essentially perform dense pixel-based estimation with known poses from sparse SLAM, which works in well-illuminated rooms but may have problems in larger-scale or texture-poor environments.
 % Second, even though memory-efficient octree-based representations of 3D grids are available, most notably the OctoMap library \cite{octomap}, a fundamental problem of grids is that the smallest-voxel size must be set by the user.
-Secondly, a fundamental problem of grids is that the smallest-voxel size must be set by the user.
-If this is set as too large, narrow passages will not be captured in the map, and if it is too small, the map may take considerably longer to update using the raycasting methods.
+This is the second fundamental problem of grid-based representations -- the smallest-voxel size must be set by the user.
+If this is set as too large, narrow passages will not be captured in the map, and if it is too small, the map will need large amounts of raycasts to set all the cells' occupancy values, which is computationally expensive.
 
 % In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
-In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can efficiently represent both large-scale and narrow space, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to allowing orders of magnitude faster path planning than on an occupancy grid.
-In this paper, we represent the free space using spheres as well, but with \todo{two major differences 
+In our previous work \cite{spheremap}, we have shown that representing free space by a graph of intersecting spheres can efficiently describe both large-space while keeping the detailed information in narrow spaces, in additon to allowing orders of magnitude faster path planning than grid-based representations.
+% In \cite{spheremap}, we also demonstrated that this representation allows path planning that has explicit information about distance to obstacles, in addition to allowing orders of magnitude faster path planning than on an occupancy grid.
+In this paper, we represent the free space using spheres as well, but with two major differences: 
+% In this paper, we represent the free space using spheres as well, but also add the obstacle points into the map and use them for constraining the sphere radii, but with \todo{two major differences 
 
 \begin{itemize}
-    \item now \textit{we do not need to build the occupancy grid as an intermediate step}, which frees up significant computational resources, and \textit{we construct the map using sparse point-clouds from monocular SLAM}, which are problematic to use for occupancy grids.
+    % \item now \textit{we do not need to build the occupancy grid as an intermediate step}, which frees up significant computational resources, and \textit{we construct the map using sparse point-clouds from monocular SLAM}, which are problematic to use for occupancy grids.
+  \item In this paper, we build the graph of spheres \textit{directly} out of the sparse 3D pointclouds and pose estimates obtained from monocular SLAM, without needing to build an intermediate occupancy grid before computing the sphere radii, which frees up significant computational resources.
 % In addition, there is no current documented way to build an occupancy grid using sparse point clouds, although this could also be interesting to research.
 % TODO-CHECK
-      \item Furthermore, in this paper the map also represents obstacle points corresponding to triangulated visual keypoints with remembered measurement distance, which play an important role when updating the map at different measurement distances (see Sec. \ref{sec:distance-based}) and when performing perception-aware planning.
+      \item The representation presented in this paper also contains obstacle points corresponding to triangulated visual keypoints with remembered measurement distance, which plays an important role when updating the map at different measurement distances (see Sec. \ref{sec:distance-based}). 
+        % to overcome the challenge of incorrect measurements at larger distances.
 \end{itemize}
-}
 
 % Traditional methods of obtaining distance measurements with an RGB camera is using visual SLAM algorithms, such as TODO-CITE.
 % Using only a single camera though, one can build a map of an environment this way, but with the scale of the map being unmeasurable, and thus the map is unusable for path planning for a robot.
@@ -519,7 +527,7 @@ TODO - RUNTIME ANALYSIS NOTE
   % \includegraphics[width=8.5cm]{fig/exper4.png}
   \centering
   % \caption{TEMPORARY IMG - Exploration experiment visualization}
-  \caption{The proposed map (bottom) after 20min of exploring an urban environment (top) in simulation, explained in more detail in TODO-REF. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points.}
+  \caption{The resulting map (bottom) after 20min of exploring an urban environment (top) in simulation, explained in more detail in TODO-REF. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. Notice that the UAV also went to explore up on the rooftops, where it could see the metal towers.}
   \label{fig:exper_sim}
 \end{figure}
 

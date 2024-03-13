@@ -199,7 +199,7 @@ In robotic exploration, the vast majority of approaches use a grid-based represe
 A grid-based representation, while being the basis for a substantial amount of robotic path planning and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}, has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
 
 Firstly, both ESDFs and occupancy grids are most commonly updated by raycasting towards measured obstacle points.
-This becomes problematic when the available measured points are very sparse, such as points tracked by sparse monocular SLAM.
+% This becomes problematic when the available measured points are very sparse, such as points tracked by sparse monocular SLAM.
 Some works overcome this limitation to some degree -- 
 in \cite{from_monoslam_to_explo}, the authors take points from semi-dense monocular SLAM and raycast towards them to build an OctoMap \cite{octomap} occupancy grid, but only demonstrate their local exploration approach building on top of this mapping pipeline to work inside a single room.
 
@@ -241,34 +241,58 @@ In this paper, we represent the free space using spheres as well, but with two m
 % We also offer an alternative usage mode, where the system uses the triangulated points coming directly from the currently deployed visual/visual-inertial SLAM, but as discussed further in TODO-REF, these are usually only very near the robot and do not fully use the long range of visual sensors.
 % % TODO - rgb to visual sensors, cuz can use greyscale!
 
-\subsection{Related Works -- Vision-Based Autonomy}
+% \subsection{Related Works -- Vision-Based Autonomy}
+\subsection{Related Works -- Vision-Based Exploration}
 
-Vision-based UAV autonomy has so far, by far not reached the levels of autonomy using range sensors, and remains a challenge, as documented in recent surveys \cite{drones_survey}, but some progress has been made.
+Vision-based UAV autonomous exploration has so far, by far not reached the levels of autonomy using range sensors, and remains a challenge, as documented in recent surveys \cite{drones_survey}, but some progress has been made.
 % A large amount of research has been conducted on reactive behaviors, for example 
 % Most examples of vision-based autonomy are only reactive behaviors, or systems that make strong assumptions on the environmental structure, such as in \cite{corridors_mono_nav_2009} where the authors assume corridor-like environments.
-Existing research has mostly focused only on reactive behaviors, or systems that make strong assumptions on the environmental structure, such as in \cite{corridors_mono_nav_2009} where the authors assume corridor-like environments.
-
-
+% Existing research has mostly focused only on reactive behaviors, or systems that make strong assumptions on the environmental structure, such as in \cite{corridors_mono_nav_2009} where the authors assume corridor-like environments.
 % For vision-based autonomous mapping and exploration in unstructured environments, some progress has been made.
 In \cite{explor_stereo}, the authors presented the first ever vision-based UAV system that can explore and build a map (a 3D occupancy grid) on a UAV equipped with stereo cameras and also a supporting downward-facing optical flow sensor for better motion estimation.
+The authors used the dense depth pointcloud coming from the stereo cameras for building an OctoMap \cite{octomap} occupancy representation in the same way as with depth data from an RGB-D camera or LiDAR.
+% With only a monocular camera however, building a reliable map for exploration and navigation is even more challenging, as monocular SLAM provides measurement points only on textured areas, which leads to point clouds with large gaps on textureless areas, and using deep learning for monocular estimation is still not ready for deployment on autonomous UAV in general environments.
+% as \todo{obtaining correct depth estimates is harder than with stereo cameras.}
+% Most notable is the work of \cite{from_monoslam_to_explo}, where the authors build an occupancy grid map on top of points coming from semi-dense monocular SLAM, but only show exploration in a single room, and with offboard processing.
 
-With only a monocular camera however, building a reliable map for exploration and navigation is even more challenging, as \todo{obtaining correct depth estimates is harder than with stereo cameras.}
-Most notable is the work of \cite{from_monoslam_to_explo}, where the authors build an occupancy grid map on top of points coming from semi-dense monocular SLAM, but only show exploration in a single room, and with offboard processing.
+For UAVs equipped with a monocular camera, to the authors' best knowledge, all the existing works have demonstrated autonomous 3D mapping and exploration on a UAV only indoor and at the scale of a single room \cite{from_monoslam_to_explo, cnn_explo_singleroom} or a few rooms \cite{los_maps, simon2023mononav}.
+It can be said that the main challenge here is that the majority of robotics methods is based on first building an occupancy grid using dense data measurements from a depth camera, LiDAR or stereo cameras, but obtaining such data from a monocular camera is difficult.
+The discussed approaches either accept that the data from visual SLAM is very sparse, or they use deep-learning-based depth estimation to obtain dense data.
 
-Another approach to single-camera autonomy uses deep-learning methods for monocular depth estimation and then applies well-researched methods for mapping, exploration and planning as on systems with a depth camera.
-% Some results have been achieved with this method, but they have also been mostly on obstacle avoidance, and not building large-scale navigable maps [TODO].
-Such approach has been shown for example in \cite{simon2023mononav}, but there the authors only show successful map building and navigation in small-scale indoor environments \todo{and}.
-Additionally, learning-based monocular depth estimation models still have many unsolved challenges, most imporant for fully autonomous UAVs not providing real-time performance and domain independence, as discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}.
-Furthermore, any learning-based approach requires a GPU on-board the UAV, which can strongly increase the system cost and reduce flight time due to weight and power requirements.
+% Some of these works build an occupancy grid in the end -- 
+% The authors of \cite{from_monoslam_to_explo, los_maps} use the sparse points obtained from visual SLAM for raycasting-based occupancy grid construction, and their exploration approach works around the problems that arise with this sort of mapping.
+The authors of \cite{from_monoslam_to_explo, los_maps} argue against using frontier-based methods \cite{paper_frontier_grandpa}, due to the facts that on textureless areas, no points will ever be generated and thus those frontiers would not be uncovered by a monocular camera.
+The authors have presented alternative exploration approaches, but have only shown them to work in small-scale environments.
+% In our exploration approach, thanks to not using raycasting in our proposed mapping pipeline and also blocking explored viewpoints, we show that frontier-based exploration is possible, and achieves large-scale outdoor exploration even with monocular cameras.
+In our exploration approach, thanks to not using raycasting in our proposed mapping pipeline and also blocking explored viewpoints, we show that frontier-based exploration is possible and assures global coverage of the explored environments.
+% The authors argue against frontier-based 
+% The main problem with the characteristics of these SLAM-based approaches is that 
+% The authors use 
 
-Compared to the above mentioned approaches, we demonstrate exploration and navigation in 3D using a monocular camera and an IMU, with \todo{no assumptions} on the environmental structure, and in large-scale environments, with all of the computations running on-board the UAV without requiring a GPU.
+In a different approach, the authors of \cite{simon2023mononav, cnn_explo_singleroom} use deep-learning-based single image depth estimation to obtain dense point clouds from a monocular camera, essentially turning it into a depth camera.
+However, using learning-based monocular depth estimation models brings additional problems, most important for fully autonomous UAVs being not providing real-time performance and the problem of domain independence, as discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}, in addition to the higher cost and weight of a UAV with a GPU.
+% which forces the UAV to carry a GPU, which significantly raises the cost of the system and lowers the flight time, and in addition, the works do not address the problem of domain transfer of learning-based monocular depth estimation models, whi
+% The exception is \cite{corridors_mono_nav_2009}, where the authors do not build an occupancy grid, but represent the world as "corridors", which limits that system to only corridor-like environments.
+
+% In \cite{corridors_mono_nav_2009}, the authors presented a system for monocular UAV navigation and demonstrated autonomous flight and map-building in an office corridor.
+% Some works have demonstrated outdoor navigation using a monocular camera, b
+
+% Most of these works use points obtained from visual SLAM and treat them as pointclouds coming from a depth sensor, and build an occupancy grid out of this data.
+
+% Another approach to single-camera autonomy uses deep-learning methods for monocular depth estimation and then applies well-researched methods for mapping, exploration and planning as on systems with a depth camera.
+% % Some results have been achieved with this method, but they have also been mostly on obstacle avoidance, and not building large-scale navigable maps [TODO].
+% Such approach has been shown for example in \cite{simon2023mononav}, but there the authors only show successful map building and navigation in small-scale indoor environments \todo{and}.
+% Additionally, learning-based monocular depth estimation models still have many unsolved challenges, most imporant for fully autonomous UAVs not providing real-time performance and domain independence, as discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}.
+% Furthermore, any learning-based approach requires a GPU on-board the UAV, which can strongly increase the system cost and reduce flight time due to weight and power requirements.
+
+Compared to the above mentioned approaches, we demonstrate that our approach achieves exploration and navigation in 3D using a monocular camera and an IMU in outdoor, large-scale environments, with all of the computations running on-board the UAV, without requiring a GPU.
 % other than that it has a reasonable amount of texture, but our approach can handle large textureless areas as well.
 
 \subsection{Contributions}
 To move towards enabling vision-based autonomous navigation in unknown, unstructured 3D environments for inexpensive UAVs, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-  \item A novel occupancy mapping approach, which constructs a sphere-based occupancy map using very sparse pointclouds obtained from monocular SLAM as the only depth information.
+  \item A novel occupancy mapping approach, which constructs a sphere-based occupancy map using sparse pointclouds obtained from monocular SLAM as the only depth information.
   % \item A novel occupancy mapping approach, which constructs a sphere-based occupancy representation that offers the same information as an occupancy grid, but is more suitable for path planning, using odometry and sparse pointclouds obtained from monocular SLAM.
     % , easily extendable with dense point cloud data from depth sensors as well.
     % -- an iteration of our previous work \cite{spheremap}, which now however does not require the costly construction of an occupancy grid

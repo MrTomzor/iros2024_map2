@@ -438,36 +438,35 @@ As future work, we also propose to utilize the measurement distance of free-spac
 
 \section{Experiments}
 \label{sec:experiments}
-\subsection{Large-Scale Exploration in Simulation}
-In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
+In this section, we present the performed experiments and show the performance of our method in large-scale simulated (Sec. \ref{sec:sim_exper} and real-world (Sec. \ref{sec:real_exper}) environments.
+Our implementation of the proposed mapping and exploration methods is single-threaded, written in python and uses the Delaunay triangulation implementation from TODO.
+As shown in Sec \ref{sec:runtimes}, even with this simple implementation, the mapping keeps below $1s$ per map update on a standard CPU, and is thus suitable for real-world deployment.
 
-TODO - RUN, EVALUATE, ADD TABLE AND IMGS
+The UAV used in the experiments was equipped with a monocular fisheye Bluefox TODO camera, and TODO IMU.
+The MRS UAV system \cite{mrs_uav_robust_system} was used for trajectory generation and control.
+% Damping in the form of 3D-printed flexible elements 
+In real-world experiments, the camera and IMU are separated from the rest of the UAV by 3D-printed damping elements, which significantly reduces the IMU noise caused by propellers.
+For state estimation and as the source of sparse visual keypoints, we used OpenVINS \cite{openvins} in the inverse-depth mode, without loop closures.
 
-TODO - RUNTIME ANALYSIS NOTE
-% In this experiment, we demonstrate the performance of the proposed occupancy mapping while using distant points with high depth covariance, against using closer-range points, which are usually available from most visual SLAM algorithms.
-% As you can see in TODO, by using the distant points, the UAV is able to quickly construct an estimate of 
-
-\begin{figure}[!htb]
-  % \includegraphics[width=8.5cm]{fig/sim_exper_gazebo.png}
-  \includegraphics[width=8.5cm]{fig/sim_exper_end.png}
-  % \includegraphics[width=8.5cm]{fig/exper3.png}
-  % \includegraphics[width=8.5cm]{fig/exper4.png}
-  \centering
-  % \caption{TEMPORARY IMG - Exploration experiment visualization}
-  \caption{The resulting map (bottom) after 20min of exploring an urban environment (top) in simulation, explained in more detail in TODO-REF. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. Notice that the UAV also went to explore up on the rooftops, where it could see the metal towers.}
-  \label{fig:exper_sim}
-\end{figure}
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
-In this experiment we demonstrate that the proposed mapping method using only a single monocular RGB camera and IMU is useful for path and exploration planning on a real-world UAV platform in a mixed indoor-outdoor warehouse setting.
+\label{sec:real_exper}
+The most notable real-world experiment is illustrated in TODO-IMG-REF
+In this experiment, the UAV explored up to $60m$ forward around the side of an abandoned farmhouse fully autonomously in an $8\text{min}$ mission.
+In this experiment, we bounded the area for generating exploration goals to a 70x10x8 bounding box, and the UAV explored all the available space in this region.
+The UAV successfully avoided and mapped all the debris, bushes and the house walls in the area, and after exploring all available goals, it autonomously returned to the starting position.
+Also note in TODO-IMG-REF that the UAV explored a considerable amount of space in the open field to the left of the house.
+This was made possible by our approach to safe estimation of free space in the absence of triangulated SLAM keypoints, described in \autoref{sec:polyhedron}.
+% The UAV is running OpenVINS \cite{openvins} for odometry estimation, and our proposed inverse depth etstimator and mapper modules.
 
-The UAV is TODO-HARDWARE \cite{mrs_uav_robust_system}.
+We have tested the proposed approach extensively in a variety of other real-world environments, including a forest path, a tree in a wide open field, and around a large house.
+Videos from all real-world experiments are available at TODO-YOUTUBE-LINK. 
+Some of these experiments required the safety pilot to take control due to an important limitation of the method that we encountered during testing --- 
+since the visual SLAM tracks and triangulates visual key\textit{points}, visual lines (caused by e.g. thin tree branches or painted manmade poles) are not sensed in our mapping pipeline.
+This caused the UAV to nearly crash into tree crowns, which did not have many leaves at that time, multiple times.
+This limitation could be resolved by integrating short-range depth sensors as well, even ultrasound sensors could potentially be fused into the map.
+Additionally, the visual SLAM could be modified to estimate 3D poses of lines as well, as for example in TODO, but we leave this for future work.
 
-The UAV is running OpenVINS \cite{openvins} for odometry estimation, and our proposed inverse depth etstimator and mapper modules.
-
-As can be seen from TODO-REF, and multimedia materials supporting the experiment, the constructed representation is quite suited for the necessary level of vision-based autonomy.
-The UAV explored TODO.
-It is currently not possible to compare TODO.
 \begin{figure}[!htb]
   % \includegraphics[width=8.5cm]{fig/exper1.png}
   \includegraphics[width=8.5cm]{fig/exper4.png}
@@ -478,14 +477,44 @@ It is currently not possible to compare TODO.
   \label{fig:exper_real}
 \end{figure}
 
+
+\subsection{Large-Scale Exploration in Simulation}
+\label{sec:sim_exper}
+% In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
+In this experiment, we showcase the capabilities of our approach in a simulated TODOxTODO wide urban area.
+The experiment was conducted using the Gazebo simulator, with essentially the same UAV and sensory setup.
+\autoref{fig:exper_sim} shows the timelapse of an example exploration mission.
+After running the exploration mission 20 times, the UAV managed to explore the entire environment in 18/20 runs.
+In the remaining 2 runs, the UAV crashed either into a large featureless metal pole or the roof of a gazebo where the texture only consists of lines.
+The crashes were caused by the same limitation as discussed in \autoref{sec:real_exper}.
+Aside from this limitation, the mapping and exploration can be said to work robustly in static environments.
+Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explored up on the roofs of the buildings when it was able to use the large towers to estimate depth and create enough free space for safely moving up to the roof.
+
+\begin{figure}[!htb]
+  \includegraphics[width=8.5cm]{fig/sim_exper_gazebo.png}
+  \includegraphics[width=8.5cm]{fig/sim_exper_end.png}
+  % \includegraphics[width=8.5cm]{fig/exper3.png}
+  % \includegraphics[width=8.5cm]{fig/exper4.png}
+  \centering
+  % \caption{TEMPORARY IMG - Exploration experiment visualization}
+  \caption{The resulting map (bottom) after 20min of exploring an urban environment (top) in simulation, explained in more detail in TODO-REF. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. Notice that the UAV also went to explore up on the rooftops, where it could see the metal towers.}
+  \label{fig:exper_sim}
+\end{figure}
+
 \subsection{Runtime analysis}
-Here we analyze the runtimes of this method, and TODO.
+\label{sec:runtimes}
+% Here we analyze the runtimes of this method, and TODO.
+To provide more insight into the real-time capability of the proposed mapping method, we measured the runtimes of individual parts of the map update iterations during one of the simulated exploration missions described in \autoref{sec:sim_exper}. 
+The resulting graph is shown in \autoref{fig:runtimes}.
+In that mission, the UAV explored the entire TODOxTODO environment.
+Thanks to only updating the map near the UAV, the update time remains relatively bounded, even when the visible free-space polyhedron is large.
+
 
 \begin{figure}[!htb]
   % \includegraphics[width=8.5cm]{}
   \adjincludegraphics[width=9cm, trim={{0.05\width} {0.00\height} {0.05\width} {0.00\height}}, clip=true]{fig/smap_runtimes_tmp.pdf}
   \centering
-  \caption{Runtime analysis of parts of the map update detailed in \autoref{sec:map_building}.}
+  \caption{Runtime analysis of parts of the map update detailed in \autoref{sec:map_building}. TODO-MEANINGS OF PARTS}
   \label{fig:runtimes}
 \end{figure}
 
@@ -501,8 +530,8 @@ Here we analyze the runtimes of this method, and TODO.
 The spatial representation proposed in this paper, consisting of spheres and points, offers an alternative to the traditionally used grid-based representations.
 We have presented a method of constructing this representation on-board a UAV, using only the keypoints from sparse monocular SLAM as input depth information.
 % We have experimentally demonstrated how this new representation allows a UAV to explore and navigate large-scale outdoor environments in the real-world.
-We have discussed and experimentally demonstrated how this new representation is specifically suited for 3D exploration and navigation in real-world outdoor conditions on a UAV equipped with only a single camera and IMU as the state estimation sensors.
-
+We have discussed and experimentally demonstrated how this new representation enables 3D exploration and navigation in real-world outdoor conditions on a UAV equipped with only a single camera and IMU as its sensors.
+% Trough extensive experimental evaluation, we have showed the feasibility of doing pose estimation, autonomous mapping, and exploration on-board a single UAV equipped with a only a monocular camera and IMU as the used sensors.
 
 In future work, we intend to explore the potential of the proposed representation for multimodal systems -- e.g. by intelligently fusing points and spheres based on the modality they were created from.
 

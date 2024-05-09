@@ -311,9 +311,11 @@ This is a necessary feature for safe flight when using sparse visual SLAM keypoi
 The mapping runs on-board the UAV in real-time, using only the pose and 3D landmark information from visual SLAM as its inputs, approximately at 5Hz.
 % In the experimental section, we specifically use OpenVINS \cite{openvins} for the monocular-inertial pose and 3D point estimation.
 The main motivations for using this representation instead of a traditional grid-based representation are discussed in detail in \autoref{sec:representations_rw}.
-The following sections describe the individual steps of a single map update iteration.
+% The following sections describe the individual steps of a single map update iteration.
 
-\subsection{Constructing the Visible Free Space Polyhedron}
+\subsection{Map Update Algorithm}
+A single map update iteration consists of the following steps in order:
+\subsubsection{Constructing the Visible Free Space Polyhedron}
 \label{sec:polyhedron}
 The first step is to construct a polygon of space that is estimated to be free in the current timestep.
 To interpolate depth between the sparse keypoints, we employ a simplified version of the approach described in FLAME \cite{flame}.
@@ -340,40 +342,9 @@ This space is enclosed by connecting all points that lie on the \todo{edge} of $
 \end{figure}
 
 
-\subsection{Obstacle Point Management and Motion-Based Free-Space Estimation for Open Areas}
-\label{sec:open_space}
-
-\subsection{Updating Existing Spheres}
-\label{sec:existing_spheres_update}
-Next, we update the radii of spheres that could be updated by $P_f$ or $X$.
-To bound the update time of this step, we specify a maximum allowed sphere radius $r_{max}$, which allows us to quickly filter out all spheres whose centers fall outside a \todo{bounding box} around $P_f$, inflated by $r_{max}$. 
-Then, for any remaining sphere with a center $x$ and radius $r_{k}$, the updated radius is computed as
-\begin{equation}
-  r_{k+1} = \min \left( \max \left( r_{k}, d(x, P_f) \right)
-  , d(x, X \cup X_p), r_{max} \right),
-  \label{eq:update}
-\end{equation}
-where $d(x, P_f)$ is the signed distance to $P_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(x,X \cup X_p)$ is the minimum distance to all input obstacle points $X$, and to obstacle points $X_p$ which lie in the map, fall into $P_f$, but are not deleted in the current frame, as described more in Sec. \ref{sec:distance-based}.
-Finally, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest allowed sphere radius specified by the user. 
-
-% where TODO.
-\subsection{Sampling New Spheres}
-\label{sec:adding_spheres}
-To introduce new spheres into the map, we sample a fixed number of points inside $P_f$ at random distances between the camera and the obstacle mesh $F_o$.
-This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.
-A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
-If the potential radius is larger than $r_{min}$, the sphere is added to the map.
-
-\subsection{Recomputing and Sparsifying Sphere Graph}
-\label{sec:graph_update}
-After all the sphere radii updates have been made, we update the graph of spheres used for path planning, so that all intersecting spheres are connected in the graph.
-% TODO - EXPLAIN???
-Furthermore, to constrain map update time and path planning time, we perform a redundancy check on the updated and added spheres in the same way as in our previous work \cite{spheremap}.
-If any sphere TODO, it is deleted from the map.
-This way, large open areas are covered by only a few spheres and can be planned over quickly, and tight corridors have a higher density of spheres, capturing the information about potential paths and distances to obstacles in more detail.
-\subsection{Updating Obstacle Points}
+\subsubsection{Updating Obstacle Points}
 \label{sec:distance-based}
-As the final step of the update, we decide which visible points $X$ to add into the map, and which points in the map to delete.
+As the next step of the update, we decide which visible points $X$ to add into the map, and which points in the map to delete.
 An important part of our method is that we store the minimum of the distances that any point $x$ has been observed from, denoted further as $d_{m, x}$.
 This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
 
@@ -388,12 +359,42 @@ We solve both these problems by deleting any map point $x$ that falls into $P_f$
 where $p_{cam}$ is the position of the camera.
 Additionally, points \todo{seen from a closer distance can erase points seen at larger distances, if they fall close enough to them, and in the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in Fig.\ref{fig:distbased}.}
 
+\subsubsection{Updating Existing Spheres}
+\label{sec:existing_spheres_update}
+Next, we update the radii of spheres that could be updated by $P_f$ or $X$.
+To bound the update time of this step, we specify a maximum allowed sphere radius $r_{max}$, which allows us to quickly filter out all spheres whose centers fall outside a \todo{bounding box} around $P_f$, inflated by $r_{max}$. 
+Then, for any remaining sphere with a center $x$ and radius $r_{k}$, the updated radius is computed as
+\begin{equation}
+  r_{k+1} = \min \left( \max \left( r_{k}, d(x, P_f) \right)
+  , d(x, X \cup X_p), r_{max} \right),
+  \label{eq:update}
+\end{equation}
+where $d(x, P_f)$ is the signed distance to $P_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(x,X \cup X_p)$ is the minimum distance to all input obstacle points $X$, and to obstacle points $X_p$ which lie in the map, fall into $P_f$, but are not deleted in the current frame, as described more in Sec. \ref{sec:distance-based}.
+Finally, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest allowed sphere radius specified by the user. 
+
+% where TODO.
+\subsubsection{Sampling New Spheres}
+\label{sec:adding_spheres}
+To introduce new spheres into the map, we sample a fixed number of points inside $P_f$ at random distances between the camera and the obstacle mesh $F_o$.
+This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.
+A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
+If the potential radius is larger than $r_{min}$, the sphere is added to the map.
+
+\subsubsection{Recomputing and Sparsifying Sphere Graph}
+\label{sec:graph_update}
+After all the sphere radii updates have been made, we update the graph of spheres used for path planning, so that all intersecting spheres are connected in the graph.
+% TODO - EXPLAIN???
+Furthermore, to constrain map update time and path planning time, we perform a redundancy check on the updated and added spheres in the same way as in our previous work \cite{spheremap}.
+If any sphere TODO, it is deleted from the map.
+This way, large open areas are covered by only a few spheres and can be planned over quickly, and tight corridors have a higher density of spheres, capturing the information about potential paths and distances to obstacles in more detail.
+
 % \section{Monocular-Inertial Exploration Using the Sphere-Based Map}
 % \section{Safety-Aware Monocular-Inertial 3D Exploration}
 \section{Safe Monocular-Inertial Exploration using the Sphere-Based Map}
 In this section, we detail how our proposed mapping method and representation are highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a single camera.
 In principle, we employ the commonly used receding-horizon next-best-view (RHNBV) [TODO-CITE] strategy, but with several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
 
+\subsection{Forced Translation when reaching Viewpoints}
 In traditional exploration approaches with dense distance sensors, it is often sufficient to move the robot to a boundary between free space and unknown space (known as a frontier), and assume that the distance sensors will uncover some additional space behind the frontier and thus expand the map.
 
 Such approach will not, in principle, work well with a robot that only has a monocular camera for depth sensing.
@@ -407,11 +408,13 @@ This motivates the first major distinction of our approach compared to tradition
 In the experiments detailed in Sec. \autoref{sec:experiments}, we set $d_{c}=TODO$.
 This way, the UAV has enough translational motion before reaching a given viewpoint, so that if there are visible visual keypoints from that viewpoint, it will most likely gain enough distance measurements to them so they can be used for the depth estimation described in Sec. \autoref{sec:map_building}.
 
+\subsection{Explored Viewpoint Blocking}
 This is an important part of the method also due to the second major distinction -- we block the sampling of new exploration viewpoints near explored viewpoints.
 This is due to the fact that real-world environments often contain textureless areas (mainly in buildings or other man-made structures).
 Because in our mapping approach, obstacle points correspond to triangulated visual keypoints, no points will be added on textureless surfaces, but they will be on the boundary of free-space, so there will be frontiers there.
 However, such frontiers are uncoverable, since there is nothing behind them, and for this reason, we block the sampling of viewpoints near visited ones, so that the UAV doesn't keep coming back to look at a blank wall.
 
+\subsection{Frontier Sampling on Free-Space Polyhedron}
 Thirdly, because our map representation is fundamentally different from an occupancy grid, we compute the frontiers in a different way than with an occupancy grid --- we sample points along the visible free-space polyhedron described in Sec. \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at some user-defined distance from all map obstacle points.
 If they do not meet these criteria in any following update, they are deleted. 
 
@@ -420,10 +423,14 @@ We constrain the exploration to only consider frontiers that lie near some obsta
 Thus, the UAV does not explore up into the sky, and explores near texture-rich areas, leading to fewer possible failure situations due to losing visual odometry tracking.
 We then add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint.
 
+\subsection{Local-Global Exploration}
 To allow exploration even in large-scale environments, we employ a local-global approach, basically a simplified version of TODO-REF.
 The UAV first tries finding paths to any exploration viewpoints up to a user-defined "local exploration radius".
 If no reachable viewpoints are found in the radius, the UAV tries finding paths to all exploration viewpoints stored in the map.
 Thanks to the planning efficiency of the sphere graph, this global replanning usually does not take more than a few seconds, but could be made even faster by implementing any sort of long-distance planning abstraction graph, as in TODO or TODO-REF-OWN, which we leave for future work.
+
+\subsection{Safety-Aware Planning}
+TODO - forward heading + using distance to obstacles
 
 % Lastly, using the sphere-based representation allows us to flexibly weigh path length and path proximity to obstacles. We use the same path cost criterion as in \cite{spheremap}, and thus we can 
 % Lastly, because the free space is represented by a graph of spheres, we immediately have an upper bound on the distance of obstacles at each graph node, and thus it is possible to efficiently weigh path length versus path proximity to obstacles, 

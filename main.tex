@@ -195,6 +195,8 @@ We further show how our mapping method enables autonomous exploration and naviga
 % Most navigation approaches for UAVs with only a single camera and no range sensors are reactive behaviors \cite{avoidance_mono1}, or make strong assumptions about environmental structure \cite{corridors_mono_nav_2009}.
 
 \subsection{Related Works -- Spatial Representations}
+\label{sec:representations_rw}
+
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
 In robotic exploration, the vast majority of approaches use a grid-based representation of occupied, unknown and free space, either in the form of an euclidean signed distance field (ESDF) \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
 A grid-based representation, while being the basis for a substantial amount of robotic path planning and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}, has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
@@ -253,14 +255,14 @@ However, using learning-based monocular depth estimation models brings additiona
 Compared to the above mentioned approaches, we demonstrate that our approach achieves exploration and navigation in 3D using a monocular camera and an IMU in outdoor, large-scale environments, with all of the computations running on-board the UAV, without requiring a GPU.
 
 \subsection{Contributions}
-To move towards enabling robust vision-based autonomous navigation in unknown, unstructured 3D environments for inexpensive UAVs, our paper brings the following contributions:
+To enable robust vision-based autonomous navigation in unknown, unstructured 3D environments for inexpensive UAVs, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
   \item A novel 3D mapping approach, which constructs a sphere-based map using sparse pointclouds obtained from monocular SLAM as the only depth information.
     % TODO - maybe define this as GEOMETRIC-PRIMITIVE-GRAPH MAP???
     \item A system that demonstrates large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU as its sensors, enabled by the proposed mapping method, 
       experimentally verified in simulation and in the real world.
-    \item Open-sourced code for the novel mapping method, along with path-planning and exploration functionalities and example simulation scripts
+    \item Open-sourced code for the novel mapping and exploration approach, along with example simulation scripts for running the entire pipeline.
 \end{enumerate}
 
 \section{Sphere-Based Map Built From Sparse Visual SLAM Keypoints}
@@ -282,36 +284,34 @@ Next, in \autoref{sec:existing_spheres_update}, we describe how the free-space p
 As the last step, in \autoref{sec:graph_update}, we update the connections of the modified spheres and prune the sphere graph to keep it sparse for rapid path planning.
 
 % \subsection{Map Data Structure}
-\subsection{Free-Sphere and Obstacle-Point Map Representation}
+% \subsection{Free-Sphere and Obstacle-Point Map Representation}
+\subsection{Map Representation and Notation}
 \label{sec:structure}
 We propose to represent free space by a graph of intersecting spheres and surfaces as 3D points corresponding to triangulated visual keypoints from visual SLAM.
-The main motivations for this representation instead of a traditional grid-based representation are twofold:
+Each sphere at the $k$-th update iteration has a static center $\mathbf{c}$ and changing radius $r_k$.
+The radius $r_k$ represents the distance to the nearest unknown space and obstacles at $\mathbf{c}$.
+We maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres, and use it for path planning.
+Furthermore, we maintain a set of obstacle points $\mathbf{X}$, which correspond to the textured surfaces measured by the visual SLAM.
+For each obstacle point $\mathbf{x} \in \mathbf{X}$, we store the lowest distance that the point was measured from $d_{\mathbf{X}, \min}$.
+A lower minimal measurement distance of a visual keypoint means that the point is less likely to be noise and we make it more difficult to erase it from the map.
+This is a necessary feature for safe flight when using sparse visual SLAM keypoints as the only depth information, as explained more in \autoref{sec:distance-based}. 
 
-First, as discussed in our previous work \cite{spheremap}, grid-based representation require a user-defined minimal voxel size.
-If this is set too large, tight corridors might seem obstructed in the map, and if set too small, updating the map can take too much time for real-time operation.
-Spheres, on the other hand, when pruned regularly (see \autoref{sec:graph_update}), cover space more efficiently and allow faster path-planning, even though the paths may be less smooth than from a fine grid.
+% We propose to represent free space by a graph of intersecting spheres and surfaces as 3D points corresponding to triangulated visual keypoints from visual SLAM.
+% The main motivations for this representation instead of a traditional grid-based representation are twofold:
+
+
+% First, as discussed in our previous work \cite{spheremap}, grid-based representation require a user-defined minimal voxel size.
+% If this is set too large, tight corridors might seem obstructed in the map, and if set too small, updating the map can take too much time for real-time operation.
+% Spheres, on the other hand, when pruned regularly (see \autoref{sec:graph_update}), cover space more efficiently and allow faster path-planning, even though the paths may be less smooth than from a fine grid.
 
 % Secondly, grid-based representations are well suited when using dense range sensors, such as a LiDAR or depth camera.
 % These sensors usually always detect an obstacle if it lies in the sensor's FOV, regardless of the sensor's motion.
 % However, when using monocular SLAM points as obstacle measurements, during some motions an obstacle point might not be triangulated as a keypoint in the SLAM algorithm, and thus not visible.
 
-The mapping runs on-board in real-time, using only the pose and 3D landmark information from visual SLAM as its inputs, approximately at 5Hz.
+The mapping runs on-board the UAV in real-time, using only the pose and 3D landmark information from visual SLAM as its inputs, approximately at 5Hz.
+% In the experimental section, we specifically use OpenVINS \cite{openvins} for the monocular-inertial pose and 3D point estimation.
+The main motivations for using this representation instead of a traditional grid-based representation are discussed in detail in \autoref{sec:representations_rw}.
 The following sections describe the individual steps of a single map update iteration.
-
-\subsection{Obtaining Sparse Pointclouds from a Monocular Camera}
-A single map update takes as input 1) a 3D pointcloud corresponding to visual keypoints, potentially sparse, at metric scale, which can be obtained from monocular-inertial SLAM \cite{openvins, orbslam3}, or for example by fusing purely monocular SLAM with a global positioning system, and 2) a pose estimate of the UAV.
-In the experiments in this paper, we obtain the pointclouds and pose estimates from OpenVINS \cite{openvins}, using its mode of inverse depth estimation.
-
-Our method works best when using inverse-depth parametrization \cite{inverse_depth} of point locations instead of estimating full 3D positions of visual keypoints in the SLAM.
-Utilizing the inverse-depth parametrization allows the UAV to know that there are points in nearly infinite distance in some direction.
-These points can be used to estimate that up to some distance, there is likely free space in that direction, such as when a UAV sees a tree line in the distance, or flies towards a distant building.
-There can be object that are too small to be detected by the visual SLAM at large distances, so the free-space estimates might be wrong, but we show how to deal with these issues in Sec. \ref{sec:distance-based}.
-
-Our method can, in principle, work with pointclouds from any source, even dense sensors such as depth cameras or LiDARs, and representing everything as elements in space allows storing information about e.g. some space looking as free according to camera data, but occupied according to a depth camera (such as in a window).
-However, we leave it for future work to fully utilize this potential for multimodality.
-
-\subsection{Motion-Based Free-Space Estimation for Open Areas}
-\label{sec:open_space}
 
 \subsection{Constructing the Visible Free Space Polyhedron}
 \label{sec:polyhedron}
@@ -323,6 +323,25 @@ We project the currently tracked \todo{triangulated points $X$} from visual SLAM
 By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $F_o$ that we call an \textit{obstacle mesh}, which is used only for the current frame.
 We estimate the currently visible free space as the volume between the camera's focal point and all points on $F_o$.
 This space is enclosed by connecting all points that lie on the \todo{edge} of $F_o$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $P_f$, visualized in Fig.\ref{fig:smap_intro}.
+
+\begin{figure}[!t]
+  % \includegraphics[width=8.5cm]{fig/smap2.png}
+  \includegraphics[width=8.5cm]{fig/distbased3.pdf}
+  \centering
+  \caption{Diagram of sphere sampling and map point management: 
+  Visible free-space polygon (-);
+  Newly sampled spheres (O);
+  Triangulated keypoints visible at current frame (X); 
+  Points already in the map (X) added from a previous pose (red). 
+  Smaller points and higher-opacity spheres have been observed from lower distances.
+  Dashed crosses correspond to points that will be deleted (red) or not added to the map (black).
+  }
+  \label{fig:distbased}
+\end{figure}
+
+
+\subsection{Obstacle Point Management and Motion-Based Free-Space Estimation for Open Areas}
+\label{sec:open_space}
 
 \subsection{Updating Existing Spheres}
 \label{sec:existing_spheres_update}
@@ -368,21 +387,6 @@ We solve both these problems by deleting any map point $x$ that falls into $P_f$
 \end{equation}
 where $p_{cam}$ is the position of the camera.
 Additionally, points \todo{seen from a closer distance can erase points seen at larger distances, if they fall close enough to them, and in the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in Fig.\ref{fig:distbased}.}
-
-\begin{figure}[!t]
-  % \includegraphics[width=8.5cm]{fig/smap2.png}
-  \includegraphics[width=8.5cm]{fig/distbased3.pdf}
-  \centering
-  \caption{Diagram of sphere sampling and map point management: 
-  Visible free-space polygon (-);
-  Newly sampled spheres (O);
-  Triangulated keypoints visible at current frame (X); 
-  Points already in the map (X) added from a previous pose (red). 
-  Smaller points and higher-opacity spheres have been observed from lower distances.
-  Dashed crosses correspond to points that will be deleted (red) or not added to the map (black).
-  }
-  \label{fig:distbased}
-\end{figure}
 
 % \section{Monocular-Inertial Exploration Using the Sphere-Based Map}
 % \section{Safety-Aware Monocular-Inertial 3D Exploration}
@@ -444,7 +448,7 @@ TODO - RUNTIME ANALYSIS NOTE
 % As you can see in TODO, by using the distant points, the UAV is able to quickly construct an estimate of 
 
 \begin{figure}[!htb]
-  \includegraphics[width=8.5cm]{fig/sim_exper_gazebo.png}
+  % \includegraphics[width=8.5cm]{fig/sim_exper_gazebo.png}
   \includegraphics[width=8.5cm]{fig/sim_exper_end.png}
   % \includegraphics[width=8.5cm]{fig/exper3.png}
   % \includegraphics[width=8.5cm]{fig/exper4.png}
@@ -465,7 +469,7 @@ As can be seen from TODO-REF, and multimedia materials supporting the experiment
 The UAV explored TODO.
 It is currently not possible to compare TODO.
 \begin{figure}[!htb]
-  \includegraphics[width=8.5cm]{fig/exper1.png}
+  % \includegraphics[width=8.5cm]{fig/exper1.png}
   \includegraphics[width=8.5cm]{fig/exper4.png}
   % \includegraphics[width=8.5cm]{fig/exper3.png}
   % \includegraphics[width=8.5cm]{fig/exper4.png}

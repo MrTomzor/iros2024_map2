@@ -190,7 +190,7 @@ Furthermore, a single camera onboard a moving UAV can theoretically provide roug
     % \adjincludegraphics[width=8.5cm, trim={{0.4\width} {0.05\height} {0.05\width} {0.1\height}}, clip=true]{fig/intro_poly.png}
     \adjincludegraphics[width=8.5cm, trim={{0.0\width} {0.00\height} {0.00\width} {0.0\height}}, clip=true]{fig/mono_sar_cover.png}
   \centering
-  \caption{Visualization of the proposed map representation and how it is updated. The green polyhedron is an estimate of currently visible free space and is formed by the visible triangulated keypoints and the camera's position (axes). The mapped spheres (green), obstacle points (red) and frontier points (purple) are updated by the polyhedron and visible keypoints, as described in Sec. \ref{sec:map_building}}
+  \caption{Visualization of the proposed map representation and how it is updated. The green polyhedron is an estimate of currently visible free space and is formed by the visible triangulated keypoints and the camera's position (axes). The mapped spheres (green), obstacle points (red) and frontier points (purple) are updated by the polyhedron and visible keypoints, as described in \autoref{sec:map_building}}
   \label{fig:smap_intro}
 \end{figure}
 
@@ -241,7 +241,7 @@ In this paper, we represent free space using spheres as well, but with two major
 % In addition, there is no current documented way to build an occupancy grid using sparse point clouds, although this could also be interesting to research.
 % TODO-CHECK
   \item Additionally, the representation proposed in this paper stores visual keypoints as obstacle points and remembers their measurement distance. 
-    These points are important for correctly estimating free space when previously seen obstacles are momentarily not detected by the visual SLAM (see Sec. \ref{sec:distance-based}). 
+    These points are important for correctly estimating free space when previously seen obstacles are momentarily not detected by the visual SLAM (see \ref{sec:distance-based}). 
         % to overcome the challenge of incorrect measurements at larger distances.
 \end{itemize}
 
@@ -293,10 +293,7 @@ To enable robust vision-based autonomous navigation in unknown, unstructured 3D 
 % This section describes the proposed mapping approach.
 This section describes the proposed mapping approach.
 In \autoref{sec:structure}, we introduce the novel spatial representation and its properties.
-% In Section \ref{sec:structure}, we describe how to construct a visible free-space polyhedron, using sparse SLAM keypoints and safely extended by virtual 3D points when moving through wide areas.
-% In Section \ref{sec:polyhedron}, we describe how to construct a visible free-space polyhedron using sparse visual SLAM keypoints at a given time, extended by virtual points when moving through large-scale areas.
 In \autoref{sec:polyhedron}, we construct an estimated visible free-space polyhedron using motion information and SLAM points available at a given time.
-% Next, in Section \ref{sec:existing_spheres_update}, we explain how the free-space polyhedron is used to update radii of 
 In \autoref{sec:distance-based}, the free-space polyhedron and keypoint measurement distances are used to determine which points are added or deleted from the map.
 Next, in \autoref{sec:existing_spheres_update}, we describe how the free-space polyhedron is used to update the radii of existing and newly sampled free-space spheres.
 % As the last step, in \autoref{sec:existing_spheres_update}, we update the connections of modified spheres and prune the sphere graph to keep it sparse.
@@ -331,7 +328,7 @@ There, the authors focus on constructing a precise mesh from visual keypoint mea
 We project the currently tracked visual SLAM points into the image plane and compute their Delaunay triangulation. 
 By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $\mathbf{F}_d$ that we call a \textit{depth mesh}, which is used only for the current frame.
 We estimate the currently visible free space as the volume between the camera's focal point and all points on $\mathbf{F}_d$.
-This space is enclosed by connecting all points that lie on the edge of $\mathbf{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathbf{P}_f$, visualized in Fig.\ref{fig:smap_intro}.
+This space is enclosed by connecting all points that lie on the edge of $\mathbf{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathbf{P}_f$, visualized in \autoref{fig:smap_intro}.
 
 When moving in open areas, such as over a field, visual SLAM often tracks only a few keypoints on the ground, which would cause free space to be estimated only below the UAV and not allow flight across the field.
 % To allow safe flight in the absence of visual keypoints in front of the UAV, we keep track of a set of \textit{virtual keypoints} in front of the UAV.
@@ -371,11 +368,10 @@ As the next step of the update, we decide which tracked SLAM points to add into 
 An important part of our method is that we store the minimum of the distances that any point $\mathbf{x}$ has been observed from, denoted further as $d_{m, x}$.
 % This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
 An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
-% The newly visible points corresponding to the wall can have large position errors, as shown in Fig.\ref{fig:distbased}, or not be detected as a point at all.
 % The visible points corresponding to the wall might not be detected as SLAM keypoints while p.
-A situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated, as shown in Fig \ref{fig:distbased}.
+A situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated, as shown in \autoref{fig:distbased}.
 % We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
-Thus, we cannot simply delete every map point that falls into $\mathbf{P}_f$, because then the original points (red in Fig \ref{fig:distbased}) would be wrongly deleted and assumed as free space.
+Thus, we cannot simply delete every map point that falls into $\mathbf{P}_f$, because then the original points (red in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
 
 We solve this problem by deleting any map point $x$ that falls into $\mathbf{P}_f$ only if
 \begin{equation}
@@ -384,7 +380,7 @@ We solve this problem by deleting any map point $x$ that falls into $\mathbf{P}_
 where $p_{cam}$ is the position of the camera.
 The points that lie in $\mathbf{P}_f$ and are not deleted are called \textit{protected points} and are used to constrain sphere radii in the following update step.
 Additionally, to prioritize closer measurements, points seen from a closer distance can replace points seen at larger distances, if they are measured close enough to them. 
-In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in Fig.\ref{fig:distbased}.
+In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in \autoref{fig:distbased}.
 
 \subsubsection{Updating Existing Spheres}
 \label{sec:existing_spheres_update}
@@ -396,7 +392,7 @@ Then, for any remaining sphere with a center $\mathbf{c}$ and radius $r_{k}$, th
   , d(\mathbf{c}, \mathbf{X}_{in} \cup \mathbf{X}_p), r_{max} \right),
   \label{eq:update}
 \end{equation}
-where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in Sec. \ref{sec:distance-based}.
+where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
 Finally, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest allowed sphere radius specified by the user. 
 
 % where TODO.
@@ -422,7 +418,7 @@ In this section, we detail how our proposed mapping method and representation ar
 In principle, we employ the commonly used receding-horizon next-best-view (RHNBV) \cite{paper_frontier_grandpa} strategy, but with several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
 
 \subsection{Frontier Sampling on Free-Space Polyhedron}
-Since the proposed map representation is fundamentally different from an occupancy grid, we compute the frontiers in a different way than with an occupancy grid --- we sample points along the visible free-space polyhedron described in Sec. \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at some user-defined distance from all map obstacle points.
+Since the proposed map representation is fundamentally different from an occupancy grid, we compute the frontiers in a different way than with an occupancy grid --- we sample points along the visible free-space polyhedron described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at some user-defined distance from all map obstacle points.
 If they do not meet these criteria in any following update, they are deleted. 
 
 In 3D outdoor exploration, it is also important to assign different value to different frontiers. 
@@ -487,11 +483,11 @@ For state estimation and as the source of sparse visual keypoints, we used OpenV
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 \label{sec:real_exper}
-The most notable real-world experiment is illustrated in Fig.\ref{fig:exper_real}.
+The most notable real-world experiment is illustrated in \autoref{fig:exper_real}.
 In this experiment, the UAV explored up to $\SI{60}{\meter}$ forward around the side of an abandoned farmhouse fully autonomously in an $8\text{min}$ mission.
 In this experiment, we bounded the area for generating exploration goals to a $\SI{70x10x8}{\meter}$ bounding box, and the UAV explored nearly all the available space in this region.
 The UAV successfully avoided and mapped all the debris, bushes and the house walls in the area, and when battery levels were getting low, it autonomously returned to the starting position.
-Also note in Fig.\ref{fig:exper_real} that the UAV explored a considerable amount of space in the open field to the left of the house.
+Also note in \autoref{fig:exper_real} that the UAV explored a considerable amount of space in the open field to the left of the house.
 This was made possible by our approach to safe estimation of free space in the absence of triangulated SLAM keypoints, described in \autoref{sec:polyhedron}.
 % The UAV is running OpenVINS \cite{openvins} for odometry estimation, and our proposed inverse depth etstimator and mapper modules.
 
@@ -632,7 +628,7 @@ Thanks to only updating the map near the UAV, the update time remains relatively
 % We have demonstrated, through testing in simulation and in the real world, that our new mapping approach and spatial representation enable safe, large-scale autonomous navigation and exploration on UAVs without traditionally used expensive range sensors.
 
 The spatial representation proposed in this paper, consisting of spheres and points, offers an alternative to the traditionally used grid-based representations.
-We have presented a method of constructing this representation on-board a UAV, using only the keypoints from sparse monocular SLAM as input depth information.
+We have presented a method of constructing this representation on-board a UAV, using only the keypoints from sparse monocular-inertial SLAM as input depth information.
 % We have experimentally demonstrated how this new representation allows a UAV to explore and navigate large-scale outdoor environments in the real-world.
 We have demonstrated how this new mapping approach enables 3D exploration and navigation in large-scale real-world outdoor environments on a UAV equipped with only a monocular camera and IMU as its sensors.
 % Trough extensive experimental evaluation, we have showed the feasibility of doing pose estimation, autonomous mapping, and exploration on-board a single UAV equipped with a only a monocular camera and IMU as the used sensors.

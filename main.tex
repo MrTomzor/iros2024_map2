@@ -306,7 +306,8 @@ As the last step, in \autoref{sec:graph_update}, we update the connections of th
 % \subsection{Free-Sphere and Obstacle-Point Map Representation}
 \subsection{Map Representation and Notation}
 \label{sec:structure}
-We propose to represent free space by a graph of intersecting spheres and surfaces as 3D points corresponding to triangulated visual keypoints from visual SLAM.
+We propose to represent free space by a graph of intersecting spheres.
+% and obstacles as a set of 3D points corresponding to triangulated visual keypoints from visual SLAM.
 Each sphere at the $k$-th update iteration has a static center $\mathbf{c}$ and changing radius $r_k$.
 The radius $r_k$ represents the distance to the nearest unknown space and obstacles at $\mathbf{c}$.
 We maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres, and use it for path planning.
@@ -314,38 +315,41 @@ Furthermore, we maintain a set of obstacle points $\mathbf{X}$, which correspond
 For each obstacle point $\mathbf{x} \in \mathbf{X}$, we store the lowest distance that the point was measured from $d_{\mathbf{X}, \min}$.
 A lower minimal measurement distance of a visual keypoint means that the point is less likely to be noise and we make it more difficult to erase it from the map.
 This is a necessary feature for safe flight when using sparse visual SLAM keypoints as the only depth information, as explained more in \autoref{sec:distance-based}. 
-
-% We propose to represent free space by a graph of intersecting spheres and surfaces as 3D points corresponding to triangulated visual keypoints from visual SLAM.
-% The main motivations for this representation instead of a traditional grid-based representation are twofold:
-
-
-% First, as discussed in our previous work \cite{spheremap}, grid-based representation require a user-defined minimal voxel size.
-% If this is set too large, tight corridors might seem obstructed in the map, and if set too small, updating the map can take too much time for real-time operation.
-% Spheres, on the other hand, when pruned regularly (see \autoref{sec:graph_update}), cover space more efficiently and allow faster path-planning, even though the paths may be less smooth than from a fine grid.
-
-% Secondly, grid-based representations are well suited when using dense range sensors, such as a LiDAR or depth camera.
-% These sensors usually always detect an obstacle if it lies in the sensor's FOV, regardless of the sensor's motion.
-% However, when using monocular SLAM points as obstacle measurements, during some motions an obstacle point might not be triangulated as a keypoint in the SLAM algorithm, and thus not visible.
-
-The mapping runs on-board the UAV in real-time, using only the pose and 3D landmark information from visual SLAM as its inputs, approximately at 5Hz.
 % In the experimental section, we specifically use OpenVINS \cite{openvins} for the monocular-inertial pose and 3D point estimation.
-The main motivations for using this representation instead of a traditional grid-based representation are discussed in detail in \autoref{sec:representations_rw}.
+% The main motivations for using this representation instead of a traditional grid-based representation are discussed in detail in \autoref{sec:representations_rw}.
 % The following sections describe the individual steps of a single map update iteration.
 
 \subsection{Map Update Algorithm}
+The mapping runs on-board the UAV in real-time, using only the pose and 3D landmark information from visual SLAM as its inputs, approximately at 5Hz.
 A single map update iteration consists of the following steps in order:
 \subsubsection{Constructing the Visible Free Space Polyhedron}
 \label{sec:polyhedron}
-The first step is to construct a polygon of space that is estimated to be free in the current timestep.
+The first step is to construct a polygon of space that is estimated to contain free space based on the information in the current timestep.
 To interpolate depth between the sparse keypoints, we employ a simplified version of the approach described in FLAME \cite{flame}.
 There, the authors focus on constructing a precise mesh from visual keypoint measurements, but here, we care primarily about mapping the free space, for planning purposes, and thus we do not perform the mesh optimization or splitting the 2D interpolations that are done in \cite{flame}.
 
-We project the currently tracked \todo{triangulated points $X$} from visual SLAM into the image plane and compute their Delaunay triangulation. 
-By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $F_o$ that we call an \textit{obstacle mesh}, which is used only for the current frame.
-We estimate the currently visible free space as the volume between the camera's focal point and all points on $F_o$.
-This space is enclosed by connecting all points that lie on the \todo{edge} of $F_o$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $P_f$, visualized in Fig.\ref{fig:smap_intro}.
+We project the currently tracked visual SLAM points into the image plane and compute their Delaunay triangulation. 
+By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $\mathbf{F}_d$ that we call a \textit{depth mesh}, which is used only for the current frame.
+We estimate the currently visible free space as the volume between the camera's focal point and all points on $\mathbf{F}_d$.
+This space is enclosed by connecting all points that lie on the edge of $\mathbf{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathbf{P}_f$, visualized in Fig.\ref{fig:smap_intro}.
 
-\begin{figure}[!t]
+When moving in open areas, such as over a field, visual SLAM often tracks only a few keypoints on the ground, which would cause free space to be estimated only below the UAV and not allow flight across the field.
+% To allow safe flight in the absence of visual keypoints in front of the UAV, we keep track of a set of \textit{virtual keypoints} in front of the UAV.
+To allow safe flight in open areas, we make the following assumption: 
+Consider a virtual keypoint $\mathbf{x}_{vir}$ at time $t_2$ that falls into the UAV's FoV since $t_1$ in the past up to $t_2$ (i.e. it could be tracked by visual SLAM).
+Then, if there is a point on the UAV's trajectory between $t_1$ and $t_2$ such that there would be enough parallax for estimating the 3D position of $\mathbf{x}_{vir}$ (according to a user-defined threshold), and if the visual SLAM has not triangulated any point at approximately that position, then $\mathbf{x}_{vir}$ must lie in free space.
+This approximation of course fails in the case of featureless walls, but works quite well in large-scale outdoor environments.
+
+% We keep a set of virtual points $\mathbf{x}_vir$ in front of the UAV at all times, and if some of the points become are estimated as free based on the above assumption, 
+We periodically check the above condition for a set of virtual points $\mathbf{x}_vir$ at a fixed distance in front of the UAV at each iteration. 
+We take the points that fulfill this condition and add them to the creation of the \textit{depth mesh} $\mathbf{F}_d$, as shown in TODO-FIG.
+However, we discard points that would fall into the Delaunay triangulation of the true obstacle points, since there we have an existing depth estimate.
+This way, we can safely estimate additional freespace, in the case of sufficiently textured wide outdoor areas.
+% These virtual points are only used for estimating free space, and are not added as obstacles and cannot be used to delete existing points
+
+% The visual SLAM usually has 
+
+\begin{figure}[!h]
   % \includegraphics[width=8.5cm]{fig/smap2.png}
   \includegraphics[width=8.5cm]{fig/distbased3.pdf}
   \centering
@@ -363,38 +367,42 @@ This space is enclosed by connecting all points that lie on the \todo{edge} of $
 
 \subsubsection{Updating Obstacle Points}
 \label{sec:distance-based}
-As the next step of the update, we decide which visible points $X$ to add into the map, and which points in the map to delete.
-An important part of our method is that we store the minimum of the distances that any point $x$ has been observed from, denoted further as $d_{m, x}$.
-This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
+As the next step of the update, we decide which tracked SLAM points to add into the map points $\mathbf{X}$, and which points in the map to delete.
+An important part of our method is that we store the minimum of the distances that any point $\mathbf{x}$ has been observed from, denoted further as $d_{m, x}$.
+% This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
+An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
+% The newly visible points corresponding to the wall can have large position errors, as shown in Fig.\ref{fig:distbased}, or not be detected as a point at all.
+% The visible points corresponding to the wall might not be detected as SLAM keypoints while p.
+A situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated, as shown in Fig \ref{fig:distbased}.
+% We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
+Thus, we cannot simply delete every map point that falls into $\mathbf{P}_f$, because then the original points (red in Fig \ref{fig:distbased}) would be wrongly deleted and assumed as free space.
 
-An apparent problem can thus arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 50m).
-The newly visible points corresponding to the wall can have large position errors, as shown in Fig.\ref{fig:distbased}.
-We also cannot simply delete every map point that falls into $P_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
-
-We solve both these problems by deleting any map point $x$ that falls into $P_f$ only if
+We solve this problem by deleting any map point $x$ that falls into $\mathbf{P}_f$ only if
 \begin{equation}
-  |x - p_{cam}| < 0.75 \cdot d_{m,x}
+  |\mathbf{x} - \mathbf{p}_{cam}| < 1.1 \cdot d_{m,x}
 \end{equation}
 where $p_{cam}$ is the position of the camera.
-Additionally, points \todo{seen from a closer distance can erase points seen at larger distances, if they fall close enough to them, and in the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in Fig.\ref{fig:distbased}.}
+The points that lie in $\mathbf{P}_f$ and are not deleted are called \textit{protected points} and are used to constrain sphere radii in the following update step.
+Additionally, to prioritize closer measurements, points seen from a closer distance can replace points seen at larger distances, if they are measured close enough to them. 
+In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in Fig.\ref{fig:distbased}.
 
 \subsubsection{Updating Existing Spheres}
 \label{sec:existing_spheres_update}
-Next, we update the radii of spheres that could be updated by $P_f$ or $X$.
-To bound the update time of this step, we specify a maximum allowed sphere radius $r_{max}$, which allows us to quickly filter out all spheres whose centers fall outside a \todo{bounding box} around $P_f$, inflated by $r_{max}$. 
-Then, for any remaining sphere with a center $x$ and radius $r_{k}$, the updated radius is computed as
+Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or $\mathbf{X}$.
+To bound the update time of this step, we specify a maximum allowed sphere radius $r_{max}$, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $\mathbf{P}_f$, inflated by $r_{max}$. 
+Then, for any remaining sphere with a center $\mathbf{c}$ and radius $r_{k}$, the updated radius is computed as
 \begin{equation}
-  r_{k+1} = \min \left( \max \left( r_{k}, d(x, P_f) \right)
-  , d(x, X \cup X_p), r_{max} \right),
+  r_{k+1} = \min \left( \max \left( r_{k}, d(\mathbf{c}, \mathbf{P}_f) \right)
+  , d(\mathbf{c}, \mathbf{X} \cup \mathbf{X}_p), r_{max} \right),
   \label{eq:update}
 \end{equation}
-where $d(x, P_f)$ is the signed distance to $P_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(x,X \cup X_p)$ is the minimum distance to all input obstacle points $X$, and to obstacle points $X_p$ which lie in the map, fall into $P_f$, but are not deleted in the current frame, as described more in Sec. \ref{sec:distance-based}.
+where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(x,X \cup X_p)$ is the minimum distance to all input obstacle points $X$, and to obstacle points $X_p$ which lie in the map, fall into $\mathbf{P}_f$, but are not deleted in the current frame, as described more in Sec. \ref{sec:distance-based}.
 Finally, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest allowed sphere radius specified by the user. 
 
 % where TODO.
 \subsubsection{Sampling New Spheres}
 \label{sec:adding_spheres}
-To introduce new spheres into the map, we sample a fixed number of points inside $P_f$ at random distances between the camera and the obstacle mesh $F_o$.
+To introduce new spheres into the map, we sample a fixed number of points inside $\mathbf{P}_f$ at random distances between the camera and the depth mesh $F_o$.
 This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.
 A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
 If the potential radius is larger than $r_{min}$, the sphere is added to the map.

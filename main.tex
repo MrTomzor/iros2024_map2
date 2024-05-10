@@ -145,12 +145,21 @@ Monocular-Inertial UAV Exploration and Mapping of Large-Scale Outdoor Environmen
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-  We present a novel approach to describing 3D space, using only a monocular camera and pose estimates.
-  Our main contribution is representing an environment by a graph of intersecting free-space spheres and a set of triangulated visual keypoints with remembered measurement uncertainty, which is fundamentally different from grid-based occupancy maps. 
-  We present a method of building this representation in real-time, using only sparse 3D point data obtained from monocular SLAM by inscribing spheres inside the estimated visible free-space polyhedron formed by the visual keypoints and the camera position.
-  We further describe an exploration system that uses the advantages brought by the novel representation to overcome some of the challenges of monocular vision-based UAV autonomy and demonstrate
-large-scale autonomous exploration in unstructured indoor/outdoor 3D environments, using only a single monocular camera and an IMU onboard an inexpensive UAV in simulation and in the real world.
-  We open-source the code for our methods to provide 3D mapping and exploration capabilities to any UAV with a monocular camera and available pose estimation.
+  We present a novel approach to mapping 3D space for navigation purposes, using only pose estimates and keypoints from sparse monocular-inertial SLAM as input.
+  % Our main contribution is representing an environment by a graph of intersecting free-space spheres and a set of triangulated visual keypoints with remembered measurement uncertainty, which is fundamentally different from grid-based occupancy maps. 
+  We propose to represent an environment by a graph of intersecting free-space spheres and a set of obstacle points with remembered measurement distance, which is fundamentally different from traditionally used grid-based maps. 
+  % We present a method of building this representation in real-time, using only sparse 3D point data obtained from monocular SLAM by inscribing spheres inside the estimated visible free-space polyhedron formed by the visual keypoints and the camera position.
+  % This representation can be built in real-time, using only sparse 3D point data obtained from monocular SLAM by inscribing spheres inside the estimated visible free-space polyhedron formed by the visual keypoints and the camera position.
+  % In our approach, the map is built in real-time by roughly interpolating depth between visible 3D points from visual SLAM while 
+  % Spheres are inscribed inside the estimated visible free-space polyhedron formed by the visual keypoints and the camera position.
+  A polyhedron of approximated visible free-space is formed at each map iteration from tracked SLAM points and the camera's position.
+  % Spheres are inscribed inside this polyhedron.
+  This polyhedron is used for updating sphere radii and deleting obstacle points.
+  % Spheres are inscribed inside the estimated visible free-space polyhedron formed by the visual keypoints and the camera position.
+  Furthermore, we describe an exploration approach that uses the advantages of the novel representation to overcome the challenges of monocular vision-based UAV autonomy.
+  The presented method allows
+large-scale autonomous exploration in unstructured indoor/outdoor 3D environments, using only a single monocular camera and an IMU onboard a possibly micro-scale UAV.
+  We open-source the code for our methods to provide 3D mapping and exploration capabilities to any UAV with visual-inertial state estimation.
 
 Code--- %\href{
 \href{TODO}{TODO}

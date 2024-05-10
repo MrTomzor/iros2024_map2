@@ -201,69 +201,73 @@ This allows for rule-based measurement fusion, which is critical for dealing wit
 % In this representation, we assign additional metrics
 % This representation allows for fast and safety-aware planning \cite{spheremap}.
 We further show how the proposed mapping method enables autonomous exploration in real-world and simulated large-scale outdoor environments on a UAV using only a single camera and IMU as its sensors, which, to the authors' best knowledge, has not yet been achieved in literature.
-% We open-source the code so that anyone with a UAV equipped with a single camera and a source of odometry can easily enable exploration and rapid, safety-aware navigation.
-% We open-source the code make a detailed analysis .
-% , and unlocks a wide variety potential low-cost UAV applications.
-
-% The vast majority of autonomous navigation and exploration research in the real world, such as in the DARPA SubT Challenge \cite{darpa_cerberus_wins}, has so far been focused on robots equipped with costly sensors that provide dense range data, such as LiDARs \cite{beneath}, depth cameras [TODO] or stereo camera pairs \cite{explor_stereo}.
-% Even though single vision sensors are much cheaper, existing approaches for using them for online map building and autonomous navigation on UAVs is still severely limited.
-% Most navigation approaches for UAVs with only a single camera and no range sensors are reactive behaviors \cite{avoidance_mono1}, or make strong assumptions about environmental structure \cite{corridors_mono_nav_2009}.
 
 \subsection{Related Works -- Spatial Representations}
 \label{sec:representations_rw}
 
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
-In robotic exploration, the vast majority of approaches use a grid-based representation of occupied, unknown and free space, either in the form of an euclidean signed distance field (ESDF) \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
+In robotic exploration, the majority of approaches use a grid-based representation of occupied, unknown, and free space, either in the form of an euclidean signed distance field (ESDF) \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
 A grid-based representation, while being the basis for a substantial amount of robotic path planning and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}, has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
 
-Firstly, both ESDFs and occupancy grids are most commonly updated by raycasting towards measured obstacle points.
+Firstly, both ESDFs and occupancy grids are most commonly updated by casting rays towards measured 3D points and updating the values of traversed cells.
+Using this technique with sparse points from monocular SLAM, e.g. in texture-poor environments, can lead to gaps in the map.
+Existing works address this issue in multiple ways:
+% Treating sparse points from monocular SLAM as 
+% The existing works on using using monocular SLAM points for 3D mapping treat the SLAM points as range measurements and perform the raycasting method as well. 
+% With only sparse 
 % This becomes problematic when the available measured points are very sparse, such as points tracked by sparse monocular SLAM.
-Some works overcome this limitation to some degree -- 
-in \cite{from_monoslam_to_explo}, the authors take points from semi-dense monocular SLAM and raycast towards them to build an OctoMap \cite{octomap} occupancy grid, but only demonstrate their local exploration approach built on top of this mapping pipeline to work inside a single room.
-
-Compared to \cite{from_monoslam_to_explo}, the authors of \cite{los_maps} use sparse monocular SLAM, they also cast rays towards the measured points to build an occupancy grid, and show exploration on a UAV across multiple rooms.
+% Some works were motivated to overcome this limitation -- 
+In \cite{from_monoslam_to_explo}, the authors take points from semi-dense monocular SLAM and raycast towards them to build an OctoMap \cite{octomap} occupancy grid, but only demonstrate their local exploration approach built on top of this mapping pipeline to work inside a single room with textured walls.
+The authors of \cite{los_maps} use sparse monocular SLAM, they also cast rays towards the measured points to build an occupancy grid, and show exploration on a UAV across multiple rooms.
 They set the occupancy grid cell size to be 0.5m, which is relatively large compared to the UAV size. 
 Such rough voxel size cannot represent the distance to obstacles in high resolution, and if the grid is misaligned with the building, narrow passages can be represented as non-traversible.
 % and in [ROOM-DENSEDEPTH], the authors essentially perform dense pixel-based estimation with known poses from sparse SLAM, which works in well-illuminated rooms but may have problems in larger-scale or texture-poor environments.
 % Second, even though memory-efficient octree-based representations of 3D grids are available, most notably the OctoMap library \cite{octomap}, a fundamental problem of grids is that the smallest-voxel size must be set by the user.
+
 This is the second fundamental problem of grid-based representations -- the smallest-voxel size must be set by the user.
 If this is set as too large, narrow passages will not be captured in the map, and if it is too small, the map will need large amounts of raycasts to set all the cells' occupancy values, which is computationally expensive.
-
 % In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
-In our previous work \cite{spheremap}, we have shown that representing free space by a graph of intersecting spheres can efficiently describe both large-space while keeping detailed information in narrow spaces, in additon to allowing orders of magnitude faster path planning than grid-based representations.
+In our previous work \cite{spheremap}, we have shown that representing free space by a graph of intersecting spheres can efficiently describe large-space while keeping detailed information in narrow spaces.
+In additon, it allows orders of magnitude faster path planning than grid-based representations.
 % In \cite{spheremap}, we also demonstrated that this representation allows path planning that has explicit information about distance to obstacles, in addition to allowing orders of magnitude faster path planning than on an occupancy grid.
 In this paper, we represent free space using spheres as well, but with two major differences: 
 % In this paper, we represent the free space using spheres as well, but also add the obstacle points into the map and use them for constraining the sphere radii, but with \todo{two major differences 
 
 \begin{itemize}
     % \item now \textit{we do not need to build the occupancy grid as an intermediate step}, which frees up significant computational resources, and \textit{we construct the map using sparse point-clouds from monocular SLAM}, which are problematic to use for occupancy grids.
-  \item In this paper, we build the graph of spheres \textit{directly} out of the sparse 3D pointclouds and pose estimates obtained from monocular SLAM, without needing to build an intermediate occupancy grid before computing the sphere radii as in \cite{spheremap}, which frees up significant computational resources.
+  % \item In this paper, we build the graph of spheres \textit{directly} out of the sparse 3D pointclouds and pose estimates obtained from monocular SLAM, without needing to build an intermediate occupancy grid before computing the sphere radii as in \cite{spheremap}, which frees up significant computational resources.
+  \item In \cite{spheremap}, the method required building a local occupancy grid with a LiDAR for updating the spheres. 
+    In this paper, we build the graph of spheres \textit{directly} out of 3D measurement points without any intermediate occupancy grid, and only require a monocular camera running visual SLAM instead of a LiDAR.
 % In addition, there is no current documented way to build an occupancy grid using sparse point clouds, although this could also be interesting to research.
 % TODO-CHECK
-  \item Unlike \cite{spheremap}, which only represents free space, the representation presented in this paper contains obstacle points corresponding to triangulated visual keypoints with remembered measurement distance, which plays an important role when updating the map at different measurement distances (see Sec. \ref{sec:distance-based}). 
+  \item Additionally, the representation proposed in this paper stores visual keypoints as obstacle points and remembers their measurement distance. 
+    These points are important for correctly estimating free space when previously seen obstacles are momentarily not detected by the visual SLAM (see Sec. \ref{sec:distance-based}). 
         % to overcome the challenge of incorrect measurements at larger distances.
 \end{itemize}
 
 \subsection{Related Works -- Vision-Based Exploration}
 
-Vision-based UAV autonomous exploration has so far, by far not reached the levels of autonomy as when using dense depth sensors, and remains a challenge, as documented in recent surveys \cite{drones_survey}, but some progress has been made.
+Vision-based UAV autonomous exploration has not yet reached the levels of autonomy as when using dense depth sensors, and remains a challenge, as documented in recent surveys \cite{drones_survey}, but some progress has been made.
 % TODO - mention reactive only
 In \cite{explor_stereo}, the authors presented the first ever vision-based UAV system that can explore and build a map (a 3D occupancy grid) on a UAV equipped with stereo cameras and also a supporting downward-facing optical flow sensor for better motion estimation.
-The authors used dense pointclouds coming from the stereo cameras for building an OctoMap \cite{octomap} occupancy representation in the same way as with depth data from an RGB-D camera or LiDAR, which allowed them to use similar exploration techniques as on systems with those sensors.
+The authors used dense pointclouds coming from the stereo cameras for building an OctoMap \cite{octomap} occupancy representation in the same way as with depth data from an RGB-D camera or LiDAR.
+This allowed them to use similar exploration techniques as on systems with such sensors.
 
-For UAVs equipped with a monocular camera, to the authors' best knowledge, all the existing works have demonstrated autonomous 3D mapping and exploration on a UAV only indoor and at the scale of a single room \cite{from_monoslam_to_explo, cnn_explo_singleroom} or a few rooms \cite{los_maps, simon2023mononav}.
+For UAVs equipped with only a monocular camera, to the authors' best knowledge, all the existing works have demonstrated autonomous 3D mapping and exploration on a UAV only indoor and at the small scale of a single room \cite{from_monoslam_to_explo, cnn_explo_singleroom} or a few simple rooms \cite{los_maps, simon2023mononav}.
 % It can be said that the main challenge here is that the majority of robotics methods is based on first building an occupancy grid using dense data measurements from a depth camera, LiDAR or stereo cameras, but obtaining such data from a monocular camera is difficult.
 % The discussed approaches either accept that the data from visual SLAM is very sparse, or they use deep-learning-based depth estimation to obtain dense data.
 Monocular SLAM, both sparse and dense, cannot produce measurement points on textureless areas, and the existing approaches either accept that the data from visual SLAM can be very sparse, or they use deep-learning-based depth estimation to obtain dense data.
 
-The authors of \cite{from_monoslam_to_explo, los_maps} argue against using frontier-based methods \cite{paper_frontier_grandpa}, due to the facts that on textureless areas, no points will ever be generated and thus those frontiers would not be uncovered by a monocular camera.
-The authors have presented alternative exploration approaches, but have only shown them to work in small-scale environments.
-In our exploration approach, thanks to not using raycasting in our proposed mapping pipeline and also blocking explored viewpoints, we show that frontier-based exploration is possible and assures global coverage of the explored environments.
+The authors of \cite{from_monoslam_to_explo, los_maps} argue against using frontier-based methods \cite{paper_frontier_grandpa}, due to the facts that no points will ever be generated on textureless areas, and thus those frontiers would not be uncovered by a monocular camera.
+The authors have presented alternative exploration approaches, but they have only shown them to work in small-scale environments.
+In our exploration approach, thanks to not using raycasting in the mapping pipeline and also blocking explored viewpoints, we show that frontier-based exploration is possible and assures global coverage of the explored environments.
 
 In a different approach, the authors of \cite{simon2023mononav, cnn_explo_singleroom} use deep-learning-based single image depth estimation to obtain dense point clouds from a monocular camera, essentially turning it into a depth camera.
-However, using learning-based monocular depth estimation models brings additional problems, most important for fully autonomous UAVs being not providing real-time performance and the problem of domain independence, as discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}, in addition to the higher cost and weight of a UAV with a GPU.
+However, using learning-based monocular depth estimation models brings additional problems.
+As discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}, this approach struggles to provide real-time onboard performance and it is not assured that it will work reliably in domains that the network was not trained on.
+In addition, a GPU significantly raises the cost and weight of a UAV.
 
-\todo{TODO - cite corridors!!!}
+% \todo{TODO - cite corridors!!!}
 
 % In \cite{corridors_mono_nav_2009}, the authors presented a system for monocular UAV navigation and demonstrated autonomous flight and map-building in an office corridor.
 
@@ -273,11 +277,11 @@ Compared to the above mentioned approaches, we demonstrate that our approach ach
 To enable robust vision-based autonomous navigation in unknown, unstructured 3D environments for inexpensive UAVs, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-  \item A novel 3D mapping approach, which constructs a sphere-based map using sparse pointclouds obtained from monocular SLAM as the only depth information.
+  \item A novel 3D mapping approach, which constructs a sphere-based map using sparse pointclouds obtained from monocular-inertial SLAM as the only depth information.
     % TODO - maybe define this as GEOMETRIC-PRIMITIVE-GRAPH MAP???
-    \item A system that demonstrates large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU as its sensors, enabled by the proposed mapping method, 
-      experimentally verified in simulation and in the real world.
-    \item Open-sourced code for the novel mapping and exploration approach, along with example simulation scripts for running the entire pipeline.
+    \item A system that demonstrates large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU as its sensors, enabled by the proposed mapping method and 
+      validated in real-world conditions.
+    \item Open-sourced code for the novel mapping and exploration approach, along with example simulation scripts for replicating our results.
 \end{enumerate}
 
 \section{Sphere-Based Map Built From Sparse Visual SLAM Keypoints}

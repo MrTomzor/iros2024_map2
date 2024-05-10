@@ -419,87 +419,89 @@ This way, large open areas are covered by only a few spheres and can be planned 
 % \section{Safety-Aware Monocular-Inertial 3D Exploration}
 \section{Safe Monocular-Inertial Exploration using the Sphere-Based Map}
 In this section, we detail how our proposed mapping method and representation are highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a single camera.
-In principle, we employ the commonly used receding-horizon next-best-view (RHNBV) [TODO-CITE] strategy, but with several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
-
-\subsection{Forced Translation when reaching Viewpoints}
-In traditional exploration approaches with dense distance sensors, it is often sufficient to move the robot to a boundary between free space and unknown space (known as a frontier), and assume that the distance sensors will uncover some additional space behind the frontier and thus expand the map.
-
-Such approach will not, in principle, work well with a robot that only has a monocular camera for depth sensing.
-The first thing that needs to be considered is that such a robot requires \textit{translational} motion to gain any sort of depth measurements when using methods built on structure-from-motion (SfM) [TODO-CITE], which is most of visual SLAM algorithms.
-% as in monocular structure-from-motion (SfM) TODO-CITE (we do not consider deep learning methods which exploit knowledge about sizes of objects).
-% Excessive rotation without translation cannot lead to reasonable distance estimates.
-% Too much rotation with too little translation of the camera will cause the monocular SLAM or any SfM-based approach to not give reliable depth estimates.
-With rotation only, or motions that have too much rotation compared to translation, reliable depth estimates cannot be obtained.
-
-This motivates the first major distinction of our approach compared to traditional RHNBV --- when planning a path to a goal viewpoint that could uncover some frontiers, we compute the target headings on the path so that the UAV maintains a fixed heading for at least $d_{c}$ meters on the path before reaching the end viewpoint, as visualized in Fig. TODO-FIG.
-In the experiments detailed in Sec. \autoref{sec:experiments}, we set $d_{c}=TODO$.
-This way, the UAV has enough translational motion before reaching a given viewpoint, so that if there are visible visual keypoints from that viewpoint, it will most likely gain enough distance measurements to them so they can be used for the depth estimation described in Sec. \autoref{sec:map_building}.
-
-\subsection{Explored Viewpoint Blocking}
-This is an important part of the method also due to the second major distinction -- we block the sampling of new exploration viewpoints near explored viewpoints.
-This is due to the fact that real-world environments often contain textureless areas (mainly in buildings or other man-made structures).
-Because in our mapping approach, obstacle points correspond to triangulated visual keypoints, no points will be added on textureless surfaces, but they will be on the boundary of free-space, so there will be frontiers there.
-However, such frontiers are uncoverable, since there is nothing behind them, and for this reason, we block the sampling of viewpoints near visited ones, so that the UAV doesn't keep coming back to look at a blank wall.
+In principle, we employ the commonly used receding-horizon next-best-view (RHNBV) \cite{paper_frontier_grandpa} strategy, but with several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
 
 \subsection{Frontier Sampling on Free-Space Polyhedron}
-Thirdly, because our map representation is fundamentally different from an occupancy grid, we compute the frontiers in a different way than with an occupancy grid --- we sample points along the visible free-space polyhedron described in Sec. \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at some user-defined distance from all map obstacle points.
+Since the proposed map representation is fundamentally different from an occupancy grid, we compute the frontiers in a different way than with an occupancy grid --- we sample points along the visible free-space polyhedron described in Sec. \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at some user-defined distance from all map obstacle points.
 If they do not meet these criteria in any following update, they are deleted. 
 
 In 3D outdoor exploration, it is also important to assign different value to different frontiers. 
 We constrain the exploration to only consider frontiers that lie near some obstacle points.
 Thus, the UAV does not explore up into the sky, and explores near texture-rich areas, leading to fewer possible failure situations due to losing visual odometry tracking.
-We then add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint.
+We then add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint at a close distance.
+
+
+\subsection{Forced Translation when reaching Viewpoints}
+\label{sec:align}
+In traditional exploration approaches with dense distance sensors, it is often sufficient to move the robot to a boundary between free space and unknown space (known as a frontier), and assume that the distance sensors will uncover some additional space behind the frontier and thus expand the map.
+
+This approach will not, in principle, work well with a robot with a monocular camera that estimates depth from motion.
+Such a robot requires \textit{translational} motion to gain correct distance measurements of visual keypoints. 
+% as in monocular structure-from-motion (SfM) TODO-CITE (we do not consider deep learning methods which exploit knowledge about sizes of objects).
+% Excessive rotation without translation cannot lead to reasonable distance estimates.
+% Too much rotation with too little translation of the camera will cause the monocular SLAM or any SfM-based approach to not give reliable depth estimates.
+With rotation only, or motions that have too much rotation compared to translation, reliable depth estimates cannot be obtained.
+
+To solve this, when planning a path to a goal viewpoint that could uncover some frontiers, we compute the target headings on the path so that the UAV maintains a fixed heading in the viewpoint's direction for at least $d_{c}$ meters on the path before reaching the viewpoint, as visualized in Fig. TODO-FIG.
+% In the experiments detailed in Sec. \autoref{sec:experiments}, we set $d_{c}=TODO$.
+This way, the UAV has enough translational motion before reaching a given viewpoint.
+Therefore, if there are visible visual keypoints from that viewpoint, there will most likely be enough parallax to triangulate these points.
+
+\subsection{Explored Viewpoint Blocking}
+% This is an important part of the method also due to the second major distinction -- we block the sampling of new exploration viewpoints near explored viewpoints.
+Another necessary distinction is that the UAV blocks sampling of new exploration viewpoints near visited viewpoints.
+This is due to the fact that real-world environments often contain textureless areas (mainly in buildings or other man-made structures).
+Because in our mapping approach, obstacle points correspond to triangulated visual keypoints, no points will be added on textureless surfaces, but they will be on the boundary of free-space, so frontiers will be generated there.
+However, such frontiers cannot be uncovered, since there is nothing behind them, and for this reason, we block the sampling of viewpoints near visited ones, so that the UAV doesn't keep coming back to look at a blank wall.
 
 \subsection{Local-Global Exploration}
-To allow exploration even in large-scale environments, we employ a local-global approach, basically a simplified version of TODO-REF.
+To allow exploration even in large-scale environments, we employ a local-global approach as in \cite{beneath} and \cite{dang2020graph}.
 The UAV first tries finding paths to any exploration viewpoints up to a user-defined "local exploration radius".
 If no reachable viewpoints are found in the radius, the UAV tries finding paths to all exploration viewpoints stored in the map.
-Thanks to the planning efficiency of the sphere graph, this global replanning usually does not take more than a few seconds, but could be made even faster by implementing any sort of long-distance planning abstraction graph, as in TODO or TODO-REF-OWN, which we leave for future work.
+Thanks to the planning efficiency of the sphere graph, this global replanning usually does not take more than a few seconds, but could be made even faster by implementing any sort of long-distance planning abstraction graph, as in \cite{spheremap, topomap}.
 
 \subsection{Safety-Aware Planning}
-TODO - forward heading + using distance to obstacles
-
 % Lastly, using the sphere-based representation allows us to flexibly weigh path length and path proximity to obstacles. We use the same path cost criterion as in \cite{spheremap}, and thus we can 
 % Lastly, because the free space is represented by a graph of spheres, we immediately have an upper bound on the distance of obstacles at each graph node, and thus it is possible to efficiently weigh path length versus path proximity to obstacles, 
+As a last safety measure, the UAV always flies in the direction of its camera, when not aligning itself with a viewpoint as described in \autoref{sec:align}.
+Free-space might always be wrongly initialized, but when flying in the direction of the camera, and with quick periodic replanning, the risk of collision can be minimized.
+The UAV also plans path with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is ideal, as detailed in \cite{spheremap}.
 
-With all of these considerations, a UAV with only a monocular camera and IMU can perform 3D volumetric exploration in large-scale outdoor environments, as we show in Sec. \autoref{sec:experiments}.
-\todo{
-It would be interesting to compare our method to monocular exploration using an occupancy grid at a similar scale, but, to the best of our knowledge, this has not yet been documented in literature.
-Thus, we can only talk about the benefits of our proposed representation --- which is that it allows much more efficient path planning that takes into account the distance to obstacles than using an occupancy grid, as we discuss more in \cite{spheremap}.
-}
-As future work, we also propose to utilize the measurement distance of free-space spheres so that path planning can, for example, force the UAV to fly slower and always forward-facing in spheres that have been observed from a large distance and might contain some obstacles not observable from far away.
+With all of these considerations, a UAV with only a monocular camera and IMU can perform 3D volumetric exploration in large-scale outdoor environments, as we demonstrate experimentally in Sec. \autoref{sec:experiments}.
+As future work for increasing the safety even more, the measurement distance of free-space spheres could be stored and used.
+With this information, trajectory generation could, for example, force the UAV to fly slower through spheres that have been observed from a large distance and might contain some obstacles not observable from far away.
 % TODO - rewrite something something with potential!
 
 \section{Experiments}
 \label{sec:experiments}
-In this section, we present the performed experiments and show the performance of our method in large-scale simulated (Sec. \ref{sec:sim_exper} and real-world (Sec. \ref{sec:real_exper}) environments.
-Our implementation of the proposed mapping and exploration methods is single-threaded, written in python and uses the Delaunay triangulation implementation from TODO.
+In this section, we present the performed experiments and show the performance of our method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
+Our implementation of the proposed mapping and exploration methods is single-threaded and written in python.
 As shown in Sec \ref{sec:runtimes}, even with this simple implementation, the mapping keeps below $1s$ per map update on a standard CPU, and is thus suitable for real-world deployment.
 
 The UAV used in the experiments was equipped with a monocular fisheye Bluefox TODO camera, and TODO IMU.
 The MRS UAV system \cite{mrs_uav_robust_system} was used for trajectory generation and control.
 % Damping in the form of 3D-printed flexible elements 
 In real-world experiments, the camera and IMU are separated from the rest of the UAV by 3D-printed damping elements, which significantly reduces the IMU noise caused by propellers.
-For state estimation and as the source of sparse visual keypoints, we used OpenVINS \cite{openvins} in the inverse-depth mode, without loop closures.
+For state estimation and as the source of sparse visual keypoints, we used OpenVINS \cite{openvins} in the inverse-depth measurement mode, without loop closures.
 
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 \label{sec:real_exper}
-The most notable real-world experiment is illustrated in TODO-IMG-REF
-In this experiment, the UAV explored up to $60m$ forward around the side of an abandoned farmhouse fully autonomously in an $8\text{min}$ mission.
-In this experiment, we bounded the area for generating exploration goals to a 70x10x8 bounding box, and the UAV explored all the available space in this region.
-The UAV successfully avoided and mapped all the debris, bushes and the house walls in the area, and after exploring all available goals, it autonomously returned to the starting position.
-Also note in TODO-IMG-REF that the UAV explored a considerable amount of space in the open field to the left of the house.
+The most notable real-world experiment is illustrated in Fig.\ref{fig:exper_real}.
+In this experiment, the UAV explored up to $\SI{60}{\meter}$ forward around the side of an abandoned farmhouse fully autonomously in an $8\text{min}$ mission.
+In this experiment, we bounded the area for generating exploration goals to a $\SI{70x10x8}{\meter}$ bounding box, and the UAV explored nearly all the available space in this region.
+The UAV successfully avoided and mapped all the debris, bushes and the house walls in the area, and when battery levels were getting low, it autonomously returned to the starting position.
+Also note in Fig.\ref{fig:exper_real} that the UAV explored a considerable amount of space in the open field to the left of the house.
 This was made possible by our approach to safe estimation of free space in the absence of triangulated SLAM keypoints, described in \autoref{sec:polyhedron}.
 % The UAV is running OpenVINS \cite{openvins} for odometry estimation, and our proposed inverse depth etstimator and mapper modules.
 
 We have tested the proposed approach extensively in a variety of other real-world environments, including a forest path, a tree in a wide open field, and around a large house.
 Videos from all real-world experiments are available at TODO-YOUTUBE-LINK. 
 Some of these experiments required the safety pilot to take control due to an important limitation of the method that we encountered during testing --- 
-since the visual SLAM tracks and triangulates visual key\textit{points}, visual lines (caused by e.g. thin tree branches or painted manmade poles) are not sensed in our mapping pipeline.
-This caused the UAV to nearly crash into tree crowns, which did not have many leaves at that time, multiple times.
+since the visual SLAM tracks and triangulates visual key\textit{points}, visual \textit{lines} (caused by e.g. thin tree branches or smooth manmade poles) are not sensed in our mapping pipeline.
+This caused the UAV to nearly crash into tree crowns multiple times.
 This limitation could be resolved by integrating short-range depth sensors as well, even ultrasound sensors could potentially be fused into the map.
-Additionally, the visual SLAM could be modified to estimate 3D poses of lines as well, as for example in TODO, but we leave this for future work.
+Additionally, the visual SLAM could be modified to estimate 3D poses of lines as well, as for example in TODO-CITE, but we leave this for future work.
 
 % \begin{figure}[!htb]
 %   % \includegraphics[width=8.5cm]{fig/exper1.png}
@@ -583,9 +585,9 @@ Additionally, the visual SLAM could be modified to estimate 3D poses of lines as
 \subsection{Large-Scale Exploration in Simulation}
 \label{sec:sim_exper}
 % In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
-In this experiment, we showcase the capabilities of our approach in a simulated TODOxTODO wide urban area.
-The experiment was conducted using the Gazebo simulator, with essentially the same UAV and sensory setup.
-\autoref{fig:exper_sim} shows the timelapse of an example exploration mission.
+In this experiment, we showcase the capabilities of our approach in a simulated $\SI{120x120x20}{\meter}$ urban area.
+The experiment was conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
+\autoref{fig:exper_sim} shows the resulting map of an example exploration mission.
 After running the exploration mission 20 times, the UAV managed to explore the entire environment in 18/20 runs.
 In the remaining 2 runs, the UAV crashed either into a large featureless metal pole or the roof of a gazebo where the texture only consists of lines.
 The crashes were caused by the same limitation as discussed in \autoref{sec:real_exper}.
@@ -606,9 +608,9 @@ Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explo
 \subsection{Runtime analysis}
 \label{sec:runtimes}
 % Here we analyze the runtimes of this method, and TODO.
-To provide more insight into the real-time capability of the proposed mapping method, we measured the runtimes of individual parts of the map update iterations during one of the simulated exploration missions described in \autoref{sec:sim_exper}. 
+To provide more insight into the real-time capability of the proposed mapping method, we measured the runtimes of individual parts of the map update iterations during one of the simulated exploration missions described in \autoref{sec:sim_exper} and visualized in \autoref{fig:exper_sim}. 
 The resulting graph is shown in \autoref{fig:runtimes}.
-In that mission, the UAV explored the entire TODOxTODO environment.
+In that mission, the UAV explored the entire available environment.
 Thanks to only updating the map near the UAV, the update time remains relatively bounded, even when the visible free-space polyhedron is large.
 
 
@@ -632,10 +634,10 @@ Thanks to only updating the map near the UAV, the update time remains relatively
 The spatial representation proposed in this paper, consisting of spheres and points, offers an alternative to the traditionally used grid-based representations.
 We have presented a method of constructing this representation on-board a UAV, using only the keypoints from sparse monocular SLAM as input depth information.
 % We have experimentally demonstrated how this new representation allows a UAV to explore and navigate large-scale outdoor environments in the real-world.
-We have discussed and experimentally demonstrated how this new representation enables 3D exploration and navigation in real-world outdoor conditions on a UAV equipped with only a single camera and IMU as its sensors.
+We have demonstrated how this new mapping approach enables 3D exploration and navigation in large-scale real-world outdoor environments on a UAV equipped with only a monocular camera and IMU as its sensors.
 % Trough extensive experimental evaluation, we have showed the feasibility of doing pose estimation, autonomous mapping, and exploration on-board a single UAV equipped with a only a monocular camera and IMU as the used sensors.
 
-In future work, we intend to explore the potential of the proposed representation for multimodal systems -- e.g. by intelligently fusing points and spheres based on the modality they were created from.
+In future work, we intend to explore the potential of the proposed representation for multimodal sensing -- e.g. intelligently fusing points and spheres based on the modality that they were created from.
 
 % \section{CONCLUSIONS}
 

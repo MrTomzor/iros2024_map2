@@ -501,13 +501,81 @@ This caused the UAV to nearly crash into tree crowns, which did not have many le
 This limitation could be resolved by integrating short-range depth sensors as well, even ultrasound sensors could potentially be fused into the map.
 Additionally, the visual SLAM could be modified to estimate 3D poses of lines as well, as for example in TODO, but we leave this for future work.
 
-\begin{figure}[!htb]
-  % \includegraphics[width=8.5cm]{fig/exper1.png}
-  \includegraphics[width=8.5cm]{fig/exper4.png}
-  % \includegraphics[width=8.5cm]{fig/exper3.png}
-  % \includegraphics[width=8.5cm]{fig/exper4.png}
+% \begin{figure}[!htb]
+%   % \includegraphics[width=8.5cm]{fig/exper1.png}
+%   \includegraphics[width=8.5cm]{fig/exper4.png}
+%   % \includegraphics[width=8.5cm]{fig/exper3.png}
+%   % \includegraphics[width=8.5cm]{fig/exper4.png}
+%   \centering
+%   \caption{TEMPORARY IMG - Exploration experiment visualization}
+%   \label{fig:exper_real}
+% \end{figure}
+
+\begin{figure}[ht]
+  \definecolor{green}{HTML}{3FA63F}
+  \definecolor{red}{HTML}{EB4E3F}
+  \definecolor{blue}{HTML}{52B8E8}
+  \newcommand{\greendot}{\raisebox{0pt}{\tikz{\draw[green,fill=green] (0,0) circle (2.0pt);}}}
+  \newcommand{\reddot}{\raisebox{0pt}{\tikz{\draw[red,fill=red] (0,0) circle (2.0pt);}}}
+  \newcommand{\bluedot}{\raisebox{0pt}{\tikz{\draw[blue,fill=blue] (0,0) circle (2.0pt);}}}
+  \def\subfigwidth{0.49\linewidth}
   \centering
-  \caption{TEMPORARY IMG - Exploration experiment visualization}
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t126.png}};
+      % \draw [latex-latex](3.2,0.9) -- (3.2,6.8);
+      % \node[align=center] at (3.6, 4) {\scriptsize \color{black}\SI{70}{\meter}};
+        \begin{scope}[x={(a.south east)},y={(a.north west)}]
+          \node[align=center] at (0.2, 0.025) {\footnotesize \color{black}$t=126\text{s}$};
+        \end{scope}
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     % \begin{subfigure}[b]{\subfigwidth}
+     %  \begin{tikzpicture}
+     %    \centering
+     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t206.png}};
+     %    \begin{scope}[x={(a.south east)},y={(a.north west)}]
+     %      \node[align=center] at (0.9, 0.075) {\footnotesize \color{black}$t=206\text{s}$};
+     %    \end{scope}
+     %  \end{tikzpicture}
+     % \end{subfigure}
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t370.png}};
+        \begin{scope}[x={(a.south east)},y={(a.north west)}]
+          \node[align=center] at (0.2, 0.025) {\footnotesize \color{black}$t=370\text{s}$};
+        \end{scope}
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t516.png}};
+      \draw [latex-latex](4.05,0.4) -- (4.05,7.3);
+      \node[align=center] at (3.6, 3.4) {\scriptsize \color{black}\SI{80}{\meter}};
+        \begin{scope}[x={(a.south east)},y={(a.north west)}]
+          \node[align=center] at (0.2, 0.025) {\footnotesize \color{black}$t=516\text{s}$};
+        \end{scope}
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[angle=90, origin=c, width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/house.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[angle=180, origin=c, width=1.0\linewidth, trim={{0.15\width} {0.3\height} {0.2\width} {0.0\height}}, clip=true]{fig/house.png}};
+        % \begin{scope}[x={(a.south east)},y={(a.north west)}]
+        %   \node[align=center] at (0.9, 0.075) {\footnotesize \color{black}$t=516\text{s}$};
+        % \end{scope}
+      \end{tikzpicture}
+     \end{subfigure}
+  \caption{
+    TODO
+  }
   \label{fig:exper_real}
 \end{figure}
 

@@ -184,7 +184,8 @@ However, building a detailed occupancy grid requires dense pointclouds of range 
 % TODO - check if all
 Thus, state-of-the-art exploration and navigation UAV systems have been constrained to expensive, heavy or limited-range sensors such as LiDARs, depth cameras or stereo-camera pairs, which can provide these dense point clouds.
 
-Building an occupancy representation for exploration using only a monocular camera for depth sensing is challenging for many reasons, and has so far been demonstrated only in small-scale indoor environments.
+\todo{mono je levnejsi nez stereo, existuje MNOHO dronu s mono+weak pocitacem, also thermal stereo je tezke - vic vypichnout (vysvetlit PROC ma smysl delat to s mono)}.
+Building an occupancy representation for exploration using only a monocular camera for depth sensing is challenging for many reasons \todo{vagni}, and has so far been demonstrated only in small-scale indoor environments.
 However, being able to build a representation that would allow safe and rapid navigation in unknown environments on-board UAVs with such small, light-weight and  inexpensive sensors, would unlock many potential applications, such as swarms of disposable UAVs for search and rescue missions.
 % TODO - split
 In addition, cameras are used for object recognition and other types of vision-based perception beneficial for autonomous UAVs, and thus 
@@ -220,6 +221,10 @@ In the field of robotic exploration, the majority of approaches use a grid-based
 A grid-based representation, while being the basis for a substantial amount of robotic path planning and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}, has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
 
 Firstly, both ESDFs and occupancy grids are most commonly updated by casting rays towards measured 3D points and updating the values of traversed cells.
+\todo{This technique accurately covers free space when dense input pointclouds are available, such as from a LiDAR or depth camera. 
+If the voxel size is too small and/or the data is sparse, gaps will appear in the free space.
+In large open areas where many features are too far to be accurately triangulated, this can lead to no free space being initiated except near the ground, causing the robot to not explore into the open space.
+}.
 Using this technique with sparse points from monocular SLAM, e.g. in texture-poor environments, can lead to gaps in the map.
 Existing works address this issue in multiple ways:
 % Treating sparse points from monocular SLAM as 
@@ -239,10 +244,12 @@ Such rough voxel size cannot represent the distance to obstacles in high resolut
 This is the second fundamental problem of grid-based representations -- the smallest-voxel size must be set by the user.
 If this is set as too large, narrow passages will not be captured in the map, and if it is too small, the map will need large amounts of raycasts to set all the cells' occupancy values, which is computationally expensive.
 % In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
-In our previous work \cite{spheremap}, we have shown that representing free space by a graph of intersecting spheres can efficiently describe large-space while keeping detailed information in narrow spaces.
+In previous work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that representing free space by a graph of intersecting spheres can efficiently describe large-space while keeping detailed information in narrow spaces.
+\todo{so why use this repre instead of grid? - ONE SENTENCE/SIMPLE $=>$}
 In additon, it allows orders of magnitude faster path planning than grid-based representations.
 % In \cite{spheremap}, we also demonstrated that this representation allows path planning that has explicit information about distance to obstacles, in addition to allowing orders of magnitude faster path planning than on an occupancy grid.
 In this paper, we represent free space using spheres as well, but with two major differences: 
+\todo{zkratit A NEBO vypichnout, ze OPROTI TEM TREM to tedka stavime ROVNOU ZE SENZORU!!!}
 % In this paper, we represent the free space using spheres as well, but also add the obstacle points into the map and use them for constraining the sphere radii, but with \todo{two major differences 
 
 \begin{itemize}
@@ -290,8 +297,10 @@ To enable robust monocular vision-based autonomous exploration in unknown, unstr
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
   \item A novel 3D mapping approach, which constructs a sphere-based map using sparse pointclouds obtained from monocular-inertial SLAM as the only depth information.
+    \todo{directly out of sparse input pointclouds, without building any intermediate free-space map}
+    \todo{using efficient, approximate free-space sampling"}
     % TODO - maybe define this as GEOMETRIC-PRIMITIVE-GRAPH MAP???
-    \item Perception-aware exploration that demonstrates large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, enabled by the proposed mapping method and 
+    \item Perception-aware exploration method enabled by the proposed mapping approach, that demonstrates large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
     \item Open-sourced code for the novel mapping and exploration approach, along with example simulation scripts for replicating our results.
 \end{enumerate}
@@ -531,7 +540,7 @@ Additionally, the visual SLAM could be modified to estimate 3D poses of lines as
 %   \label{fig:exper_real}
 % \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[htb]
   \definecolor{green}{HTML}{3FA63F}
   \definecolor{red}{HTML}{EB4E3F}
   \definecolor{blue}{HTML}{52B8E8}
@@ -612,9 +621,10 @@ The crashes were caused by the same limitation as discussed in \autoref{sec:real
 Aside from this limitation, the mapping and exploration can be said to work robustly in static environments.
 Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explored up on the roofs of the buildings when it was able to use the large towers to estimate depth and create enough free space for safely moving up to the roof.
 
-\begin{figure}[!htb]
-  \includegraphics[width=8.5cm]{fig/sim_exper_gazebo.png}
-  \includegraphics[width=8.5cm]{fig/sim_exper_end.png}
+\begin{figure}[htb]
+  % TODO - subfig
+  % \includegraphics[width=7.5cm]{fig/sim_exper_gazebo.png}
+  \includegraphics[width=7.5cm]{fig/sim_exper_end.png}
   % \includegraphics[width=8.5cm]{fig/exper3.png}
   % \includegraphics[width=8.5cm]{fig/exper4.png}
   \centering

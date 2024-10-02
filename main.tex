@@ -178,6 +178,18 @@ Code--- %\href{
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
+\todo{In recent years, big achievements have been presented for UAVs in autonomous exploration. 
+These advances are critical for moving towards deployment of robots in real-world, unknown environments where global navigation satellite systems (GNSS) are partially or completely unavailable.}
+\todo{However, the state-of-the-art autonomy software stacks depend on dense range sensors (lidars - heavy, depth cameras - shortrange, stereo cameras - expensive, not available in thermal).
+These sensors are heavy, expensive, and thus severely limit the affordability and flight time of UAVs.}
+
+\todo{Monocular cameras and inertial measurement units (IMU), on the other hand, are abundant in consumer electronics and vastly more commercially available.
+Additionally, most of the computer vision methods for perception, such as object classificiation, semantic segmentation, object tracking etc. use monocular camera images and do not need the expensive dense range sensors.
+Being able to autonomously map and navigate unknown environments using UAVs equipped with only such small, light-weight and inexpensive sensors would democratize real world deployment of many UAV applications, such as swarms of disposable UAVs for search and rescue missions, wildfire detection or reforestation, which are not viable due to the heavy and costly dense sensors.
+
+Exploration using only a monocular camera and IMU is however still a challenging research problem.
+The existing approaches present success only at the scale of one or two indoor rooms, or outdoor, but with severely limiting assumptions on the environmental structure.
+}
 The autonomous UAV systems operating in unknown environments documented in recent literature \cite{darpa_cerberus_wins, beneath} usually construct an occupancy grid \cite{occupancy_moravec}, such as the efficient octree-based implementation of OctoMap \cite{octomap}, and use it as the base representation for planning, exploration and constructing higher-level spatial abstractions \cite{topomap, spheremap}.
 However, building a detailed occupancy grid requires dense pointclouds of range measurements due to the raycasting nature of occupancy grid updates.
 % which is to cast rays towards the measurement points and update the occupancy of traversed cells.
@@ -219,7 +231,7 @@ To enable robust monocular vision-based autonomous exploration in unknown, unstr
 % To enable autonomous navigation in general environments for low-cost UAV platforms equipped with only monocular-inertial sensors, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-  \item A novel 3D mapping approach that constructs a scale-invariant sphere-based map directly from sparse pointclouds obtained by monocular-inertial SLAM, without needing any intermediate occupancy map, mapping both open-space and cluttered areas.
+  \item A novel 3D mapping approach that constructs a sphere-based map directly from sparse pointclouds obtained by monocular-inertial SLAM, without needing any intermediate occupancy map, mapping both open-space and cluttered areas.
     \item A perception-aware exploration method enabled by the proposed mapping approach, that demonstrates large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
     \item Open-sourced code for the novel mapping and exploration approach, along with example simulation scripts for replicating our results.
@@ -230,8 +242,8 @@ To enable robust monocular vision-based autonomous exploration in unknown, unstr
 \label{sec:representations_rw}
 
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
-In the field of robotic exploration, environments are most often represented by a grid-based map of occupied, unknown, and free space, either in the form of a signed distance field \cite{voxblox}[\todo{TODO-euclid, trunct}] or an occupancy grid \cite{occupancy_moravec, octomap}.
-These grid-based representations are the backbone for nearly all of robotic path planning, exploration \cite{explor_stereo}[\todo{TODO}] and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}.
+In the field of robotic exploration, environments are most often represented by a grid-based map of occupied, unknown, and free space, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
+These grid-based representations are the backbone for nearly all of robotic path planning, exploration \cite{darpa_cerberus_wins, beneath} and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}.
 However, these maps rely on dense distance sensors, such as LiDARs or depth cameras, to accurately map the true free and occupied space.
 
 % , has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
@@ -307,6 +319,7 @@ In this paper, we represent free space using spheres as well, but with two major
   % \item In this paper, we build the graph of spheres \textit{directly} out of the sparse 3D pointclouds and pose estimates obtained from monocular SLAM, without needing to build an intermediate occupancy grid before computing the sphere radii as in \cite{spheremap}, which frees up significant computational resources.
   \item In \cite{spheremap, spheregraph, bubbleplanner}, the method required building a local occupancy grid with a LiDAR for updating the spheres. 
     In this paper, we build the graph of spheres \textit{directly} out of 3D measurement points without any intermediate occupancy grid, and only require a monocular camera running visual SLAM instead of a LiDAR.
+    \todo{first to do this}
 % In addition, there is no current documented way to build an occupancy grid using sparse point clouds, although this could also be interesting to research.
 % TODO-CHECK
   \item Additionally, the representation proposed in this paper stores visual keypoints as obstacle points and remembers their measurement distance. 
@@ -373,6 +386,7 @@ Each sphere at the $k$-th update iteration has a static center $\mathbf{c}$ and 
 The radius $r_k$ represents the distance to the nearest unknown space and obstacles at $\mathbf{c}$.
 We maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres, and use it for path planning.
 Furthermore, we maintain a set of obstacle points $\mathbf{X}$, which correspond to the textured surfaces measured by the visual SLAM.
+
 For each obstacle point $\mathbf{x} \in \mathbf{X}$, we store the lowest distance that the point was measured from $d_{\mathbf{X}, \min}$.
 A lower minimal measurement distance of a visual keypoint means that the point is less likely to be noise and we make it more difficult to erase it from the map.
 This is a necessary feature for safe flight when using sparse visual SLAM keypoints as the only depth information, as explained more in \autoref{sec:distance-based}. 
@@ -391,7 +405,7 @@ There, the authors focus on constructing a precise mesh from visual keypoint mea
 We project the currently tracked visual SLAM points into the image plane and compute their Delaunay triangulation. 
 By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $\mathbf{F}_d$ that we call a \textit{depth mesh}, which is used only for the current frame.
 We estimate the currently visible free space as the volume between the camera's focal point and all points on $\mathbf{F}_d$.
-This space is enclosed by connecting all points that lie on the edge of $\mathbf{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathbf{P}_f$, visualized in \autoref{fig:smap_intro}.
+This space is enclosed by connecting all points that lie on the edge of $\mathbf{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathbf{P}_f$, illustrated in \autoref{fig:distbased}.
 
 \subsection{Estimating Free Space in Open Areas}
 When moving in open areas, such as over a field, visual SLAM often tracks only a few keypoints on the ground, which would cause free space to be estimated only below the UAV and not allow flight across the field.

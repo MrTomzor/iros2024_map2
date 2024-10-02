@@ -83,7 +83,7 @@
 % FINAL TWO
 % Sphere-Based Mapping using Sparse Monocular SLAM Points for Robust Large-Scale 3D Exploration on Inexpensive UAVs}
 % Monocular-Inertial Exploration of Large-Scale Outdoor Environments using Sparse SLAM Keypoints on an Inexpensive UAV}
-Monocular-Inertial UAV Exploration and Mapping of Large-Scale Outdoor Environments using Sparse Visual SLAM}
+Monocular-Inertial UAV Exploration and 3D Mapping of Large-Scale Outdoor Environments using Sparse Visual SLAM}
 % Monocular-Inertial 3D Exploration of Large-Scale Outdoor Environments using Sparse Visual SLAM}
 % Monocular-Interital Sphere-Based Mapping for Large-Scale UAV Exploration}
 
@@ -178,32 +178,32 @@ Code--- %\href{
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
-\todo{In recent years, big achievements have been presented for UAVs in autonomous exploration. 
-These advances are critical for moving towards deployment of robots in real-world, unknown environments where global navigation satellite systems (GNSS) are partially or completely unavailable.}
-\todo{However, the state-of-the-art autonomy software stacks depend on dense range sensors (lidars - heavy, depth cameras - shortrange, stereo cameras - expensive, not available in thermal).
-These sensors are heavy, expensive, and thus severely limit the affordability and flight time of UAVs.}
+In recent years, significant advances in autonomous robotic exploration of environments spanning kilometers in scale have been presented \cite{darpa_cerberus_wins, beneath}. 
+These advances are critical for moving towards deployment of UAVs in real-world, unknown environments where global navigation satellite systems (GNSS) are partially or completely unavailable.
+% However, the state-of-the-art mapping and exploration methods depend heavily on dense range sensors (lidars - heavy, depth cameras - shortrange, stereo cameras - expensive, not available in thermal).
+However, the state-of-the-art mapping and exploration methods depend heavily on dense range sensors such as LiDARs, and stereo depth cameras.
+These sensors are heavy, expensive, and thus severely limit the affordability and flight time of autonomous UAVs.
+\todo{?range of depth cams?}
 
-\todo{Monocular cameras and inertial measurement units (IMU), on the other hand, are abundant in consumer electronics and vastly more commercially available.
-Additionally, most of the computer vision methods for perception, such as object classificiation, semantic segmentation, object tracking etc. use monocular camera images and do not need the expensive dense range sensors.
-Being able to autonomously map and navigate unknown environments using UAVs equipped with only such small, light-weight and inexpensive sensors would democratize real world deployment of many UAV applications, such as swarms of disposable UAVs for search and rescue missions, wildfire detection or reforestation, which are not viable due to the heavy and costly dense sensors.
-
-Exploration using only a monocular camera and IMU is however still a challenging research problem.
-The existing approaches present success only at the scale of one or two indoor rooms, or outdoor, but with severely limiting assumptions on the environmental structure.
-}
-The autonomous UAV systems operating in unknown environments documented in recent literature \cite{darpa_cerberus_wins, beneath} usually construct an occupancy grid \cite{occupancy_moravec}, such as the efficient octree-based implementation of OctoMap \cite{octomap}, and use it as the base representation for planning, exploration and constructing higher-level spatial abstractions \cite{topomap, spheremap}.
-However, building a detailed occupancy grid requires dense pointclouds of range measurements due to the raycasting nature of occupancy grid updates.
-% which is to cast rays towards the measurement points and update the occupancy of traversed cells.
-% TODO - check if all
-Thus, state-of-the-art exploration and navigation UAV systems have been constrained to expensive, heavy or limited-range sensors such as LiDARs, depth cameras or stereo-camera pairs, which can provide these dense point clouds.
-
-% Building a map for exploration using only a monocular camera for depth sensing is challenging for many reasons \todo{vagni}, and has so far been demonstrated only in small-scale indoor environments.
-Building a map for exploration without dense sensors is still an open problem and has so far been demonstrated only in small-scale indoor environments.
-However, being able to build a representation that would allow safe and rapid navigation in unknown environments on-board UAVs with such small, light-weight and  inexpensive sensors, would unlock many potential applications, such as swarms of disposable UAVs for search and rescue missions.
-% TODO - split
-In addition, cameras are used for object recognition and other types of vision-based perception beneficial for autonomous UAVs, and thus 
+Monocular cameras and inertial measurement units (IMU), on the other hand, are abundant in consumer electronics and vastly more commercially available.
+Additionally, cameras are used for object recognition and other types of vision-based perception beneficial for autonomous UAVs, and thus 
 % it makes sense to have them equipped on many UAV applications already.
 they are already equipped on UAVs in most real-world applications.
-Furthermore, a single camera onboard a moving UAV can provide rough distance estimates on distant objects when using the inverse depth parametrization \cite{inverse_depth}, far beyond sensory capabilities of current LiDARs and depth cameras.
+% Additionally, most of the computer vision methods for perception, such as object classificiation, semantic segmentation, object tracking etc. use monocular camera images and do not need dense range sensors.
+\todo{
+Enabling UAVs to autonomously map and navigate unknown environments using UAVs equipped with only such small, light-weight and inexpensive sensors would democratize real world deployment of many UAV applications, such as swarms of disposable UAVs for search and rescue missions, wildfire detection or reforestation, which are not viable due to the heavy and costly dense range sensors.
+}
+
+Exploration using only a monocular camera and IMU is, however, still a challenging research problem.
+The existing approaches present success only at the scale of one or two indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav, cnn_explo_singleroom}, or outdoor, but with severely limiting assumptions on the environmental structure.
+\todo{[CITE]}
+
+% The autonomous UAV systems operating in unknown environments documented in recent literature \cite{darpa_cerberus_wins, beneath} usually construct an occupancy grid \cite{occupancy_moravec}, such as the efficient octree-based implementation of OctoMap \cite{octomap}, and use it as the base representation for planning, exploration and constructing higher-level spatial abstractions \cite{topomap, spheremap}.
+% However, building a detailed occupancy grid requires dense pointclouds of range measurements due to the raycasting nature of occupancy grid updates.
+% which is to cast rays towards the measurement points and update the occupancy of traversed cells.
+% TODO - check if all
+
+% Building a map for exploration using only a monocular camera for depth sensing is challenging for many reasons \todo{vagni}, and has so far been demonstrated only in small-scale indoor environments.
 
 \begin{figure}[!t]
   % \includegraphics[width=8.5cm]{fig/smap2.png}
@@ -216,25 +216,27 @@ Furthermore, a single camera onboard a moving UAV can provide rough distance est
   \label{fig:smap_intro}
 \end{figure}
 
-In this paper, we present a novel approach to 3D mapping that takes in a sparse pointcloud of visual keypoints tracked by monocular SLAM (already a necessary part of many vision-based UAV systems).
-Instead of traditionally casting rays through a grid and updating its cells, we construct a polyhedron of approximate visible free space at each frame, inscribe spheres of free space inside that polyhedron, and connect them together to form a graph of intersecting spheres.
+In this paper, we present a novel approach to 3D mapping utilizing a sparse pointcloud of 3D points produced by monocular SLAM, which is already a necessary part of many vision-based UAV systems.
+Instead of traditionally casting rays through a grid and updating its cells \cite{octomap, voxblox}, we construct a polyhedron of approximate visible free space at each frame, inscribe spheres of free space inside that polyhedron, and connect them together to form a graph of intersecting spheres.
 By storing obstacles as a set of points, we can assign additional metrics to each point, such as measurement distance. 
 % or, in future work, the modality of its origin.
 This approach allows for rule-based measurement fusion, which is critical for dealing with monocular cameras, as we explain in \autoref{sec:distance-based}.
 % In this representation, we assign additional metrics
 % This representation allows for fast and safety-aware planning \cite{spheremap}.
-We further show how the proposed mapping method enables autonomous exploration in real-world, large-scale outdoor environments on a UAV using only a single monocular camera and IMU, which, to the authors' best knowledge, has not yet been presented in literature.
+We further show how the proposed mapping method enables autonomous exploration in real-world, \todo{large-scale} indoor/outdoor environments on a UAV using only a single monocular camera and IMU, which, to the authors' best knowledge, has not yet been presented in literature.
+% This paper brings the following contributions:
 
-To enable robust monocular vision-based autonomous exploration in unknown, unstructured 3D environments of large scales, our paper brings the following contributions:
+To enable safety-aware monocular vision-based autonomous exploration in unknown, unstructured 3D environments of large scales, our paper brings the following contributions:
+
 % Our paper brings the following contributions:
 % To enable autonomous navigation in unstructured 3D environments of large scales for low-cost UAV platforms equipped with only monocular-inertial sensors, our paper brings the following contributions:
 % To enable autonomous navigation in general environments for low-cost UAV platforms equipped with only monocular-inertial sensors, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
   \item A novel 3D mapping approach that constructs a sphere-based map directly from sparse pointclouds obtained by monocular-inertial SLAM, without needing any intermediate occupancy map, mapping both open-space and cluttered areas.
-    \item A perception-aware exploration method enabled by the proposed mapping approach, that demonstrates large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
+    \item A perception-aware exploration method enabled by the proposed mapping approach that achieves large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
-    \item Open-sourced code for the novel mapping and exploration approach, along with example simulation scripts for replicating our results.
+    \item Open-sourced code for the proposed mapping and exploration methods, along with example simulation scripts for replicating our results.
 \end{enumerate}
 
 

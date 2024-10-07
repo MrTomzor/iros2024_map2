@@ -546,28 +546,28 @@ We solve this problem by deleting any map point $x$ that falls into $\mathbf{P}_
 where $p_{cam}$ is the position of the camera.
 The points that lie in $\mathbf{P}_f$ and are not deleted are called \textit{protected points} $\mathbf{X}_p$.
 These points are used to constrain sphere radii in the following update step.
-Additionally, to prioritize closer measurements, points seen from a closer distance can replace points seen at larger distances, if they are measured close enough to them. 
+Additionally, to prioritize closer measurements, points seen from a closer distance \todo{can replace} points seen at larger distances, if they are measured \todo{close enough to them}. 
 In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in \autoref{fig:distbased}.
 \todo{rewrite as sort?}
 
 \subsection{Updating Existing Spheres}
 \label{sec:existing_spheres_update}
 Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or input points $\mathbf{X}_{in}$.
-To bound the update time of this step, we specify a maximum allowed sphere radius $r_{max}$, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $\mathbf{P}_f$, inflated by $r_{max}$. 
+To bound the update time of this step, we specify a maximum \todo{allowed} sphere radius $r_{max}$, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $\mathbf{P}_f$, inflated by $r_{max}$. 
 Then, for any remaining sphere with a center $\mathbf{c}$ and radius $r_{k}$, the updated radius is computed as
 \begin{equation}
   r_{k+1} = \min \left( \max \left( r_{k}, d(\mathbf{c}, \mathbf{P}_f) \right)
   , d(\mathbf{c}, \mathbf{X}_{in} \cup \mathbf{X}_p), r_{max} \right),
   \label{eq:update}
 \end{equation}
-where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) and $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
-Finally, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest allowed sphere radius specified by the user. 
+where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) \todo{and} $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
+Finally, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest \todo{allowed} sphere radius specified by the user. 
 
 % where TODO.
 \subsection{Sampling New Spheres}
 \label{sec:adding_spheres}
 To introduce new spheres into the map, we sample a fixed number of points inside $\mathbf{P}_f$ at random distances between the camera and the depth mesh $F_o$.
-This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.
+\todo{This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.}
 A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
 If the potential radius is larger than $r_{min}$, the sphere is added to the map.
 
@@ -577,13 +577,14 @@ After all the sphere radii updates have been made, we update the graph of sphere
 % TODO - EXPLAIN???
 Furthermore, to constrain map update time and path planning time, we perform a redundancy check on the updated and added spheres in the same way as in our previous work \cite{spheremap}.
 If any sphere is found to be redundant, it is deleted from the map.
+\todo{this approach is important to cover large...}
 This way, large open areas are covered by only a few spheres and can be planned over quickly, and tight corridors have a higher density of spheres, capturing the information about potential paths and distances to obstacles in more detail.
 
 % \section{Monocular-Inertial Exploration Using the Sphere-Based Map}
 % \section{Safety-Aware Monocular-Inertial 3D Exploration}
 % \section{Safe Monocular-Inertial Exploration using the Sphere-Based Map}
 \section{Perception-Aware Exploration using the Sphere-Based Map}
-In this section, we detail how our proposed mapping method and representation are highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a single camera.
+In this section, we detail how the proposed mapping method is highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a single camera \todo{and IMU?}.
 In principle, we employ the commonly used receding-horizon next-best-view (RHNBV) \cite{paper_frontier_grandpa} strategy, but with several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
 \todo{write assumptions on perception here? mapping doesnt care}
 
@@ -591,11 +592,12 @@ In principle, we employ the commonly used receding-horizon next-best-view (RHNBV
 Since the proposed map representation is fundamentally different from an occupancy grid, we need to compute the frontiers in a different way than with an occupancy grid 
 We propose to sample points along the visible free-space polyhedron described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at some user-defined distance from all map obstacle points.
 If they do not meet these criteria in any following update, they are deleted. 
+\todo{complexity and vs octomap?}
 
 In 3D outdoor exploration, it is also important to assign different value to different frontiers. 
 We constrain the exploration to only consider frontiers that lie near some obstacle points.
 This way, the UAV does not explore up into the sky, and only explores near texture-rich areas, thus avoiding losing visual odometry tracking.
-Lastly, we add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint at a close distance.
+\todo{Lastly, we add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint at a close distance.}
 
 
 \subsection{Forced Translation when reaching Viewpoints}
@@ -607,19 +609,19 @@ Such a robot requires \textit{translational} motion to gain correct distance mea
 % as in monocular structure-from-motion (SfM) TODO-CITE (we do not consider deep learning methods which exploit knowledge about sizes of objects).
 % Excessive rotation without translation cannot lead to reasonable distance estimates.
 % Too much rotation with too little translation of the camera will cause the monocular SLAM or any SfM-based approach to not give reliable depth estimates.
-With rotation only, or motions that have too much rotation compared to translation, reliable depth estimates cannot be obtained.
+With rotation only, or motions that have too much rotation compared to translation, reliable depth estimates cannot be obtained \todo{using this method?}.
 
-To solve this, when planning a path to a goal viewpoint that could uncover some frontiers, we compute the target headings on the path so that the UAV maintains a fixed heading in the viewpoint's direction for at least $d_{c}$ meters on the path before reaching the viewpoint, as visualized in Fig. TODO-FIG.
+To solve this, when planning a path to a goal viewpoint that could uncover some frontiers, we need to compute the target headings on the path so that the UAV maintains a fixed heading in the viewpoint's direction for at least $d_{c}$ meters on the path before reaching the viewpoint, as visualized in Fig. \todo{TODO-FIG}.
 % In the experiments detailed in Sec. \autoref{sec:experiments}, we set $d_{c}=TODO$.
 This way, the UAV has enough translational motion before reaching a given viewpoint.
-Therefore, if there are visible visual keypoints from that viewpoint, there will most likely be enough parallax to triangulate these points.
+Therefore, if there are \todo{visible visual keypoints} from that viewpoint, there will most likely be enough parallax to triangulate these points.
 
 \subsection{Explored Viewpoint Blocking}
 % This is an important part of the method also due to the second major distinction -- we block the sampling of new exploration viewpoints near explored viewpoints.
-Another necessary distinction is that the UAV blocks sampling of new exploration viewpoints near visited viewpoints.
+\todo{Another necessary distinction is that the UAV blocks sampling of new exploration viewpoints near visited viewpoints.
 This is due to the fact that real-world environments often contain textureless areas (mainly in buildings or other man-made structures).
 Because in our mapping approach, obstacle points correspond to triangulated visual keypoints, no points will be added on textureless surfaces, but they will be on the boundary of free-space, so frontiers will be generated there.
-However, such frontiers cannot be uncovered, since there is nothing behind them, and for this reason, we block the sampling of viewpoints near visited ones, so that the UAV doesn't keep coming back to look at a blank wall.
+However, such frontiers cannot be uncovered, since there is nothing behind them, and for this reason, we block the sampling of viewpoints near visited ones, so that the UAV doesn't keep coming back to look at a blank wall.}
 
 % \subsection{Local-Global Exploration}
 % To allow exploration even in large-scale environments, we employ a local-global approach as in \cite{beneath} and \cite{dang2020graph}.
@@ -632,7 +634,7 @@ However, such frontiers cannot be uncovered, since there is nothing behind them,
 % Lastly, because the free space is represented by a graph of spheres, we immediately have an upper bound on the distance of obstacles at each graph node, and thus it is possible to efficiently weigh path length versus path proximity to obstacles, 
 As a last safety measure, the UAV is controlled to fly in the direction of its camera, when not aligning itself with a viewpoint as described in \autoref{sec:align}.
 % Free-space might always be wrongly initialized, but when flying in the direction of the camera, and with quick periodic replanning, the risk of collision can be minimized.
-This approach is crucial for ensuring collision-free flight even in wrongly initialized free space.
+This approach is crucial for ensuring collision-free flight even in \todo{wrongly} initialized free space.
 \todo{lip popsat co se muze dit, resp. jak tohle pomuze lip estimovat free space (might see obstacles that were not detected as SLAM pts at a higher distance or at a wrong position. By storing the distally seen objects as less survivy we can update them with more precise data here}.
 To increase safety and allow agile maneuvers, the UAV plans paths with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is ideal, as detailed in \cite{spheremap}.
 \todo{add other sphere papers}
@@ -640,7 +642,7 @@ To increase safety and allow agile maneuvers, the UAV plans paths with a strong 
 With all of these considerations, a UAV with only a monocular camera and IMU can perform 3D volumetric exploration in large-scale outdoor environments, as we demonstrate experimentally in Sec. \autoref{sec:experiments}.
 % As future work for increasing the safety even more, the measurement distance of free-space spheres could be stored and used.
 % With this information, trajectory generation could, for example, force the UAV to fly slower through spheres that have been observed from a large distance and might contain some obstacles not observable from far away.
-As future work for increasing the safety even more, the measurement distance of free-space spheres could be used for decreasing the UAV speed in areas with higher probability of overlooked or wrongly localized obstacles.
+\todo{As future work for increasing the safety even more, the measurement distance of free-space spheres could be used for decreasing the UAV speed in areas with higher probability of overlooked or wrongly localized obstacles.}
 
 \section{Experiments}
 \label{sec:experiments}

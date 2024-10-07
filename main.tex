@@ -509,13 +509,20 @@ This also helps to correctly estimate depth when there is at least a little amou
   % \includegraphics[width=8.5cm]{fig/smap2.png}
   \includegraphics[width=8.5cm]{fig/distbased3.pdf}
   \centering
-  \caption{Diagram of sphere sampling and map point management: 
-  Visible free-space polygon (-);
-  Newly sampled spheres (O);
-  Triangulated keypoints visible at current frame (X); 
-  Points already in the map (X) added from a previous pose (red). 
+  \caption{Top-down illustration of sphere sampling and map point management: 
+  The visible free-space polyhedron $\mathbf{P}_f$ is created using the currently tracked SLAM points (black crosses) and the camera's position $\mathbf{p}_{cam}^{k}$ at update step $k$.
   Smaller points and higher-opacity spheres have been observed from lower distances.
-  Dashed crosses correspond to points that will be deleted (red) or not added to the map (black).
+  % Dashed crosses correspond to points that will be deleted (red) or not added to the map (black), as there are better localized (smaller) points near them.
+  The (dashed red) point seen from a long distance at a previous step $k-n$ is now not visible, and will be deleted as noise.
+  The (dashed black) two points seen at a large distance now are not added to the map, as there are better localized (red) points near them in the map.
+  New spheres are inscribed inside $\mathbf{P}_f$, but their radii are also bound by the protected points $\mathbf{X}_p$ (small red crosses), which were added to the map at $k-n$.
+  % New spheres are inscribed inside the visible free-space polyhedron $\mathbf{P}_f$.
+  % Visible free-space polygon $\mathbf{P}_f$ (-);
+  % Newly sampled spheres (O);
+  % Triangulated keypoints visible at current frame (X); 
+  % Points already in the map (X) added from a previous pose (red). 
+  % Smaller points and higher-opacity spheres have been observed from lower distances.
+  % Dashed crosses correspond to points that will be deleted (red) or not added to the map (black).
   }
   \label{fig:distbased}
 \end{figure}
@@ -537,9 +544,11 @@ We solve this problem by deleting any map point $x$ that falls into $\mathbf{P}_
   |\mathbf{x} - \mathbf{p}_{cam}| < 1.1 \cdot d_{m,x}
 \end{equation}
 where $p_{cam}$ is the position of the camera.
-The points that lie in $\mathbf{P}_f$ and are not deleted are called \textit{protected points} and are used to constrain sphere radii in the following update step.
+The points that lie in $\mathbf{P}_f$ and are not deleted are called \textit{protected points} $\mathbf{X}_p$.
+These points are used to constrain sphere radii in the following update step.
 Additionally, to prioritize closer measurements, points seen from a closer distance can replace points seen at larger distances, if they are measured close enough to them. 
 In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in \autoref{fig:distbased}.
+\todo{rewrite as sort?}
 
 \subsection{Updating Existing Spheres}
 \label{sec:existing_spheres_update}

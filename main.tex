@@ -312,6 +312,7 @@ Moreover, such high map resolution requires large amounts of raycasts which can 
 % In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
 
 In previous work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that using a graph of intersecting free-space spheres, rather than a voxel grid, can solve this scaling issue.
+\todo{TODO - address octree repre vs spheremap, also smallest sphere size}
 A graph-of-spheres representation efficiently describes large spaces with a few nodes, while keeping detailed information in narrow passages.
 % In previous work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that representing free space by a graph of intersecting spheres \todo{solves this problem by} can efficiently describe large-space while keeping detailed information in narrow spaces.
 In additon, it allows orders of magnitude faster path planning \cite{spheremap, spheregraph} than grid-based representations.
@@ -493,7 +494,8 @@ However, this could be easily solved by adding low-cost, short-range distance se
 % We keep a set of virtual points $\mathbf{x}_vir$ in front of the UAV at all times, and if some of the points become are estimated as free based on the above assumption, 
 We periodically check the above described condition for a set of virtual points $\mathbf{x}_{vir}$ at a fixed distance in front of the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration. 
 This is only done for a few points, as checking the condition for all points in the UAV's FOV would be computationally demanding. 
-We take the points that fulfill this condition and add them to the creation of the \textit{depth mesh} $\mathbf{F}_d$.
+% We take the points that fulfill this condition and add them to the creation of the \textit{depth mesh} $\mathbf{F}_d$.
+The points that fulfill this condition are added to the creation of the \textit{depth mesh} $\mathbf{F}_d$.
 % To further mitigate the depth estimation problem near textureless areas,
 % we discard points such points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a better depth estimate from the SLAM points.
 However, we discard points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a better depth estimate from the SLAM points.
@@ -530,44 +532,61 @@ This also helps to correctly estimate depth when there is at least a little amou
 
 \subsection{Updating Obstacle Points}
 \label{sec:distance-based}
-As the next step of the update, we decide which tracked SLAM points to add into the map points $\mathbf{X}$, and which points in the map to delete.
-An important part of our method is that we store the minimum of the distances that any point $\mathbf{x}$ has been observed from, denoted further as $d_{m, x}$.
+As the next step of the update, we decide which tracked SLAM points to add into the map points $\mathbf{X}$, and which points already in the map to delete.
+An important part of the proposed mapping method is that we store the minimum of the distances that any point $\mathbf{x}$ has been observed from, denoted further as $d_{m, x}$.
 % This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
+\todo{
 An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
 % The visible points corresponding to the wall might not be detected as SLAM keypoints while p.
-A situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated, as shown in \autoref{fig:distbased}.
+A situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
+}
 % We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
-Thus, we cannot simply delete every map point that falls into $\mathbf{P}_f$, because then the original points (red in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
+Thus, we cannot simply delete every map point that falls into $\mathbf{P}_f$, because then the original points (small red points in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
 
-We solve this problem by deleting any map point $x$ that falls into $\mathbf{P}_f$ only if
+We solve this problem by deleting any map point $\mathbf{x}$ that falls into $\mathbf{P}_f$ only if
 \begin{equation}
-  |\mathbf{x} - \mathbf{p}_{cam}| < 1.1 \cdot d_{m,x}
+  |\mathbf{x} - \mathbf{p}_{cam}| < \alpha \cdot d_{m,x}
 \end{equation}
-where $p_{cam}$ is the position of the camera.
-The points that lie in $\mathbf{P}_f$ and are not deleted are called \textit{protected points} $\mathbf{X}_p$.
+where $p_{cam}$ is the position of the camera and $\alpha$ is a paremeter, which is usually set to $1.1$ to account for distance measurements uncertainty.
+Thanks to this condition, when a small obstacle seen previously from a short distance is currently not visible when further away, but objects are visible behind it, that obstacle will not be wrongly deleted from the map.
+% where $p_{cam}$ is the position of the camera and $\alpha$ is a paremeter.
+% We usually set $\alpha$ to $1.1$ to account for distance measurements uncertainty.
+% We usually set $\alpha$ to $1.1$ to allow the mapping to modify points for a while when moving away from them.
+% The parameter $\alpha$ could be set to $1$ to allow the mapping to modify points for a while when moving away from them.
+% A higher value of $\alpha$ can be set 
+The points that lie in the free-space polyhedron $\mathbf{P}_f$ and are not deleted are called \textit{protected points} $\mathbf{X}_p$.
 These points are used to constrain sphere radii in the following update step.
-Additionally, to prioritize closer measurements, points seen from a closer distance \todo{can replace} points seen at larger distances, if they are measured \todo{close enough to them}. 
-In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, also visualized in \autoref{fig:distbased}.
-\todo{rewrite as sort?}
+
+Additionally, to prioritize closer measurements, points seen from a closer distance re-lace points seen from larger distances, if they are measured close enough to them. 
+In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, which is also visualized in \autoref{fig:distbased}. We enforce this through a simple algorithm shown in 
+\todo{TODO - rewrite as sort?}
 
 \subsection{Updating Existing Spheres}
 \label{sec:existing_spheres_update}
-Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or input points $\mathbf{X}_{in}$.
-To bound the update time of this step, we specify a maximum \todo{allowed} sphere radius $r_{max}$, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $\mathbf{P}_f$, inflated by $r_{max}$. 
+% Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or the protected points $\mathbf{X}_{p}$.
+% Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or the input points $\mathbf{X}_{in}$.
+Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or the input points $\mathbf{X}_{in}$.
+To bound the update time of this step, we check the largest sphere radius $r_{max}$ in the map, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $\mathbf{P}_f$, inflated by $r_{max}$. 
 Then, for any remaining sphere with a center $\mathbf{c}$ and radius $r_{k}$, the updated radius is computed as
 \begin{equation}
   r_{k+1} = \min \left( \max \left( r_{k}, d(\mathbf{c}, \mathbf{P}_f) \right)
-  , d(\mathbf{c}, \mathbf{X}_{in} \cup \mathbf{X}_p), r_{max} \right),
+  , d(\mathbf{c}, \mathbf{X}_{in} \cup \mathbf{X}_p) \right).
+  % r_{k+1} = \min \left( d(\mathbf{c}, \mathbf{X}_{in} \cup \mathbf{X}_p)
+  % , \max \left( r_{k}, d(\mathbf{c}, \mathbf{P}_f) \right) \right).
   \label{eq:update}
 \end{equation}
-where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) \todo{and} $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
-Finally, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest \todo{allowed} sphere radius specified by the user. 
+% where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) \todo{and} $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
+In this equation, $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside).
+The value of $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
+Essentially, this equation means that the polyhedron $\mathbf{P}_f$ is used to increase the radius of a sphere, whereas the protected $\mathbf{X}_p$ and input points $\mathbf{X}_{in}$ are used to constrain it.
+As the last part of this step, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest \todo{allowed} sphere radius specified by the user.
+% , usually slightly lower than the UAV's minimal allowed distance to obstacles. 
 
 % where TODO.
 \subsection{Sampling New Spheres}
 \label{sec:adding_spheres}
 To introduce new spheres into the map, we sample a fixed number of points inside $\mathbf{P}_f$ at random distances between the camera and the depth mesh $F_o$.
-\todo{This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.}
+% \todo{This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.}
 A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
 If the potential radius is larger than $r_{min}$, the sphere is added to the map.
 
@@ -577,8 +596,9 @@ After all the sphere radii updates have been made, we update the graph of sphere
 % TODO - EXPLAIN???
 Furthermore, to constrain map update time and path planning time, we perform a redundancy check on the updated and added spheres in the same way as in our previous work \cite{spheremap}.
 If any sphere is found to be redundant, it is deleted from the map.
-\todo{this approach is important to cover large...}
-This way, large open areas are covered by only a few spheres and can be planned over quickly, and tight corridors have a higher density of spheres, capturing the information about potential paths and distances to obstacles in more detail.
+% \todo{this approach is important to cover large...}
+This step is important to cover large open areas by only a few spheres to allow rapid planning, and tight corridors by a higher density of spheres, capturing the information about potential paths and distances in more detail.
+% This way, large open areas are covered by only a few spheres and can be planned over quickly, and tight corridors have a higher density of spheres, capturing the information about potential paths and distances to obstacles in more detail.
 
 % \section{Monocular-Inertial Exploration Using the Sphere-Based Map}
 % \section{Safety-Aware Monocular-Inertial 3D Exploration}

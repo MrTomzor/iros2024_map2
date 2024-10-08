@@ -605,33 +605,66 @@ This step is important to cover large open areas by only a few spheres to allow 
 % \section{Safe Monocular-Inertial Exploration using the Sphere-Based Map}
 \section{Perception-Aware Exploration using the Sphere-Based Map}
 In this section, we detail how the proposed mapping method is highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a single camera \todo{and IMU?}.
-In principle, we employ the commonly used receding-horizon next-best-view (RHNBV) \cite{paper_frontier_grandpa} strategy, but with several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
-\todo{write assumptions on perception here? mapping doesnt care}
+In principle, we employ the commonly used next-best-view (NBV) \cite{paper_frontier_grandpa} strategy, which has so far been deemed unsuitable for monocular exploration in existing works \cite{from_monoslam_to_explo, los_maps}.
+% We introduce several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments, detailed in the following sections.
+% In the following sections, we introduce several major differences in methodology that are neccessary for NBV in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
+In the following sections, we introduce several major differences in methodology that are critical for the NBV strategy in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
+% \todo{write assumptions on perception here? mapping doesnt care}
 
 \subsection{Frontier Sampling on Free-Space Polyhedron}
-Since the proposed map representation is fundamentally different from an occupancy grid, we need to compute the frontiers in a different way than with an occupancy grid 
+Firstly, since the proposed map representation is fundamentally different from an occupancy grid, we need to detect the frontiers in a different way than with an occupancy grid.
 We propose to sample points along the visible free-space polyhedron described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at some user-defined distance from all map obstacle points.
 If they do not meet these criteria in any following update, they are deleted. 
 \todo{complexity and vs octomap?}
 
-In 3D outdoor exploration, it is also important to assign different value to different frontiers. 
-We constrain the exploration to only consider frontiers that lie near some obstacle points.
-This way, the UAV does not explore up into the sky, and only explores near texture-rich areas, thus avoiding losing visual odometry tracking.
-\todo{Lastly, we add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint at a close distance.}
+In enclosed spaces, which are usually considered in autonomous exploration literature, all frontiers are usually worth exploring.
+However, in outdoor exploration with areas of open space, it is also important to assign different value to different frontiers, especially for UAVs. 
+We proposed to constrain the exploration to only consider frontiers that lie near some obstacle points.
+This way, the UAV does not explore up into the sky.
+Additionally, this forces the UAV to only explore near texture-rich areas, thus avoiding losing visual odometry tracking.
+% \todo{Lastly, we add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint at a close distance.}
+These frontier points are used to generate exploration viewpoints so that at least some frontier points are visible form each viewpoint.
+
+% EXPLORATION EXPLANATION IMG%%{
+\begin{figure}[!htb]
+  \def\subfigwidth{0.9\linewidth}
+  \centering
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_923.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_930.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_925.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_931.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+  \caption{
+    Illustration of the exploration approach. TODO - desc
+  }
+  \label{fig:exploration_explanation}
+\end{figure}
+% %%}
 
 
 \subsection{Forced Translation when reaching Viewpoints}
 \label{sec:align}
-In traditional exploration approaches with dense distance sensors, it is often sufficient to move the robot to a boundary between free space and unknown space (known as a frontier), and assume that the distance sensors will uncover some additional space behind the frontier and thus expand the map.
-
+In traditional exploration approaches with dense distance sensors, it is sufficient to move the robot to the frontier between free space and unknown space, aim the sensors at the unknown space, and assume that the distance sensors will uncover some additional space behind the frontier and thus expand the map.
 This approach will not, in principle, work well with a robot relying on a monocular camera that estimates depth from motion.
 Such a robot requires \textit{translational} motion to gain correct distance measurements of visual keypoints. 
 % as in monocular structure-from-motion (SfM) TODO-CITE (we do not consider deep learning methods which exploit knowledge about sizes of objects).
 % Excessive rotation without translation cannot lead to reasonable distance estimates.
 % Too much rotation with too little translation of the camera will cause the monocular SLAM or any SfM-based approach to not give reliable depth estimates.
-With rotation only, or motions that have too much rotation compared to translation, reliable depth estimates cannot be obtained \todo{using this method?}.
+With rotation only, or motions that have too much rotation compared to translation, reliable depth estimates cannot be obtained in this manner.
 
-To solve this, when planning a path to a goal viewpoint that could uncover some frontiers, we need to compute the target headings on the path so that the UAV maintains a fixed heading in the viewpoint's direction for at least $d_{c}$ meters on the path before reaching the viewpoint, as visualized in Fig. \todo{TODO-FIG}.
+To solve this, we propose the following perception-aware planning approach: 
+When finding a path to a goal viewpoint that could uncover some frontiers, we need to compute the target headings on the path so that the UAV maintains a fixed heading in the viewpoint's direction for at least $d_{c}$ meters on the path before reaching the viewpoint, as visualized in Fig. \todo{TODO-FIG}.
 % In the experiments detailed in Sec. \autoref{sec:experiments}, we set $d_{c}=TODO$.
 This way, the UAV has enough translational motion before reaching a given viewpoint.
 Therefore, if there are \todo{visible visual keypoints} from that viewpoint, there will most likely be enough parallax to triangulate these points.

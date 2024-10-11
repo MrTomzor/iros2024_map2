@@ -235,8 +235,11 @@ This paper brings the following contributions:
 % To enable autonomous navigation in general environments for low-cost UAV platforms equipped with only monocular-inertial sensors, our paper brings the following contributions:
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
-  \item A novel 3D mapping approach that constructs a sphere-based map directly from sparse pointclouds obtained by monocular-inertial SLAM, without needing any intermediate occupancy map, mapping both open-space and cluttered areas.
-    \item A perception-aware exploration method enabled by the proposed mapping approach that achieves large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
+  % \item A novel 3D mapping approach that constructs a sphere-based map directly from sparse pointclouds obtained by monocular-inertial SLAM, without needing any intermediate occupancy map, mapping both open-space and cluttered areas.
+  \item A novel 3D mapping approach that constructs a sphere-based map for safe map-based navigation using only sparse pointclouds and the trajectory obtained by monocular-inertial SLAM as input, with less conservative free-space estimation than traditional ray-casting methods.
+    % , without needing any intermediate occupancy map.
+    % , mapping both open-space and cluttered areas.
+    \item A perception-aware exploration approach enabled by the proposed mapping method that achieves large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
     \item Open-sourced code for the proposed mapping and exploration methods, along with example simulation scripts for replicating our results.
 \end{enumerate}
@@ -403,7 +406,15 @@ Our proposed perception-aware exploration strategy, tightly coupled with the map
      \end{subfigure}
      \hfill
   \caption{
-    Illustration of the mapping pipeline. TODO - desc + delaunay w fake fspace vis
+    Illustration of the mapping pipeline. 
+    (a) The stable localized points (green) used by the monocular SLAM are the only input distance measurements. 
+    (b) Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
+    % Additionally, , the TODO-fake points are added to the depth estimation.
+    Additionally the active assumed-freespace points (see \autoref{sec:fake}) above the ground, where there is no depth information, are added to construct the
+    (c) resulting visible free-space polyhedron $\mathbf{P}_f$.
+    % (d) Side view of how new spheres are sampled in the polyhedron and added to the others, as well as how new obstacle points are added to the map.
+    (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathbf{X}$.
+    % TODO - desc + delaunay w fake fspace vis
   }
   \label{fig:mapping_pipeline}
 \end{figure*}
@@ -468,6 +479,7 @@ We estimate the currently visible free space as the volume between the camera's 
 This space is enclosed by connecting all points that lie on the edge of $\mathbf{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathbf{P}_f$, illustrated in \autoref{fig:distbased}.
 
 \subsection{Estimating Free Space in Open Areas}
+\label{sec:fake}
 When moving in open areas, such as a grassy field without vertical obstacles, visual SLAM often tracks only a few keypoints on the ground, as illustrated in \autoref{fig:mapping_pipeline}.
 % This would \todo{normally} cause free space to be estimated only below the UAV and not allow flight across the field.
 Using standard free-space estimation methods, this would cause free space to be estimated only below the UAV and not allow flight across the field.

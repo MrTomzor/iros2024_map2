@@ -646,7 +646,12 @@ These frontier points are used to generate exploration viewpoints such that at l
      \end{subfigure}
      \hfill
   \caption{
-    Illustration of the exploration approach. TODO - desc
+    Illustration of the exploration approach. The UAV moves to a selected exploration viewpoint (yellow arrows).
+    % As described in \autoref{sec:align}, 
+    The planned path aligns the UAV with the viewpoint's direction before reaching it so that the monocular SLAM has enough parallax to estimate distances to textured surfaces in that direction.
+    The frontier points (purple) near textured surfaces are replaced with newly added obstacle points (red).
+    % As explained in \autoref{sec:blocking}, the UAV also blocks viewpoint sampling near visited viewpoints (large black arrows).
+    The UAV also blocks viewpoint sampling near visited viewpoints (large black arrows) to avoid returning to viewpoints facing textureless areas.
   }
   \label{fig:exploration_explanation}
 \end{figure}
@@ -670,6 +675,7 @@ This way, the UAV has enough translational motion before reaching a given viewpo
 Therefore, if there are textured surfaces visible from that viewpoint, the UAV will most likely have enough parallax to estimate their distances.
 
 \subsection{Explored Viewpoint Blocking}
+\label{sec:blocking}
 % This is an important part of the method also due to the second major distinction -- we block the sampling of new exploration viewpoints near explored viewpoints.
 Another necessary distinction for NBV exploration with a monocular camera is that the UAV blocks sampling of new exploration viewpoints near visited viewpoints.
 This is due to the fact that real-world environments often contain textureless areas (mainly in buildings or other man-made structures).

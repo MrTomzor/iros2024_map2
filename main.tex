@@ -210,17 +210,53 @@ Some works have demonstrated limited outdoor exploration, but with highly specif
 
 % Building a map for exploration using only a monocular camera for depth sensing is challenging for many reasons \todo{vagni}, and has so far been demonstrated only in small-scale indoor environments.
 
+
+% INTRO IMG%%{
+% \begin{figure}[!t]
+%   % \includegraphics[width=8.5cm]{fig/smap2.png}
+%   % \includegraphics[width=8.5cm]{fig/explor_forest2.png}
+%   % \includegraphics[width=8.5cm]{fig/intro_poly.png}
+%     % \adjincludegraphics[width=8.5cm, trim={{0.4\width} {0.05\height} {0.05\width} {0.1\height}}, clip=true]{fig/intro_poly.png}
+%     \adjincludegraphics[width=8.5cm, trim={{0.0\width} {0.00\height} {0.00\width} {0.0\height}}, clip=true]{fig/mono_sar_cover.png}
+%   \centering
+%   % \caption{Visualization of the proposed map representation and how it is updated. The green polyhedron is an estimate of currently visible free space and is formed by the visible triangulated keypoints and the camera's position (axes). The mapped spheres (green), obstacle points (red) and frontier points (purple) are updated by the polyhedron and visible keypoints, as described in \autoref{sec:map_building}}
+%   \caption{Visualization of the proposed map representation as described in \autoref{sec:map_building}}
+%   \label{fig:smap_intro}
+% \end{figure}
+
 \begin{figure}[!t]
-  % \includegraphics[width=8.5cm]{fig/smap2.png}
-  % \includegraphics[width=8.5cm]{fig/explor_forest2.png}
-  % \includegraphics[width=8.5cm]{fig/intro_poly.png}
-    % \adjincludegraphics[width=8.5cm, trim={{0.4\width} {0.05\height} {0.05\width} {0.1\height}}, clip=true]{fig/intro_poly.png}
-    \adjincludegraphics[width=8.5cm, trim={{0.0\width} {0.00\height} {0.00\width} {0.0\height}}, clip=true]{fig/mono_sar_cover.png}
   \centering
-  % \caption{Visualization of the proposed map representation and how it is updated. The green polyhedron is an estimate of currently visible free space and is formed by the visible triangulated keypoints and the camera's position (axes). The mapped spheres (green), obstacle points (red) and frontier points (purple) are updated by the polyhedron and visible keypoints, as described in \autoref{sec:map_building}}
-  \caption{Visualization of the proposed map representation as described in \autoref{sec:map_building}}
+     \begin{subfigure}[b]{0.98\linewidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.1\height} {0.0\width} {0.1\height}}, clip=true]{fig/sar_mono_dji_2.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\linewidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_912_cam.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\linewidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/mono_sar_cover.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+  \caption{
+    % Illustration of the mapping pipeline. 
+    Illustration of the proposed method evaluated in a real-world outdoor environment with large open areas. 
+    % The UAV (top) only uses a monocular camera and IMU as its sensors.
+    The method uses information from sparse monocular-inertial SLAM (left) running onboard the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right) for safety-aware exploration.
+  }
+  % \label{fig:mapping_pipeline}
   \label{fig:smap_intro}
 \end{figure}
+% %%}
+
 
 In this paper, we present a novel approach to 3D mapping of unstructured large-scale environments. 
 Our method utilizes a sparse pointcloud of 3D points produced by monocular-inertial SLAM, which is already a necessary part of many vision-based UAV systems.
@@ -381,18 +417,16 @@ Our proposed perception-aware exploration strategy, tightly coupled with the map
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_912_cam.png}};
-      % \draw [latex-latex](3.2,0.9) -- (3.2,6.8);
-      % \node[align=center] at (3.6, 4) {\scriptsize \color{black}\SI{70}{\meter}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_968_poly1_A.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_970_poly2_A.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_912_cam.png}};
-      % \draw [latex-latex](3.2,0.9) -- (3.2,6.8);
-      % \node[align=center] at (3.6, 4) {\scriptsize \color{black}\SI{70}{\meter}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_969_poly1_B.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -412,10 +446,10 @@ Our proposed perception-aware exploration strategy, tightly coupled with the map
      \hfill
   \caption{
     Illustration of the mapping pipeline. 
-    (a) The stable localized points (green) used by the monocular SLAM are the only input distance measurements. 
-    (b) Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
+    (a) The stable 3D points (red) used by the monocular SLAM are the only input distance measurements. 
+    Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
     % Additionally, , the TODO-fake points are added to the depth estimation.
-    Additionally the active assumed-freespace points (see \autoref{sec:fake}) above the ground, where there is no depth information, are added to construct the
+    (b) The active assumed-freespace points (blue, see \autoref{sec:fake}) above the ground, where the SLAM cannot accurately localize any points, are added to construct the
     (c) resulting visible free-space polyhedron $\mathbf{P}_f$.
     % (d) Side view of how new spheres are sampled in the polyhedron and added to the others, as well as how new obstacle points are added to the map.
     (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathbf{X}$.
@@ -515,7 +549,7 @@ This is only done for a few points, as checking the condition for all points in 
 The points that fulfill this condition are added to the creation of the \textit{depth mesh} $\mathbf{F}_d$.
 % To further mitigate the depth estimation problem near textureless areas,
 % we discard points such points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a better depth estimate from the SLAM points.
-However, we discard points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a better depth estimate from the SLAM points.
+However, we discard points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a \todo{better} depth estimate from the SLAM points.
 This also helps to correctly estimate depth when there is at least a little amount of visual texture near to textureless areas.
 % This way, the problem of large featureless objects is mitigated in the majority of cases, when textured objects are visible nearby. 
 % This way, we can safely estimate additional freespace, in the case of sufficiently textured wide outdoor areas.
@@ -875,68 +909,6 @@ Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explo
   \label{fig:exper_sim}
 \end{figure}
 
-\begin{figure}[htb]
-  \def\subfigwidth{0.49\linewidth}
-  \centering
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t126.png}};
-      % \draw [latex-latex](3.2,0.9) -- (3.2,6.8);
-      % \node[align=center] at (3.6, 4) {\scriptsize \color{black}\SI{70}{\meter}};
-        \begin{scope}[x={(a.south east)},y={(a.north west)}]
-          \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=126\text{s}$};
-        \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     % \begin{subfigure}[b]{\subfigwidth}
-     %  \begin{tikzpicture}
-     %    \centering
-     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t206.png}};
-     %    \begin{scope}[x={(a.south east)},y={(a.north west)}]
-     %      \node[align=center] at (0.9, 0.075) {\footnotesize \color{black}$t=206\text{s}$};
-     %    \end{scope}
-     %  \end{tikzpicture}
-     % \end{subfigure}
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t370.png}};
-        \begin{scope}[x={(a.south east)},y={(a.north west)}]
-          \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=370\text{s}$};
-        \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t516.png}};
-      \draw [latex-latex](4.05,0.4) -- (4.05,7.3);
-      \node[align=center] at (3.6, 3.4) {\scriptsize \color{black}\SI{80}{\meter}};
-        \begin{scope}[x={(a.south east)},y={(a.north west)}]
-          \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=516\text{s}$};
-        \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[angle=90, origin=c, width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/house.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[angle=180, origin=c, width=1.0\linewidth, trim={{0.15\width} {0.3\height} {0.2\width} {0.0\height}}, clip=true]{fig/house.png}};
-        % \begin{scope}[x={(a.south east)},y={(a.north west)}]
-        %   \node[align=center] at (0.9, 0.075) {\footnotesize \color{black}$t=516\text{s}$};
-        % \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
-  \caption{
-    Visualization of the real-world autonomous exploration experiment described in \autoref{sec:real_exper}, along with a satellite image of the explored abandoned farm area.
-  }
-  \label{fig:exper_real}
-\end{figure}
-
 
 \subsection{Runtime analysis}
 \label{sec:runtimes}
@@ -951,7 +923,7 @@ Thanks to only updating the map near the UAV, the update time remains relatively
   % \includegraphics[width=8.5cm]{}
   \adjincludegraphics[width=9cm, trim={{0.05\width} {0.00\height} {0.05\width} {0.00\height}}, clip=true]{fig/smap_runtimes_tmp.pdf}
   \centering
-  \caption{Runtime analysis of parts of the map update detailed in \autoref{sec:map_building}. TODO-MEANINGS OF PARTS}
+  \caption{Runtime analysis of parts of the map update detailed in \autoref{sec:map_building}. TODO-MEANINGS OF PARTS + REDO WITH FIXED DATA}
   \label{fig:runtimes}
 \end{figure}
 
@@ -965,7 +937,8 @@ Compared to the existing approaches to 3D monocular mapping and exploration, whi
 The proposed method opens the way for micro-scale UAVs operating fully autonomously in unknown indoor/outdoor large-scale environments with obstacles, but there are still many challenges to be solved.
 Primarily, monocular depth estimation methods are not yet completely reliable, which can lead to crashes due to non-detected obstacles, even when using the perception-aware planning proposed in this paper.
 As future work, we intend to complement the imperfections of the depth estimation by integrating low-cost, short-range distance sensors (e.g. ultrasound) into the mapping pipeline, thus detecting even thin and textureless objects.
-Additionally, we plan to use the proposed mapping approach for building submaps instead of a single large map and performing large-scale map optimization to achieve low-cost autonomy at the scale of kilometers, which has only been demonstrated with LiDAR-based systems.
+% Furthermore, the proposed map representation could be extended with other geometrical primitives for clustering large areas of free or occupied space, thus increasing performance and allowing 
+Additionally, we plan to use the proposed mapping approach for building submaps instead of a single large map and performing large-scale map optimization combined with vision-based place recognition to achieve low-cost autonomy at the scale of kilometers, which has only been demonstrated with LiDAR-based systems so far.
 % and then perform large-scale map optimization using place recognition, 
 
 % As we analyzed in this paper, 

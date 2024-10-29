@@ -777,7 +777,7 @@ Lastly,
 the UAV is controlled to always fly in the direction of its camera when not aligning itself with a viewpoint as described in \autoref{sec:align}.
 % Free-space might always be wrongly initialized, but when flying in the direction of the camera, and with quick periodic replanning, the risk of collision can be minimized.
 This approach is crucial for ensuring collision-free flight in the case of incorrectly initialized free space.
-As discussed in \todo{ref}, some obstacles (e.g. thin wires, twigs) might not be visible in the cameras from a large distance to be detected by the visual SLAM (especially when using fisheye cameras), and can be wrongly estimated as free space.
+As discussed in \autoref{sec:fake}, some obstacles (e.g. thin wires, twigs) might not be visible in the cameras from a large distance to be detected by the visual SLAM (especially when using fisheye cameras), and can be wrongly estimated as free space.
 Using the forward-facing flight, the UAV has a higher chance to see these obstacles that were previously not detected, and quickly replan.
 
 To further increase safety and allow agile maneuvers, the UAV also plans paths with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is highly suitable, as described in \cite{spheremap, bubbleplanner, spheregraph}.
@@ -989,15 +989,15 @@ We plan to overcome this in future work by separating the map into submaps, but 
 
 
 \section{CONCLUSION}
-In this paper, we proposed a novel approach to building a 3D map for navigation using a graph of spheres instead of a traditionally used voxel grid as the base representation, and presented how to use such a map for safe exploration. 
+In this paper, we proposed a novel approach to building a 3D map for navigation using a graph of spheres instead of a traditionally used voxel grid as the base representation, and presented how to use such a map for safe, large-scale exploration. 
 Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
-Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration in large multi-scale environments, with all of the computations running on-board the UAV.
+Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces, with all of the computations running on-board the UAV.
 
 The proposed method opens the way for micro-scale UAVs operating fully autonomously in unknown indoor/outdoor large-scale environments with obstacles, but there are still many challenges to be solved.
 Primarily, monocular depth estimation methods are not yet completely reliable, which can lead to crashes due to non-detected obstacles, even when using the perception-aware planning proposed in this paper.
 As future work, we intend to complement the imperfections of the depth estimation by integrating low-cost, short-range distance sensors (e.g. ultrasound) into the mapping pipeline, thus detecting even thin and textureless objects.
 % Furthermore, the proposed map representation could be extended with other geometrical primitives for clustering large areas of free or occupied space, thus increasing performance and allowing 
-Additionally, we plan to use the proposed mapping approach for building submaps instead of a single large map and performing large-scale map optimization combined with vision-based place recognition to achieve low-cost autonomy at the scale of kilometers, which has only been demonstrated with LiDAR-based systems so far.
+Additionally, we plan to use the proposed mapping approach for building submaps instead of a single large map and performing large-scale map optimization combined with vision-based place recognition to achieve low-cost autonomy at the scale of kilometers, which has only been demonstrated with LiDAR-based systems thus far.
 % and then perform large-scale map optimization using place recognition, 
 
 % As we analyzed in this paper, 

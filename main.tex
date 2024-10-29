@@ -513,8 +513,8 @@ There, the authors focus on constructing a precise mesh from visual keypoint mea
 In this paper, we care primarily about mapping the free space for navigation purposes, and thus we do not perform the mesh optimization or split the 2D interpolations as in \cite{flame}.
 
 We project the currently tracked visual SLAM points into the image plane and compute their Delaunay triangulation. 
-By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $\mathbf{F}_d$ that we call a \textit{depth mesh}, which is used only for the current frame.
-We estimate the currently visible free space as the volume between the camera's focal point $\mathbf{p}_{cam}$ and all points on $\mathbf{F}_d$.
+By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $\mathcal{F}_d$ that we call a \textit{depth mesh}, which is used only for the current frame.
+We estimate the currently visible free space as the volume between the camera's position $\mathbf{p}_{cam}$ and all points on $\mathcal{F}_d$.
 This space is enclosed by connecting all points that lie on the edge of $\mathbf{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathbf{P}_f$, illustrated in \autoref{fig:distbased}.
 
 \subsection{Estimating Free Space in Open Areas}
@@ -560,15 +560,18 @@ This also helps to correctly estimate depth when there is at least a little amou
 
 \begin{figure}[!h]
   % \includegraphics[width=8.5cm]{fig/smap2.png}
-  \includegraphics[width=8.5cm]{fig/distbased3.pdf}
+  \includegraphics[width=8.5cm]{fig/distbased9.pdf}
   \centering
   \caption{Top-down illustration of sphere sampling and map point management: 
-  The visible free-space polyhedron $\mathbf{P}_f$ is created using the currently tracked SLAM points (black crosses) and the camera's position $\mathbf{p}_{cam}^{k}$ at update step $k$.
-  Smaller points and higher-opacity spheres have been observed from lower distances.
+  The visible free-space polyhedron $\mathcal{P}_f^{t_2}$ is created using the currently tracked SLAM points (black crosses) and the camera's position $\mathbf{p}_{cam}^{t_2}$ at time $t_2$.
+  % Smaller points and higher-opacity spheres have been observed from lower distances.
+  The size of a point $\mathbf{x}$ negatively corresponds to the distance $d_{\mathbf{x}}$ that it was measured from.
   % Dashed crosses correspond to points that will be deleted (red) or not added to the map (black), as there are better localized (smaller) points near them.
-  The (dashed red) point seen from a long distance at a previous step $k-n$ is now not visible, and will be deleted as noise.
-  The (dashed black) two points seen at a large distance now are not added to the map, as there are better localized (red) points near them in the map.
-  New spheres are inscribed inside $\mathbf{P}_f$, but their radii are also bound by the protected points $\mathbf{X}_p$ (small red crosses), which were added to the map at $k-n$.
+  The (dashed red) point seen far away from the camera at a previous time $t_1$ now lies in $\mathcal{P}_f^{t_2}$ close to the camera and will thus be deleted as noise.
+  % The (dashed red) point will be deleted, as it lies in the free-space polyhedron at $t_2$, and it .
+  The (dashed black) two points observed far from the camera at $t_2$ are not added to the map, as there are more precisely localized (red) points close to them.
+  % New spheres are inscribed inside $\mathcal{P}_f^{t_2}$, but their radii are also bound by the protected points (non-dashed red) $\mathcal{X}_p$, which were added to the map at $t_1$.
+  New spheres are inscribed inside $\mathcal{P}_f^{t_2}$, but their radii are also bound by the protected points (non-dashed red) $\mathcal{X}_p$, which were added to the map at $t_1$.
   % New spheres are inscribed inside the visible free-space polyhedron $\mathbf{P}_f$.
   % Visible free-space polygon $\mathbf{P}_f$ (-);
   % Newly sampled spheres (O);
@@ -785,6 +788,7 @@ This is so that the assumption that small objects will be detected at a close ra
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 \label{sec:real_exper}
+\todo{openvins used as odom so they dont think gps}
 One of the realized real-world experiments is illustrated in \autoref{fig:exper_real}.
 % In this experiment, the UAV explored up to $\SI{60}{\meter}$ forward around the side of an abandoned farmhouse fully autonomously in an $8\text{min}$ mission.
 In this experiment, we bounded the area for generating exploration goals to a $\SI{70x10x8}{\meter}$ bounding box around the side of an abandoned farmhouse, and the UAV fully autonomously explored nearly all the available space in this region.
@@ -891,17 +895,30 @@ Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explo
 \begin{figure}[htb]
   \def\subfigwidth{0.89\linewidth}
   \centering
+     % \begin{subfigure}[b]{\subfigwidth}
+     %  \begin{tikzpicture}
+     %    \centering
+     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_gazebo.png}};
+     %  \end{tikzpicture}
+     % \end{subfigure}
+     % \hfill
+     % \begin{subfigure}[b]{\subfigwidth}
+     %  \begin{tikzpicture}
+     %    \centering
+     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_end.png}};
+     %  \end{tikzpicture}
+     % \end{subfigure}
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_gazebo.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood3.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_end.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood_end.png}};
       \end{tikzpicture}
      \end{subfigure}
   \centering

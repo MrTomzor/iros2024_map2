@@ -321,11 +321,13 @@ A different line of research focuses on taking the sparse 3D points from monocul
 Most of this research has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} or exploration with strong assumptions on the environment structure \cite{corridors_mono_nav_2009}.
 % A different line of research \cite{from_monoslam_to_explo, los_maps} focuses on taking the points from monocular SLAM, treating them as sparse distance measurements, and building the grid-based maps in the same way as with dense pointclouds.
 
-For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
+% For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
+% For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
+For full monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed building grid-based maps by casting rays of free space towards the monocular SLAM points. 
 % A few these works \cite{from_monoslam_to_explo, los_maps} have demonstrated autonomous exploration in unstructured, indoor environments, 
 % As documented in \cite{from_monoslam_to_explo} and as shown in [\todo{TODO-FIG}], this approach causes gaps to appear in the free space of the map, whenever the environment is not texture-rich.
-As documented in \cite{from_monoslam_to_explo} and as illustrated in [\todo{TODO-FIG}], this approach causes gaps to appear in the free space of the map when the environment is not texture-rich.
-The authors propose an exploration method specifically to cover these gaps.
+As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the environment is not texture-rich.
+The authors of \cite{from_monoslam_to_explo} propose an exploration method specifically to cover these gaps.
 However, this only reduces the gaps, as this mapping method can never estimate free space near texture-sparse areas, and the authors show this exploration approach to only work at the scale of a single room.
 % \todo{This technique accurately covers free space when dense input pointclouds are available, such as from a LiDAR or depth camera. 
 % If the voxel size is too small and/or the data is sparse, gaps will appear in the free space.
@@ -342,18 +344,18 @@ However, this only reduces the gaps, as this mapping method can never estimate f
 % The authors of \cite{los_maps} work around the gap issue by setting the voxel size to be relatively larger compared to the UAV size, which causes more voxels to be passed by the sparse rays towards measured points.
 % They present exploration on the scale of several indoor rooms and in simulation only. 
 
-The authors of \cite{los_maps} cast rays towards sparse SLAM points as well, and present exploration on the scale of several indoor rooms and in simulation only.
+The authors of \cite{los_maps} also cast rays towards sparse SLAM points, and present exploration on the scale of several indoor rooms and in simulation only.
 They work around the gap issue by setting the map voxel size to be relatively large compared to the UAV size.
-A larger voxel size causes a higher percentage of voxels to be passed by the sparse rays towards measured points, but leads to the following problem:
+A larger voxel size causes a higher percentage of voxels to be passed by the sparse rays towards measured points, reducing the gaps, but leads to the following problem:
 % This approach can however only work in constant-scale environments.
 % This approach can however only work in constant-scale environments without narrow corridors.
 % Such large voxel size, however, can cause narrow pathways to appear untraversible if the map is not perfectly aligned.
 
-Grid-based maps in general suffer from the problem of choosing the voxel resolution in multi-scale environments.
+Grid-based maps built by raycasting suffer from the problem of choosing the smallest voxel resolution in multi-scale environments.
 If the voxels are too big, then narrow passages can wrongly appear as untraversible or even completely closed, severely limiting the robot's navigation. 
 If the minimum voxel size is too small compared to the density of data, gaps can appear in free space due to rays passing only a thin strip of voxels
-Moreover, such high map resolution requires large amounts of raycasts which can go beyond the computational power available on the onboard computers.
-\todo{rict ze sfery maj min radius, ale nevadi to scalovani, neni to to samy co grid resolution}
+Moreover, high map resolution requires large amounts of raycasts which can go beyond the computational power available on the onboard computers.
+% \todo{rict ze sfery maj min radius, ale nevadi to scalovani, neni to to samy co grid resolution}
 
 % We argue that using a smaller voxel size would not solve this issue, since that would leave many gaps in the free space.
 % and in [ROOM-DENSEDEPTH], the authors essentially perform dense pixel-based estimation with known poses from sparse SLAM, which works in well-illuminated rooms but may have problems in larger-scale or texture-poor environments.
@@ -364,8 +366,8 @@ Moreover, such high map resolution requires large amounts of raycasts which can 
 % In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
 
 In previous work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that using a graph of intersecting free-space spheres, rather than a voxel grid, can solve this scaling issue.
-\todo{TODO - address octree repre vs spheremap, also smallest sphere size}
-A graph-of-spheres representation efficiently describes large spaces with a few nodes, while keeping detailed information in narrow passages.
+% \todo{TODO - address octree repre vs spheremap, also smallest sphere size}
+A graph-of-spheres representation efficiently describes large spaces with a few large spheres, while describing narrow passages in more detail by densely-packed smaller spheres.
 % In previous work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that representing free space by a graph of intersecting spheres \todo{solves this problem by} can efficiently describe large-space while keeping detailed information in narrow spaces.
 In additon, it allows orders of magnitude faster path planning \cite{spheremap, spheregraph} than grid-based representations.
 % In \cite{spheremap}, we also demonstrated that this representation allows path planning that has explicit information about distance to obstacles, in addition to allowing orders of magnitude faster path planning than on an occupancy grid.
@@ -376,12 +378,12 @@ In this paper, we represent free space using spheres as well, but with two major
     % \item now \textit{we do not need to build the occupancy grid as an intermediate step}, which frees up significant computational resources, and \textit{we construct the map using sparse point-clouds from monocular SLAM}, which are problematic to use for occupancy grids.
   % \item In this paper, we build the graph of spheres \textit{directly} out of the sparse 3D pointclouds and pose estimates obtained from monocular SLAM, without needing to build an intermediate occupancy grid before computing the sphere radii as in \cite{spheremap}, which frees up significant computational resources.
   \item In \cite{spheremap, spheregraph, bubbleplanner}, the method required building a local occupancy grid with a LiDAR for updating the spheres. 
-    In this paper, \todo{we build} the graph of spheres \textit{directly} out of 3D measurement points without any intermediate occupancy grid, and only require a monocular camera running visual SLAM instead of a LiDAR.
+    In this paper, we build the graph of spheres \textit{directly} out of input measurement points without building any intermediate occupancy grid, and only require a monocular camera running visual SLAM instead of a LiDAR.
     
 % In addition, there is no current documented way to build an occupancy grid using sparse point clouds, although this could also be interesting to research.
 % TODO-CHECK
-  \item \todo{Additionally, the representation proposed in this paper stores visual keypoints as obstacle points and remembers their measurement distance. 
-    These points are important for correctly updating free space when previously seen obstacles are momentarily not detected by the visual SLAM (see \ref{sec:distance-based}).}
+  \item Additionally, the representation proposed in this paper stores previously seen SLAM points as obstacle points and remembers their measurement distance. 
+    These points are important for correctly updating free space when previously seen obstacles are momentarily not detected by the visual SLAM (see \ref{sec:distance-based}).
         % to overcome the challenge of incorrect measurements at larger distances.
 \end{itemize}
 
@@ -408,13 +410,13 @@ To build a graph-of-spheres representation directly out of sensory data, one mus
 % It interpolates the depth between the sparse SLAM points and samples free-space spheres instead of casting rays of free space.
 We propose to interpolate the depth between the sparse SLAM points and sample free-space spheres instead of casting rays of free space.
 Additionally, we present a method for sampling free space in wide open areas where objects are too far to be accurately triangulated. 
-In special cases, this can cause the free space to be overestimated, but it allows the UAV to fly where the sparse raycasting approach \cite{from_monoslam_to_explo, los_maps} would never estimate enough free space to even begin navigation. 
+In special cases, this can cause the free space to be overestimated, but it allows the UAV to fly where the sparse raycasting approach \cite{from_monoslam_to_explo, los_maps} would never estimate enough free space to even begin navigation -- specifically in open outdoor areas where there are no reliable visual features in the sky, and thus raycasting towards SLAM points would estimate free-space only near the ground. 
+% Our proposed perception-aware exploration strategy, tightly coupled with the mapping method, handles the free-space inaccuracies and achieves safe and complete exploration.
 % This sampling approach allows the UAV to fly where the sparse raycasting approach would never estimate enough free space to even begin navigation. 
 % Additionally, we show that when this is coupled coupled with a perception-aware path planning and exploration, the UAV can navigate safely even when occasionally overestimating free space.
 % We show that when coupled with perception-aware planning and an exploration approach suited for the novel map representation, the UAV can safely and completely explore unknown environments even when occasionally overestimating free space.
 % This mapping approach is tightly coupled with perception-aware planning and an exploration approach suited for the novel map representation, which handles the occational overestimation of free space.
 % This mapping approach is tightly coupled with perception-aware planning and an exploration approach suited for the novel map representation, which handles the occational overestimation of free space.
-Our proposed perception-aware exploration strategy, tightly coupled with the mapping method, handles the free-space inaccuracies and achieves safe and complete exploration.
 % Thus, the proposed method allows safe and complete explore unknown, multi-scale, indoor/outdoor environments, even without dense sensors or GPU-based depth estimation.
 % In special cases concerning textureless objects, this can cause the UAV to 
 % Compared to all the mentioned approaches to 3D monocular mapping and exploration, we demonstrate that our approach achieves exploration and navigation in 3D using only a monocular camera and an IMU in outdoor, large-scale environments, with all of the computations running on-board the UAV, without requiring a GPU.

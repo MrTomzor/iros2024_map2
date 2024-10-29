@@ -782,11 +782,10 @@ the measurement distance of free-space spheres could be used for adaptively decr
 \label{sec:experiments}
 In this section, we present the performed experiments and show the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
 Our implementation of the proposed mapping and exploration methods is single-threaded and written in python.
-As shown in Sec \ref{sec:runtimes}, even with this unoptimized implementation, the mapping keeps below $1s$ per map update on a standard CPU, making it suitable for real-world deployment.
+As shown in Sec \ref{sec:runtimes}, even with this unoptimized implementation, the mapping keeps below $\SI{1.5}{\second}$ per map update on a standard CPU, making it suitable for real-world deployment.
 
 The UAV used in the experiments was equipped with a monocular global-shutter grayscale fisheye Bluefox camera, and \todo{TODO} IMU.
-The MRS UAV system \cite{mrs_uav_robust_system} was used for trajectory generation and control.
-\todo{baca jint paper}
+The MRS UAV system \cite{mrs_uav_system} was used for trajectory generation and control.
 % Damping in the form of 3D-printed flexible elements 
 In real-world experiments, the camera and IMU are separated from the rest of the UAV by 3D-printed damping elements, which significantly reduces the IMU noise caused by propellers and improves the SLAM performance.
 For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins} in the inverse-depth measurement mode, without loop closures.
@@ -798,7 +797,6 @@ This is so that the assumption that small objects will be detected at a close ra
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 \label{sec:real_exper}
-\todo{openvins used as odom so they dont think gps}
 One of the realized real-world experiments is illustrated in \autoref{fig:exper_real}.
 % In this experiment, the UAV explored up to $\SI{60}{\meter}$ forward around the side of an abandoned farmhouse fully autonomously in an $8\text{min}$ mission.
 In this experiment, we bounded the area for generating exploration goals to a $\SI{70x10x8}{\meter}$ bounding box around the side of an abandoned farmhouse, and the UAV fully autonomously explored nearly all the available space in this region.
@@ -809,13 +807,13 @@ This was made possible by our approach to safe estimation of free space in the a
 
 We have tested the proposed approach extensively in a variety of other real-world environments, including a forest path, a tree in a wide open field, and around a large house.
 Videos from all real-world experiments are available at TODO-YOUTUBE-LINK. 
-\todo{zkratit, neprisli jsme nato u testovani ale vime o tom a jak to resit (future work - lajny / shortrange sensory a pouzivat tohle na longrange)}
-\todo{Some of these experiments required the safety pilot to take control due to an important limitation of the method that we encountered during testing --- 
-since the visual SLAM tracks and triangulates visual key\textit{points}, visual \textit{lines} (caused by e.g. thin tree branches or smooth manmade poles) are not sensed in our mapping pipeline.
-This caused the UAV to nearly crash into tree crowns multiple times.
-This limitation could be resolved by integrating short-range depth sensors as well, even ultrasound sensors could potentially be fused into the map.
-Additionally, the visual SLAM could be modified to estimate 3D poses of lines as well, as for example in TODO-CITE, but we leave this for future work.
-}
+% \todo{zkratit, neprisli jsme nato u testovani ale vime o tom a jak to resit (future work - lajny / shortrange sensory a pouzivat tohle na longrange)}
+% \todo{Some of these experiments required the safety pilot to take control due to an important limitation of the method that we encountered during testing --- 
+% since the visual SLAM tracks and triangulates visual key\textit{points}, visual \textit{lines} (caused by e.g. thin tree branches or smooth manmade poles) are not sensed in our mapping pipeline.
+% This caused the UAV to nearly crash into tree crowns multiple times.
+% This limitation could be resolved by integrating short-range depth sensors as well, even ultrasound sensors could potentially be fused into the map.
+% Additionally, the visual SLAM could be modified to estimate 3D poses of lines as well, as for example in TODO-CITE, but we leave this for future work.
+% }
 
 % \begin{figure}[!htb]
 %   % \includegraphics[width=8.5cm]{fig/exper1.png}
@@ -893,14 +891,22 @@ Additionally, the visual SLAM could be modified to estimate 3D poses of lines as
 \subsection{Large-Scale Exploration in Simulation}
 \label{sec:sim_exper}
 % In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
-In this experiment, we showcase the capabilities of our approach in a simulated $\SI{120x120x20}{\meter}$ urban area.
-The experiment was conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
-\autoref{fig:exper_sim} shows the resulting map of an example exploration mission.
-After running the exploration mission 20 times, the UAV managed to explore the entire environment in 18/20 runs.
-In the remaining 2 runs, the UAV crashed either into a large featureless metal pole or the roof of a gazebo where the texture only consists of lines.
-The crashes were caused by the same limitation as discussed in \autoref{sec:real_exper}.
-Aside from this limitation, the mapping and exploration can be said to work robustly in static environments.
-Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explored up on the roofs of the buildings when it was able to use the large towers to estimate depth and create enough free space for safely moving up to the roof.
+In these experiments, we showcase the capabilities of our approach in a simulated $\SI{130x130x40}{\meter}$ urban area with multiple buildings, collapsed trees, cars and other obstacles.
+The experiments were conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
+\autoref{fig:exper_sim} shows the resulting map of a single example exploration mission.
+Additional experiment runs are available in the multimedia materials.
+The UAV managed to fully autonomously and with no prior information (except for the exploration bounding box so that the UAV does not explore far onto the open field) explore the vast majority of the environment.
+
+The UAV managed collision-free flight even near complex obstacles such as trees, cranes and radio towers.
+As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that takes line-based features into account, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
+Also, the explored area could be increased by implementing a more sophisticated exploration strategy, but even the simplistic greedy approach used in this paper proves the usefulness of our mapping approach.
+% In such more topologically complex environment, our greedy exploration strateg
+% Our exploration strategy is greedy, 
+% After running the exploration mission 20 times, the UAV managed to explore the entire environment in 18/20 runs.
+% In the remaining 2 runs, the UAV crashed either into a large featureless metal pole or the roof of a gazebo where the texture only consists of lines.
+% The crashes were caused by the same limitation as discussed in \autoref{sec:real_exper}.
+% Aside from this limitation, the mapping and exploration can be said to work robustly in static environments.
+% Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explored up on the roofs of the buildings when it was able to use the large towers to estimate depth and create enough free space for safely moving up to the roof.
 
 \begin{figure}[htb]
   \def\subfigwidth{0.89\linewidth}
@@ -948,15 +954,23 @@ Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explo
 % Here we analyze the runtimes of this method, and TODO.
 To provide more insight into the real-time capability of the proposed mapping method, we measured the runtimes of individual parts of the map update iterations during one of the simulated exploration missions described in \autoref{sec:sim_exper} and visualized in \autoref{fig:exper_sim}. 
 The resulting graph is shown in \autoref{fig:runtimes}.
-In that mission, the UAV explored the entire available environment.
-Thanks to only updating the map near the UAV, the update time remains relatively bounded, even when the visible free-space polyhedron is large.
+% In that mission, the UAV explored the entire available environment.
+% Thanks to only updating the map near the UAV, the update time remains relatively bounded, even when the visible free-space polyhedron is large.
+% Thanks to only updating the map near the UAV, the update time remains relatively bounded.
+Most of the mapping operations only take into account spheres and points in a bounding box around the visible free-space polyhedron (as more distant parts of the map cannot be affected by the polyhedron).
+Thanks to the sparsification, the update complexity does not skyrocket, since the sphere population is bounded.
+However, the overall runtime does slowly go up, most likely due to the polyhedron being large compared to the map size (the UAV travels at high speeds and triangulates distant points).
+% However, in this experiment, the visible polyhedron is often quite large and encompasses most of the map, which.
+We plan to overcome this in future work by separating the map into submaps, but the experiments demonstrate that a single map can be built at a reasonable rate for navigation even in a cluttered 130x130m area.
+% The overall runtime grows with the map size as
 
 
 \begin{figure}[!htb]
   % \includegraphics[width=8.5cm]{}
   \adjincludegraphics[width=9cm, trim={{0.05\width} {0.00\height} {0.05\width} {0.00\height}}, clip=true]{fig/runtimes_flood_almost_full.pdf}
   \centering
-  \caption{Runtime analysis of parts of the map update detailed in \autoref{sec:map_building}. TODO-MEANINGS OF PARTS + REDO WITH FIXED DATA}
+  \caption{Runtime analysis of individual steps of the map update explained in \autoref{sec:map_building}, recorded from the simulation experiment shown in \autoref{fig:exper_sim}.}
+  % \caption{Runtime analysis of individual steps of the map update iterations, detailed in \autoref{sec:map_building}, recorded in the simulation experiment shown in \autoref{fig:exper_sim}.
   \label{fig:runtimes}
 \end{figure}
 

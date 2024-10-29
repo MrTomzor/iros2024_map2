@@ -494,7 +494,7 @@ In special cases, this can cause the free space to be overestimated, but it allo
 % \label{sec:structure}
 % We propose to represent free space by a graph of intersecting spheres.
 The proposed mapping approach represents free space by a graph of intersecting spheres.
-\todo{kdtree of centers}
+% \todo{kdtree of centers}
 % and obstacles as a set of 3D points corresponding to triangulated visual keypoints from visual SLAM.
 Each sphere at the $k$-th update iteration has a static center $\mathbf{c}$ and changing radius $r_k$.
 The radius $r_k$ represents the distance from $\mathbf{c}$ to the nearest unknown space or obstacle at time step $k$.
@@ -540,27 +540,39 @@ Using standard free-space estimation methods, this would cause free space to be 
 % To allow safe flight in open areas, we make the following assumption: 
 To allow safe flight in open areas, our method estimates additional free space based on the following assumption: 
 % \todo{reformulate - consider an area of the image -> fake depth -> but up to some max dist -> see image}
-Consider a virtual keypoint $\mathbf{x}_{vir}$ at time $t$ that has been in the UAV's FoV from a given time $t-x$ in the past up to $t$ (i.e. it could have been tracked by visual SLAM).
+% Consider a virtual keypoint $\mathbf{x}_{vir}$ at time $t$ that has been in the UAV's FoV from a given time $t-x$ in the past up to $t$ 
+Consider a virtual point in space $\mathbf{x}_{vir}$ at time $t$ that not left the camera's FoV from a given time $t-x$ in the past up to $t$ 
+(i.e. it could have been tracked by visual SLAM).
+% (i.e. it has not left the camera's FOV between $t-x$ and $t$).
 Then, if there is a point on the UAV's trajectory between $t-x$ and $t$ such that there would be enough parallax for estimating the distance of $\mathbf{x}_{vir}$ (according to a user-defined threshold), and if the visual SLAM frontend has not estimated any stable 3D point at approximately that position, then $\mathbf{x}_{vir}$ must lie in free space.
+
+This assumption allows estimating more free space than when only raycasting towards observed SLAM points.
 % \todo{reformulate - "second order of depth estim = guessing?"}
 % This approximation does not hold close to large textureless walls, but works quite well in the vast majority of real-world environments.
 % This assumption does not hold close to large textureless objects, and free space could thus be wrongly estimated in the rare cases when such objects occur.
-This assumption does not hold close to large textureless objects.
-Therefore, free space could thus be wrongly estimated in the rare cases when such objects occur in the real world.
-However, this could be easily solved by adding low-cost, short-range distance sensors (e.g. a single-point LiDAR or ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping, but that would be outside the scope of this paper.
+However, it does not hold close to large textureless objects or thin objects where no features are detected by the visual SLAM.
+% Therefore, free space could be wrongly estimated in the rare cases when such objects appear in the real world.
+Therefore, free space can sometimes be wrongly estimated when such objects appear.
+In future work, this could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping, or by using a denser depth estimation method.
+% This could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping, 
+% but that would be outside the scope of this paper.
+% which we leave for future work.
+% but we leave that for future work.
 % However, when coupled with perception-aware flight
 % However, such features are uncommon in most large-scale real-world environments.
 % \todo{tadyten assumption jeste lip specifikovat a hodit mozna na zacatek / na konec k limitations}
 
+
 % We keep a set of virtual points $\mathbf{x}_vir$ in front of the UAV at all times, and if some of the points become are estimated as free based on the above assumption, 
-We periodically check the above described condition for a set of virtual points $\mathbf{x}_{vir}$ at a fixed distance in front of the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration. 
+We periodically check the described condition for a set of virtual points $\mathbf{x}_{vir}$ at a fixed distance in front of the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration. 
 This is only done for a few points, as checking the condition for all points in the UAV's FOV would be computationally demanding. 
 % We take the points that fulfill this condition and add them to the creation of the \textit{depth mesh} $\mathbf{F}_d$.
 The points that fulfill this condition are added to the creation of the \textit{depth mesh} $\mathcal{F}_d$.
 % To further mitigate the depth estimation problem near textureless areas,
 % we discard points such points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a better depth estimate from the SLAM points.
-However, we discard points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a \todo{better} depth estimate from the SLAM points.
-This also helps to correctly estimate depth when there is at least a little amount of visual texture near to textureless areas.
+% However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there we have a better depth estimate from the SLAM points.
+However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there we have at least some depth estimate from interpolating the SLAM points.
+% This also helps to correctly estimate depth when there is at least a little amount of visual texture near to textureless areas.
 % This way, the problem of large featureless objects is mitigated in the majority of cases, when textured objects are visible nearby. 
 % This way, we can safely estimate additional freespace, in the case of sufficiently textured wide outdoor areas.
 % \todo{tadyten assumption jeste lip specifikovat a hodit mozna na zacatek / na konec k limitations}
@@ -599,11 +611,10 @@ This also helps to correctly estimate depth when there is at least a little amou
 As the next step of the update, we decide which tracked SLAM points to add into the map points $\mathcal{X}$, and which points already in the map to delete.
 An important part of the proposed mapping method is that we store the minimum of the distances that any point $\mathbf{x}$ has been observed from, denoted further as $d_{m, x}$.
 % This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
-\todo{
-An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
+% An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
+This is designed to solve a problem that can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m) ---
 % The visible points corresponding to the wall might not be detected as SLAM keypoints while p.
-A situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
-}
+a situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
 % We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
 Thus, we cannot simply delete every map point that falls into $\mathcal{P}_f$, because then the original points (small red points in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
 
@@ -623,7 +634,7 @@ These points are used to constrain sphere radii in the following update step.
 
 Additionally, to prioritize closer measurements, points seen from a closer distance re-lace points seen from larger distances, if they are measured close enough to them. 
 In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, which is also visualized in \autoref{fig:distbased}. We enforce this through a simple algorithm shown in 
-\todo{TODO - rewrite as sort?}
+% \todo{TODO - rewrite as sort?}
 
 \subsection{Updating Existing Spheres}
 \label{sec:existing_spheres_update}
@@ -948,6 +959,17 @@ Also, the explored area could be increased by implementing a more sophisticated 
   \label{fig:exper_sim}
 \end{figure}
 
+\begin{figure}[!htb]
+  % \includegraphics[width=8.5cm]{}
+  \adjincludegraphics[width=9cm, trim={{0.05\width} {0.00\height} {0.05\width} {0.00\height}}, clip=true]{fig/runtimes_flood_almost_full.pdf}
+  \centering
+  \caption{Runtime analysis of individual steps of the map update explained in \autoref{sec:map_building}, recorded from the simulation experiment shown in \autoref{fig:exper_sim}.}
+  % \caption{Runtime analysis of individual steps of the map update iterations, detailed in \autoref{sec:map_building}, recorded in the simulation experiment shown in \autoref{fig:exper_sim}.
+  \label{fig:runtimes}
+\end{figure}
+
+
+
 
 \subsection{Runtime analysis}
 \label{sec:runtimes}
@@ -963,16 +985,6 @@ However, the overall runtime does slowly go up, most likely due to the polyhedro
 % However, in this experiment, the visible polyhedron is often quite large and encompasses most of the map, which.
 We plan to overcome this in future work by separating the map into submaps, but the experiments demonstrate that a single map can be built at a reasonable rate for navigation even in a cluttered 130x130m area.
 % The overall runtime grows with the map size as
-
-
-\begin{figure}[!htb]
-  % \includegraphics[width=8.5cm]{}
-  \adjincludegraphics[width=9cm, trim={{0.05\width} {0.00\height} {0.05\width} {0.00\height}}, clip=true]{fig/runtimes_flood_almost_full.pdf}
-  \centering
-  \caption{Runtime analysis of individual steps of the map update explained in \autoref{sec:map_building}, recorded from the simulation experiment shown in \autoref{fig:exper_sim}.}
-  % \caption{Runtime analysis of individual steps of the map update iterations, detailed in \autoref{sec:map_building}, recorded in the simulation experiment shown in \autoref{fig:exper_sim}.
-  \label{fig:runtimes}
-\end{figure}
 
 
 

@@ -546,7 +546,7 @@ However, this could be easily solved by adding low-cost, short-range distance se
 We periodically check the above described condition for a set of virtual points $\mathbf{x}_{vir}$ at a fixed distance in front of the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration. 
 This is only done for a few points, as checking the condition for all points in the UAV's FOV would be computationally demanding. 
 % We take the points that fulfill this condition and add them to the creation of the \textit{depth mesh} $\mathbf{F}_d$.
-The points that fulfill this condition are added to the creation of the \textit{depth mesh} $\mathbf{F}_d$.
+The points that fulfill this condition are added to the creation of the \textit{depth mesh} $\mathcal{F}_d$.
 % To further mitigate the depth estimation problem near textureless areas,
 % we discard points such points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a better depth estimate from the SLAM points.
 However, we discard points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a \todo{better} depth estimate from the SLAM points.
@@ -586,7 +586,7 @@ This also helps to correctly estimate depth when there is at least a little amou
 
 \subsection{Updating Obstacle Points}
 \label{sec:distance-based}
-As the next step of the update, we decide which tracked SLAM points to add into the map points $\mathbf{X}$, and which points already in the map to delete.
+As the next step of the update, we decide which tracked SLAM points to add into the map points $\mathcal{X}$, and which points already in the map to delete.
 An important part of the proposed mapping method is that we store the minimum of the distances that any point $\mathbf{x}$ has been observed from, denoted further as $d_{m, x}$.
 % This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
 \todo{
@@ -595,9 +595,9 @@ An apparent problem can arise when viewing some surface from a much higher dista
 A situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
 }
 % We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
-Thus, we cannot simply delete every map point that falls into $\mathbf{P}_f$, because then the original points (small red points in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
+Thus, we cannot simply delete every map point that falls into $\mathcal{P}_f$, because then the original points (small red points in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
 
-We solve this problem by deleting any map point $\mathbf{x}$ that falls into $\mathbf{P}_f$ only if
+We solve this problem by deleting any map point $\mathbf{x}$ that falls into $\mathcal{P}_f$ only if
 \begin{equation}
   |\mathbf{x} - \mathbf{p}_{cam}| < \alpha \cdot d_{m,x}
 \end{equation}
@@ -608,7 +608,7 @@ Thanks to this condition, when a small obstacle seen previously from a short dis
 % We usually set $\alpha$ to $1.1$ to allow the mapping to modify points for a while when moving away from them.
 % The parameter $\alpha$ could be set to $1$ to allow the mapping to modify points for a while when moving away from them.
 % A higher value of $\alpha$ can be set 
-The points that lie in the free-space polyhedron $\mathbf{P}_f$ and are not deleted are called \textit{protected points} $\mathbf{X}_p$.
+The points that lie in the free-space polyhedron $\mathcal{P}_f$ and are not deleted are called \textit{protected points} $\mathcal{X}_p$.
 These points are used to constrain sphere radii in the following update step.
 
 Additionally, to prioritize closer measurements, points seen from a closer distance re-lace points seen from larger distances, if they are measured close enough to them. 
@@ -619,27 +619,27 @@ In the same way, new points seen at a large distance are not added to the map, i
 \label{sec:existing_spheres_update}
 % Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or the protected points $\mathbf{X}_{p}$.
 % Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or the input points $\mathbf{X}_{in}$.
-Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or the input points $\mathbf{X}_{in}$.
-To bound the update time of this step, we check the largest sphere radius $r_{max}$ in the map, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $\mathbf{P}_f$, inflated by $r_{max}$. 
+Next, we recompute the radii of spheres that could be updated by $\mathcal{P}_f$ or the input points $\mathcal{X}_{in}$.
+To bound the update time of this step, we check the largest sphere radius $r_{max}$ in the map, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $\mathcal{P}_f$, inflated by $r_{max}$. 
 Then, for any remaining sphere with a center $\mathbf{c}$ and radius $r_{k}$, the updated radius is computed as
 \begin{equation}
-  r_{k+1} = \min \left( \max \left( r_{k}, d(\mathbf{c}, \mathbf{P}_f) \right)
-  , d(\mathbf{c}, \mathbf{X}_{in} \cup \mathbf{X}_p) \right).
+  r_{k+1} = \min \left( \max \left( r_{k}, d(\mathbf{c}, \mathcal{P}_f) \right)
+  , d(\mathbf{c}, \mathcal{X}_{in} \cup \mathcal{X}_p) \right).
   % r_{k+1} = \min \left( d(\mathbf{c}, \mathbf{X}_{in} \cup \mathbf{X}_p)
   % , \max \left( r_{k}, d(\mathbf{c}, \mathbf{P}_f) \right) \right).
   \label{eq:update}
 \end{equation}
 % where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) \todo{and} $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
-In this equation, $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside).
-The value of $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
-Essentially, this equation means that the polyhedron $\mathbf{P}_f$ is used to increase the radius of a sphere, whereas the protected $\mathbf{X}_p$ and input points $\mathbf{X}_{in}$ are used to constrain it.
+In this equation, $d(x, \mathcal{P}_f)$ is the signed distance to $\mathcal{P}_f$ (positive if the point is inside the polyhedron, negative if outside).
+The value of $d(\mathbf{x},\mathcal{X}_{in} \cup \mathcal{X}_p)$ is the minimum distance to all input obstacle points $\mathcal{X}_{in}$, and to the protected map points $\mathcal{X}_p$ described in \autoref{sec:distance-based}.
+Essentially, this equation means that the polyhedron $\mathcal{P}_f$ is used to increase the radius of a sphere, whereas the protected $\mathcal{X}_p$ and input points $\mathcal{X}_{in}$ are used to constrain it.
 As the last part of this step, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest \todo{allowed} sphere radius specified by the user.
 % , usually slightly lower than the UAV's minimal allowed distance to obstacles. 
 
 % where TODO.
 \subsection{Sampling New Spheres}
 \label{sec:adding_spheres}
-To introduce new spheres into the map, we sample a fixed number of points inside $\mathbf{P}_f$ at random distances between the camera and the depth mesh $F_o$.
+To introduce new spheres into the map, we sample a fixed number of points inside $\mathcal{P}_f$ at random distances between the camera and the depth mesh $F_o$.
 % \todo{This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.}
 A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
 If the potential radius is larger than $r_{min}$, the sphere is added to the map.
@@ -927,7 +927,8 @@ Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explo
       \end{tikzpicture}
      \end{subfigure}
   \centering
-  \caption{The resulting map (bottom) after 33min of exploring a simulated post-earthquake urban environment (top) in simulation, explained in more detail in \autoref{sec:sim_exper}. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. }
+  \caption{The resulting map (bottom) after 33min of exploring a simulated post-earthquake urban environment (top).
+  The experiment is described in more detail in \autoref{sec:sim_exper}. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. }
   \label{fig:exper_sim}
 \end{figure}
 

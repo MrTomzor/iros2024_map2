@@ -450,9 +450,9 @@ Our proposed perception-aware exploration strategy, tightly coupled with the map
     Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
     % Additionally, , the TODO-fake points are added to the depth estimation.
     (b) The active assumed-freespace points (blue, see \autoref{sec:fake}) above the ground, where the SLAM cannot accurately localize any points, are added to construct the
-    (c) resulting visible free-space polyhedron $\mathbf{P}_f$.
+    (c) resulting visible free-space polyhedron $\mathcal{P}_f$.
     % (d) Side view of how new spheres are sampled in the polyhedron and added to the others, as well as how new obstacle points are added to the map.
-    (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathbf{X}$.
+    (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathcal{X}$.
     % TODO - desc + delaunay w fake fspace vis
   }
   \label{fig:mapping_pipeline}
@@ -491,8 +491,8 @@ The radius $r_k$ represents the distance from $\mathbf{c}$ to the nearest unknow
 % We maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres, and use it for path planning.
 To allow rapid path planning, we maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres.
 % Furthermore, we maintain a set of obstacle points $\mathbf{X}$, which correspond to the textured surfaces measured by the visual SLAM.
-% We represent obstacles by a set of points $\mathbf{X}$, which are .
-To represent obstacles, we accumulate the stable (i.e. with low position covariance according to the SLAM) 3D points estimated by the monocular SLAM into a set of points $\mathbf{X}$, based on criteria described in \autoref{sec:distance-based}.
+% We represent obstacles by a set of points $\mathcal{X}$, which are .
+To represent obstacles, we accumulate the stable (i.e. with low position covariance according to the SLAM) 3D points estimated by the monocular SLAM into a set of points $\mathcal{X}$, based on criteria described in \autoref{sec:distance-based}.
 % For simplicity, we do not store the position covariances of the points given by the SLAM.
 % Instead, we parametrize the minimum distance $\rho_{min}$ between any two obstacle points.
 % Instead, we set a minimum distance $\rho_{min}$ between any two obstacle points as a parameter.
@@ -515,7 +515,7 @@ In this paper, we care primarily about mapping the free space for navigation pur
 We project the currently tracked visual SLAM points into the image plane and compute their Delaunay triangulation. 
 By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $\mathcal{F}_d$ that we call a \textit{depth mesh}, which is used only for the current frame.
 We estimate the currently visible free space as the volume between the camera's position $\mathbf{p}_{cam}$ and all points on $\mathcal{F}_d$.
-This space is enclosed by connecting all points that lie on the edge of $\mathbf{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathbf{P}_f$, illustrated in \autoref{fig:distbased}.
+This space is enclosed by connecting all points that lie on the edge of $\mathcal{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathcal{P}_f$, illustrated in \autoref{fig:distbased}.
 
 \subsection{Estimating Free Space in Open Areas}
 \label{sec:fake}
@@ -918,11 +918,16 @@ Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explo
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood_end.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood_end_freespace.png}};
+      \draw [latex-latex](0.3,0.1) -- (0.3,6.85);
+      \node[align=center] at (0.75, 4.5) {\scriptsize \color{black}\SI{130}{\meter}};
+        \begin{scope}[x={(a.south east)},y={(a.north west)}]
+          % \node[align=center] at (0.4, 0.925) {\footnotesize \color{black}$t=516\text{s}$};
+        \end{scope}
       \end{tikzpicture}
      \end{subfigure}
   \centering
-  \caption{The resulting map (bottom) after 20min of exploring an urban environment (top) in simulation, explained in more detail in \autoref{sec:sim_exper}. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. Notice that the UAV also went to explore up on the rooftops, where it could see the metal towers.}
+  \caption{The resulting map (bottom) after 33min of exploring a simulated post-earthquake urban environment (top) in simulation, explained in more detail in \autoref{sec:sim_exper}. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. }
   \label{fig:exper_sim}
 \end{figure}
 
@@ -938,7 +943,7 @@ Thanks to only updating the map near the UAV, the update time remains relatively
 
 \begin{figure}[!htb]
   % \includegraphics[width=8.5cm]{}
-  \adjincludegraphics[width=9cm, trim={{0.05\width} {0.00\height} {0.05\width} {0.00\height}}, clip=true]{fig/smap_runtimes_tmp.pdf}
+  \adjincludegraphics[width=9cm, trim={{0.05\width} {0.00\height} {0.05\width} {0.00\height}}, clip=true]{fig/runtimes_flood_almost_full.pdf}
   \centering
   \caption{Runtime analysis of parts of the map update detailed in \autoref{sec:map_building}. TODO-MEANINGS OF PARTS + REDO WITH FIXED DATA}
   \label{fig:runtimes}

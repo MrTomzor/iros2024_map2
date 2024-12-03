@@ -997,6 +997,7 @@ In this paper, we proposed a novel approach to building a 3D map for navigation 
 Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
 Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces, with all of the computations running on-board the UAV.
 
+
 The proposed methods open the way for micro-scale UAVs operating fully autonomously in unknown indoor/outdoor large-scale environments with obstacles, but there are still many challenges to be solved.
 Primarily, monocular depth estimation methods are not yet completely reliable, which can lead to crashes due to non-detected obstacles, even when using the perception-aware planning proposed in this paper.
 % As future work, we intend to complement the imperfections of the depth estimation by integrating low-cost, short-range distance sensors (e.g. ultrasound) into the mapping pipeline, thus detecting even thin and textureless objects.

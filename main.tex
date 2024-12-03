@@ -91,7 +91,7 @@
 % Monocular-Inertial Sphere-Based Mapping for UAV Exploration of Large-Scale Unstructured 3D Environments}
 % Monocular-Inertial Sphere-Based Mapping for UAV Exploration of Large-Scale 3D Environments}
 % MonoSphere: Monocular-Inertial Sphere-Based Mapping for UAV Exploration in Large-Scale 3D Environments}
-MonoSphere: Monocular-Inertial Mapping for UAV Exploration in Large-Scale 3D Environments}
+MonoSphere: Monocular-Inertial 3D Mapping for UAV Exploration in Large-Scale Environments}
 % MonoSphere: Monocular-Inertial Mapping and Exploration for UAV Exploration in Large-Scale 3D Environments}
 % Monocular-Inertial 3D Exploration of Large-Scale Outdoor Environments using Sparse Visual SLAM}
 % Monocular-Interital Sphere-Based Mapping for Large-Scale UAV Exploration}
@@ -300,7 +300,7 @@ As a step towards low-cost vision-based UAVs safely and efficiently navigating a
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
 In the field of robotic exploration, environments are most often represented by a grid-based map of occupied, unknown, and free space, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
 These grid-based representations are the backbone for nearly all of robotic path planning, exploration \cite{darpa_cerberus_wins, beneath} and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}.
-However, these maps rely on dense distance sensors, such as LiDARs or depth cameras, to accurately map the true free and occupied space.
+However, these maps rely on dense distance sensors, such as LiDARs or depth cameras, to build an accurate map of free and occupied space.
 
 % , has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
 
@@ -352,8 +352,8 @@ A larger voxel size causes a higher percentage of voxels to be passed by the spa
 % Such large voxel size, however, can cause narrow pathways to appear untraversible if the map is not perfectly aligned.
 
 Grid-based maps built by raycasting suffer from the problem of choosing the smallest voxel resolution in multi-scale environments.
-If the voxels are too big, then narrow passages can wrongly appear as untraversible or even completely closed, severely limiting the robot's navigation. 
-If the minimum voxel size is too small compared to the density of data, gaps can appear in free space due to rays passing only a thin strip of voxels
+If the voxels are too big, then narrow passages can wrongly appear as untraversable or even completely closed, severely limiting the robot's navigation. 
+If the minimum voxel size is too small compared to the density of data, gaps can appear in free space due to rays passing only a thin strip of voxels.
 Moreover, high map resolution requires large amounts of raycasts which can go beyond the computational power available on the onboard computers.
 % \todo{rict ze sfery maj min radius, ale nevadi to scalovani, neni to to samy co grid resolution}
 
@@ -614,9 +614,10 @@ As the next step of the update, we decide which tracked SLAM points to add into 
 An important part of the proposed mapping method is that we store the minimum of the distances that any point $\mathbf{x}$ has been observed from, denoted further as $d_{m, x}$.
 % This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
 % An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
-This is designed to solve a problem that can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m) ---
+\todo{This is designed to solve a problem that can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m) ---
 % The visible points corresponding to the wall might not be detected as SLAM keypoints while p.
 a situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
+}
 % We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
 Thus, we cannot simply delete every map point that falls into $\mathcal{P}_f$, because then the original points (small red points in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
 \begin{equation}

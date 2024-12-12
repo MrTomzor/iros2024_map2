@@ -91,7 +91,9 @@
 % Monocular-Inertial Sphere-Based Mapping for UAV Exploration of Large-Scale Unstructured 3D Environments}
 % Monocular-Inertial Sphere-Based Mapping for UAV Exploration of Large-Scale 3D Environments}
 % MonoSphere: Monocular-Inertial Sphere-Based Mapping for UAV Exploration in Large-Scale 3D Environments}
-MonoSpheres: Monocular-Inertial 3D Mapping for UAV Exploration in Large-Scale Environments}
+% MonoSpheres: Monocular-Inertial Mapping for UAV Exploration of Large-Scale 3D Environments}
+% MonoSpheres: Monocular-Inertial Sphere-Based Mapping for UAV Exploration of Large-Scale 3D Environments}
+Monocular-Inertial Sphere-Based Mapping for UAV Exploration of Large-Scale 3D Environments}
 % MonoSphere: Monocular-Inertial Mapping and Exploration for UAV Exploration in Large-Scale 3D Environments}
 % Monocular-Inertial 3D Exploration of Large-Scale Outdoor Environments using Sparse Visual SLAM}
 % Monocular-Interital Sphere-Based Mapping for Large-Scale UAV Exploration}
@@ -298,12 +300,14 @@ As a step towards low-cost vision-based UAVs safely and efficiently navigating a
 \begin{enumerate}
     % \item A method of building an occupancy map consisting of spheres and points using only sparse visual points and odometry as inputs
   % \item A novel 3D mapping approach that constructs a sphere-based map directly from sparse pointclouds obtained by monocular-inertial SLAM, without needing any intermediate occupancy map, mapping both open-space and cluttered areas.
-  \item A novel 3D mapping approach that constructs a sphere-based map for safe map-based navigation using only sparse pointclouds and the trajectory from monocular-inertial SLAM as input, with less conservative free-space estimation than traditional ray-casting methods.
+  \item A novel 3D mapping approach that constructs a sphere-based map for safety-aware navigation using only sparse pointclouds and pose estimates from monocular-inertial SLAM as input,
+    % with less conservative free-space estimation than traditional ray-casting methods.
+    with the ability to map sufficient free space for flight even in open-spaced areas which lack reliably localizable visual features.
     % , without needing any intermediate occupancy map.
     % , mapping both open-space and cluttered areas.
     \item A perception-aware exploration approach, enabled by the proposed mapping method, that achieves large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
-    \item Open-sourced code for the proposed mapping and exploration methods, along with example simulation scripts for replicating our results.
+    \item Open-sourced code for the proposed mapping and exploration methods, along with example simulation scripts for replicating \todo{and benchmarking} our results.
 \end{enumerate}
 
 

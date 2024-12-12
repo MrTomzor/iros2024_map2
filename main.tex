@@ -166,10 +166,12 @@ MonoSpheres: Monocular-Inertial 3D Mapping for UAV Exploration in Large-Scale En
   % Our method represents an environment by a graph of intersecting free-space spheres and a set of obstacle points instead of traditionally used grid-based maps. 
   % Our method represents an environment by a graph of intersecting free-space spheres and a set of obstacle points. 
   % To build this map, free-space spheres are inscribed inside a polyhedron constructed around the camera's position and currently tracked visual SLAM points at each iteration.
-  Instead of traditionally casting rays of free space towards obstacle points to build an occupancy grid-based representation, our method inscribes free-space spheres inside a polyhedron constructed around the camera's position and currently tracked visual SLAM points at each iteration.
-  We also allow oversampling of free space in certain cases to allow flight through open-spaced outdoor areas.
-  % We show how oversampling of free-space can allow flight through open-spaced outdoor areas.
+  Instead of traditionally casting rays of free space towards obstacle points to build an occupancy grid-based representation, our method inscribes free-space spheres inside a polyhedron constructed around the camera's position 
+  % and currently tracked visual SLAM points at each iteration.
+  and the currently visible triangulated visual keypoints at each iteration.
   Intersecting spheres then form a topological graph suitable for rapid and safety-aware planning.
+  \todo{We also present a scheme for safely sampling additional free space in directions where no textured points can be triangulated, and show how this enables exploring outdoor open-space areas.}
+  % We show how oversampling of free-space can allow flight through open-spaced outdoor areas.
   % Thus we build a topological graph of intersecting spheres, suitable for rapid and safety-aware planning, without needing any intermediate occupancy representation.
   % TOP
   % We also propose a method for safely estimating additional free space in large open outdoor areas with sufficient texture.
@@ -182,7 +184,7 @@ MonoSpheres: Monocular-Inertial 3D Mapping for UAV Exploration in Large-Scale En
   % and explicitly handles the uncertainty brought by monocular depth estimation.
   % and explicitly handles the measurement errors of monocular depth estimation.
   and explicitly handles the problematic properties of monocular depth estimation.
-The proposed methods are, to the authors' best knowledge, the first to achieve autonomous exploration in unknown, unstructured outdoor 3D environments at the presented scale, using only a single monocular camera and an IMU onboard a potentially micro-scale UAV.
+The proposed methods are, to the authors' best knowledge, the first to achieve autonomous exploration in real-world, unknown, unstructured 3D environments at the presented scale, using only a single monocular camera and an IMU onboard a potentially micro-scale UAV.
   % We open-source the code for the proposed methods to allow any UAV equipped with a monocular camera and IMU to explore and navigate in unknown 3D environments.
   We open-source the code for the proposed methods to provide safety-aware 3D navigation capabilities to any vision-based UAV operating in unknown environments.
 
@@ -274,7 +276,9 @@ Some works have demonstrated limited outdoor exploration, but only with strong c
 
 In this paper, we present a novel approach to 3D mapping of unstructured large-scale environments using only a monocular camera and IMU. 
 Our method utilizes a sparse pointcloud of 3D points produced by monocular-inertial SLAM, which is already a necessary part of many vision-based UAV systems.
+\todo{The main idea is...}
 Instead of traditionally casting rays through a grid and updating occupancy values of voxels \cite{octomap, voxblox}, we construct a polyhedron of approximate visible free space at each frame, inscribe spheres of free space inside that polyhedron, and connect them together to form a graph of intersecting spheres.
+\todo{Under some assumptions (see \autoref{sec:fake}), which hold in most outdoor real-world areas, this allows large-scale exploration...}
 By storing obstacles as a set of points, we can assign additional metrics to each point, such as measurement distance. 
 % or, in future work, the modality of its origin.
 This allows for rule-based measurement fusion, which is critical for dealing with the challenges of monocular depth estimation, as we explain in \autoref{sec:distance-based}.
@@ -805,6 +809,7 @@ the measurement distance of free-space spheres could be used for adaptively decr
 
 \section{Experiments}
 \label{sec:experiments}
+\todo{METRIC - NxN grid, covered when contains sphere! Can make simple script! (and can also output map as set of spheres and pts if needed! Useful for postproc! A weeks work to massively upgrade experiments!)}
 In this section, we present the performed experiments and show the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
 Our implementation of the proposed mapping and exploration methods is single-threaded and written in python.
 As shown in Sec \ref{sec:runtimes}, even with this unoptimized implementation, the mapping keeps below $\SI{1.5}{\second}$ per map update on a standard CPU, making it suitable for real-world deployment.

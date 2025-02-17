@@ -212,7 +212,7 @@ They build a grid-based map where cells are set as free if they are passed by ra
 % This mapping approach, however, leads to several problems that prohibit large-scale exploration (see \autoref{sec:related_works}).
 % However, casting rays towards sparse pointclouds given by monocular SLAM can lead to large gaps in free space, prohibiting planning, while using depth neural networks can lead to crashes due to depth inaccuracies.
 Some methods \cite{from_monoslam_to_explo, los_maps} cast rays towards sparse pointclouds given by monocular SLAM, which leads to large gaps in free space, prohibiting planning.
-Other methods \cite{mononnav} use depth neural networks to obtain denser pointclouds, 
+Other methods \cite{simon2023mononav} use depth neural networks to obtain denser pointclouds, 
 but this often leads to crashes,
 since such networks are not yet very reliable.
 % This can lead to gaps in free space \cite{from_monoslam_to_explo}, which prevent path planning, or wrongly estimated free, which can lead to crashes \cite{simon2023mononav}.
@@ -276,12 +276,12 @@ since such networks are not yet very reliable.
 % \todo{The main idea is...}
 The main idea of our paper is that instead of traditionally casting rays through a grid towards obstacle points and updating occupancy values of passed voxels \cite{octomap, voxblox}[\todo{MORE CITATIONS}], we construct a polyhedron of approximate visible free space at each frame and inscribe spheres of free space inside that polyhedron.
 Intersecting spheres are connected together to form a topological graph suitable for rapid, safety-aware planning \cite{spheremap}.
-\todo{Under assumptions that hold in the majority of real-world environments (see \autoref{sec:fake}), this approach accurately maps free space even in low-texture areas where the traditional raycasting approach might not initialize enough free space to allow flight. } 
+Under assumptions that hold in the majority of real-world environments (see \autoref{sec:fake}), this approach accurately maps free space even in low-texture areas where the traditional raytracing approach might not initialize enough free space to allow flight. 
 % and yields a topological graph that allows rapid safety-aware planning.}
 By storing obstacles as a set of geometric primitives (points), we can also assign additional metrics to each obstacle, such as measurement distance. 
 % or, in future work, the modality of its origin.
 This allows for rule-based measurement fusion, which is critical for dealing with problems such as occlusions in monocular depth estimation, as we explain in \autoref{sec:distance-based}.
-\todo{In several experiments, we show how this mapping approach, combined with perception-aware planning, enables exploration large-scale unstructured areas which feature both textureless wide open spaces and cluttered narrow passages.}
+In several experiments, we show how this mapping approach, combined with perception-aware planning, enables exploration large-scale unstructured areas which feature both textureless wide open spaces and cluttered narrow passages.
 % TODO - is neccesary?
 % In this representation, we assign additional metrics
 % This representation allows for fast and safety-aware planning \cite{spheremap}.
@@ -303,7 +303,7 @@ As a step towards low-cost vision-based UAVs safely and efficiently navigating a
     with the ability to map sufficient free space for flight even in open-spaced areas which lack reliably localizable visual features.
     % , without needing any intermediate occupancy map.
     % , mapping both open-space and cluttered areas.
-  \item A perception-aware exploration approach, enabled by the proposed mapping method, that achieves \todo{large-scale} 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
+  \item A perception-aware exploration approach, enabled by the proposed mapping method, that achieves large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
     \item Open-sourced code for the proposed methods, along with example simulation scripts for replicating our results, providing a benchmark for new monocular exploration methods.
 \end{enumerate}
@@ -338,7 +338,7 @@ Most of this research has been on reactive obstacle avoidance \cite{flame, avoid
 
 % For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
 % For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
-For full monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed building grid-based maps by casting rays of free space towards the monocular SLAM points. 
+For full monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed building grid-based maps by tracing rays of free space towards the monocular SLAM points. 
 % A few these works \cite{from_monoslam_to_explo, los_maps} have demonstrated autonomous exploration in unstructured, indoor environments, 
 % As documented in \cite{from_monoslam_to_explo} and as shown in [\todo{TODO-FIG}], this approach causes gaps to appear in the free space of the map, whenever the environment is not texture-rich.
 As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the environment is not texture-rich.
@@ -359,14 +359,14 @@ However, this only reduces the gaps, as this mapping method can never estimate f
 % The authors of \cite{los_maps} work around the gap issue by setting the voxel size to be relatively larger compared to the UAV size, which causes more voxels to be passed by the sparse rays towards measured points.
 % They present exploration on the scale of several indoor rooms and in simulation only. 
 
-The authors of \cite{los_maps} also cast rays towards sparse SLAM points, and present exploration on the scale of several indoor rooms and in simulation only.
+The authors of \cite{los_maps} also trace rays towards sparse SLAM points, and present exploration on the scale of several indoor rooms and in simulation only.
 They work around the gap issue by setting the map voxel size to be relatively large compared to the UAV size.
 A larger voxel size causes a higher percentage of voxels to be passed by the sparse rays towards measured points, reducing the gaps, but leads to the following problem:
 % This approach can however only work in constant-scale environments.
 % This approach can however only work in constant-scale environments without narrow corridors.
 % Such large voxel size, however, can cause narrow pathways to appear untraversible if the map is not perfectly aligned.
 
-Grid-based maps built by raycasting suffer from the problem of choosing the smallest voxel resolution in multi-scale environments.
+Grid-based maps built by raytracing suffer from the problem of choosing the smallest voxel resolution in multi-scale environments.
 If the voxels are too big, then narrow passages can wrongly appear as untraversable or even completely closed, severely limiting the robot's navigation. 
 If the minimum voxel size is too small compared to the density of data, gaps can appear in free space due to rays passing only a thin strip of voxels.
 Moreover, high map resolution requires large amounts of raycasts which can go beyond the computational power available on the onboard computers.
@@ -391,14 +391,16 @@ In this paper, we represent free space using spheres as well, but with two major
 
 % \begin{itemize}
   Firstly, the methods presented in \cite{spheremap, spheregraph, bubbleplanner} require building a local occupancy grid with a LiDAR for computing the sphere-based map.
-    \todo{This can be computationally expensive + there has been now approach shown to build GRID using sparse depth data, making it unsuitable for large featureless environments?}
-    In this paper, we build the graph of spheres \textit{directly} out of input  pointclouds without building any intermediate occupancy grid. 
-    Additionally, the proposed method requires only sparse pointclouds from a monocular camera running visual SLAM instead of dense LiDAR pointclouds.
+    % \todo{This can be computationally expensive + there has been now approach shown to build GRID using sparse depth data, making it unsuitable for large featureless environments?}
+    This can be computationally expensive.
+    Secondly, all methods for building a grid-based occupancy map require the data to be from dense depth sensors. 
+    In this paper, we build the graph of spheres \textit{directly} out of input  pointclouds without building any intermediate occupancy grid, while also 
+    requiring only \textit{sparse} pointclouds from a monocular camera running visual SLAM.
     
-    \todo{in addition to only describing free space...}
-  Secondly, the representation proposed in this paper stores previously seen SLAM points as obstacle points and remembers their measurement distance. 
-    These points are important for correctly updating free space when previously seen obstacles are momentarily not detected by the visual SLAM (see \ref{sec:distance-based}).
-    \todo{TIE IN OR END SECTION}
+    % \todo{in addition to only describing free space...}
+  % Secondly, the representation proposed in this paper stores previously seen SLAM points as obstacle points and remembers their measurement distance. 
+  %   These points are important for correctly updating free space when previously seen obstacles are momentarily not detected by the visual SLAM (see \ref{sec:distance-based}).
+    % \todo{TIE IN OR END SECTION}
         % to overcome the challenge of incorrect measurements at larger distances.
 % \end{itemize}
 
@@ -519,7 +521,8 @@ The radius $r_k$ represents the distance from $\mathbf{c}$ to the nearest unknow
 To allow rapid path planning, we maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres.
 % Furthermore, we maintain a set of obstacle points $\mathbf{X}$, which correspond to the textured surfaces measured by the visual SLAM.
 % We represent obstacles by a set of points $\mathcal{X}$, which are .
-To represent obstacles, we accumulate the stable (i.e. with low position covariance according to the SLAM) 3D points estimated by the monocular SLAM into a set of points $\mathcal{X}$, based on criteria described in \autoref{sec:distance-based}.
+To represent obstacles, we accumulate the stable (i.e. with low position covariance according to the SLAM) 3D points estimated by the monocular SLAM into a set of points $\mathcal{X}$ with user-defined minimal point-to-point distance.
+The obstacle points are updated, merged and removed based on criteria designed specifically for monocular sensing, described in \autoref{sec:distance-based}.
 % For simplicity, we do not store the position covariances of the points given by the SLAM.
 % Instead, we parametrize the minimum distance $\rho_{min}$ between any two obstacle points.
 % Instead, we set a minimum distance $\rho_{min}$ between any two obstacle points as a parameter.
@@ -530,7 +533,7 @@ To represent obstacles, we accumulate the stable (i.e. with low position covaria
 % A lower minimal measurement distance of a visual keypoint means that the point is less likely to be noise and we make it more difficult to erase it from the map.
 % This is a necessary feature for safe flight when using sparse visual SLAM keypoints as the only depth information, as explained more in \autoref{sec:distance-based}. 
 The mapping runs onboard the UAV in real-time, using only the estimated pose and 3D points from monocular-inertial SLAM as its inputs.
-In this paper, we use the sparse OpenVINS \cite{openvins} as the SLAM frontend, but our method could work with any other monocular-inertial SLAM.
+In this paper, we use the sparse OpenVINS \cite{openvins} method as the SLAM frontend, but our method could work with any other monocular-inertial SLAM.
 A single map update iteration consists of the following steps in order:
 \subsection{Constructing the Visible Free-Space Polyhedron}
 \label{sec:polyhedron}
@@ -563,14 +566,13 @@ Consider a virtual point in space $\mathbf{x}_{vir}$ at time $t$ that not left t
 % (i.e. it has not left the camera's FOV between $t-x$ and $t$).
 Then, if there is a point on the UAV's trajectory between $t-x$ and $t$ such that there would be enough parallax for estimating the distance of $\mathbf{x}_{vir}$ (according to a user-defined threshold), and if the visual SLAM frontend has not estimated any stable 3D point at approximately that position, then $\mathbf{x}_{vir}$ must lie in free space.
 
-\todo{This assumption allows estimating more free space than when only raycasting towards observed SLAM points.
+This assumption allows estimating more free space than when only tracing rays towards the visual SLAM points localized in 3D.
 % This approximation does not hold close to large textureless walls, but works quite well in the vast majority of real-world environments.
 % This assumption does not hold close to large textureless objects, and free space could thus be wrongly estimated in the rare cases when such objects occur.
-However, it does not hold close to large textureless objects or thin objects where no features are detected by the visual SLAM.
+However, it does not hold close to large textureless objects or thin objects where no features can measured by the sparse visual SLAM frontend.
 % Therefore, free space could be wrongly estimated in the rare cases when such objects appear in the real world.
 Therefore, free space can sometimes be wrongly estimated when such objects appear.
 In future work, this could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping, or by using a denser depth estimation method.
-}
 % This could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping, 
 % but that would be outside the scope of this paper.
 % which we leave for future work.
@@ -631,10 +633,10 @@ As the next step of the update, we decide which tracked SLAM points to add into 
 An important part of the proposed mapping method is that we store the minimum of the distances that any point $\mathbf{x}$ has been observed from, denoted further as $d_{m, x}$.
 % This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
 % An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
-\todo{This is designed to solve a problem that can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m) ---
+This is designed to solve problems that can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
 % The visible points corresponding to the wall might not be detected as SLAM keypoints while p.
-a situation can occur where the previously mapped points are now triangulated at an incorrect position, or are not triangulated by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
-}
+Primarily, points corresonding to a small obstacle might momentarily not be detected by the visual frotend, while a larger obstacle behind the small one is detected.
+% In such situation, the previously mapped points can be momentarily estimated to lie at an incorrect position, or might not be localized by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
 % We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
 Thus, we cannot simply delete every map point that falls into $\mathcal{P}_f$, because then the original points (small red points in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
 \begin{equation}
@@ -676,7 +678,7 @@ Then, for any remaining sphere with a center $\mathbf{c}$ and radius $r_{k}$, th
 In this equation, $d(x, \mathcal{P}_f)$ is the signed distance to $\mathcal{P}_f$ (positive if the point is inside the polyhedron, negative if outside).
 The value of $d(\mathbf{x},\mathcal{X}_{in} \cup \mathcal{X}_p)$ is the minimum distance to all input obstacle points $\mathcal{X}_{in}$, and to the protected map points $\mathcal{X}_p$ described in \autoref{sec:distance-based}.
 Essentially, this equation means that the polyhedron $\mathcal{P}_f$ is used to increase the radius of a sphere, whereas the protected $\mathcal{X}_p$ and input points $\mathcal{X}_{in}$ are used to constrain it.
-As the last part of this step, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest \todo{allowed} sphere radius specified by the user.
+As the last part of this step, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest allowed sphere radius specified by the user.
 % , usually slightly lower than the UAV's minimal allowed distance to obstacles. 
 
 % where TODO.
@@ -701,11 +703,12 @@ This step is important to cover large open areas by only a few spheres to allow 
 % \section{Safety-Aware Monocular-Inertial 3D Exploration}
 % \section{Safe Monocular-Inertial Exploration using the Sphere-Based Map}
 \section{Perception-Aware Exploration using the Sphere-Based Map}
-In this section, we detail how the proposed mapping method is highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a single camera \todo{and IMU?}.
+% In this section, we detail how the proposed mapping method is highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a monocular camera and IMU.
+In this section, we describe a monocular exploration approach enabled by the proposed mapping method.
 In principle, we employ the commonly used next-best-view (NBV) \cite{paper_frontier_grandpa} strategy, which has so far been deemed unsuitable for monocular exploration in existing works \cite{from_monoslam_to_explo, los_maps}.
 % We introduce several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments, detailed in the following sections.
 % In the following sections, we introduce several major differences in methodology that are neccessary for NBV in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
-In the following sections, we introduce several major differences in methodology that are critical for the NBV strategy in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
+In the following sections, we introduce several major differences in methodology that are critical for allowing the NBV strategy in the case of a robot equipped with only a monocular camera for depth sensing.
 % \todo{write assumptions on perception here? mapping doesnt care}
 
 \subsection{Frontier Sampling on Free-Space Polyhedron}

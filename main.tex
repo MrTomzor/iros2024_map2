@@ -813,7 +813,6 @@ the measurement distance of free-space spheres could be used for adaptively decr
 
 \section{Experiments}
 \label{sec:experiments}
-\todo{METRIC - NxN grid, covered when contains sphere! Can make simple script! (and can also output map as set of spheres and pts if needed! Useful for postproc! A weeks work to massively upgrade experiments!)}
 In this section, we present the performed experiments and show the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
 Our implementation of the proposed mapping and exploration methods is single-threaded and written in python.
 Even with this unoptimized implementation, the mapping keeps below $\SI{1.5}{\second}$ per map update on a standard CPU, making it suitable for real-world deployment.
@@ -925,15 +924,30 @@ Videos from all real-world experiments are available at TODO-YOUTUBE-LINK.
 \subsection{Large-Scale Exploration in Simulation}
 \label{sec:sim_exper}
 % In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
-In these experiments, we showcase the capabilities of our approach in a simulated $\SI{130x130x40}{\meter}$ urban area with multiple buildings, collapsed trees, cars and other obstacles.
+In these experiments, we showcase the capabilities of our approach in simulated  urban areas with multiple buildings, collapsed trees, cars and other obstacles.
 The experiments were conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
-\autoref{fig:exper_sim} shows the resulting map of a single example exploration mission.
-Additional experiment runs are available in the multimedia materials.
-The UAV managed to fully autonomously and with no prior information (except for the exploration bounding box so that the UAV does not explore far onto the open field) explore the vast majority of the environment.
+The explored volume is measured by dividing the world into $\SI{1}{\meter}$ wide cells and summing the volume of cells that are intersected by at least one sphere.
 
-The UAV managed collision-free flight even near complex obstacles such as trees, cranes and radio towers.
-As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that takes line-based features into account, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
-Also, the explored area could be increased by implementing a more sophisticated exploration strategy, but even the simplistic greedy approach used in this paper proves the usefulness of our mapping approach.
+First, we analyzed the exploration performance in a $\SI{110x70x20}{\meter}$ area over multiple 10 minute runs.
+We compared the performance with the open-area free-space sampling (see \autoref{sec:fake}) both enabled and disabled.
+The qualitative results can be seen in TODO and the resulting maps of the best runs are shown in \autoref{fig:exper_cranes}.
+Without the additional free-space sampling, the UAV was only able to explore the mostly enclosed area with many obstacles and walls.
+Only when our proposed novel open-space free-space estimation was enabled, the UAV could estimate sufficient free-space for exploration in the open-space area on the right with trees, cars and no enclosing buildings.
+This experiment also shows that even when the more aggresive free-space sampling is enabled, our approach is still sufficiently safe to explore more space before running out of time or crashing.
+
+Secondly, to test the scale limits of the method, we ran an experiment for 40 minutes in a $\SI{130x130x40}{\meter}$ simulated area.
+The resulting map and original environment can be seen in \autoref{fig:exper_sim}.
+The UAV managed to fully autonomously explore the environment while keeping the runtime of both the mapping and planning sufficiently low for real-time operation.
+Additional experiment runs are available in the multimedia materials.
+
+\subsection{Discussion}
+In all the experiments, our method achieved collision-free flight even near complex obstacles such as trees, cranes and radio towers in uncommon configurations.
+The few documented crashes were caused by either occasionally incorrect free-space sampling \autoref{sec:fake}, or by small featureless obstacles (such as the smooth metal pole near the fast-food building) that were not detected as features by point-based visual SLAM frontend.
+Both of these issues could be solved in future work by using a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
+% As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
+% As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
+% Also, the explored area could be increased by implementing a more sophisticated exploration strategy, but even the simplistic greedy approach used in this paper demonstrates the usefulness of our mapping approach.
+
 % In such more topologically complex environment, our greedy exploration strateg
 % Our exploration strategy is greedy, 
 % After running the exploration mission 20 times, the UAV managed to explore the entire environment in 18/20 runs.
@@ -941,6 +955,42 @@ Also, the explored area could be increased by implementing a more sophisticated 
 % The crashes were caused by the same limitation as discussed in \autoref{sec:real_exper}.
 % Aside from this limitation, the mapping and exploration can be said to work robustly in static environments.
 % Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explored up on the roofs of the buildings when it was able to use the large towers to estimate depth and create enough free space for safely moving up to the roof.
+
+% \subsection{Ablation Study - Open-Area Free-Space Sampling }
+% \label{sec:ablation}
+% In this experiment, conducted also in the Gazebo simulation, we analyze the method over multiple runs in a smaller urban environment.
+% As can be seen in the table 
+
+\begin{figure}[htb]
+  \def\subfigwidth{0.9\linewidth}
+  \centering
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/explor_cranes_map.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.02\width} {0.0\height} {0.0\width} {0.1\height}}, clip=true]{fig/explor_minusfreespace1a.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.1\height}}, clip=true]{fig/explor_plusfreespace1.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+  \centering
+  \caption{Comparsion of the best resulting maps with the open-area free-space sampling disabled (middle) and enabled (bottom) in the smaller-scale exploration experiment.
+  }
+  \label{fig:exper_cranes}
+\end{figure}
+
 
 \begin{figure}[htb]
   \def\subfigwidth{0.89\linewidth}
@@ -983,21 +1033,26 @@ Also, the explored area could be increased by implementing a more sophisticated 
 \end{figure}
 
 
+
 \section{CONCLUSION}
 % \todo{[In this paper, we reformulate 3D volumetric mapping and exploration to use a graph-of-spheres map instead of a traditionally used voxel-based one.]}
-\todo{In this paper, we proposed a novel approach to building a navigable map of 3D space, departing from the paradigm of tracing rays through a voxel-based grid.
-[building a graph-of-spheres representation using sparse depth estimates provided by monocular-inertial SLAM. Our methods show that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates FROM MONO CAMERA.] 
-}
-In addition, our method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.
+In this paper, we proposed a novel approach to building a navigable map of 3D space, departing from the paradigm of tracing rays through a voxel-based grid.
+% [building a graph-of-spheres representation using sparse depth estimates provided by monocular-inertial SLAM. 
+% Our approach shows that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
+Our results show that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
 % Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
-
-Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces, with all of the computations running on-board and online.
+Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
+% Our proposed method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.
+Our method also significantly reduces the cost of autonomous unknown-space exploration and safe navigation that was previously only documented using LiDARs and expensive depth sensors, as it only requires a single camera, a standard IMU and 
+% no GPU for dense depth estimation.
+a CPU.
+Thus, we hope our method can be a step towards economically viable real-world deployment of UAV systems, especially in search-and-rescue missions.
 % As future work, we intend to complement the imperfections of the depth estimation by integrating low-cost, short-range distance sensors (e.g. ultrasound) into the mapping pipeline, thus detecting even thin and textureless objects.
 % As future work, we intend to complement the problems of monocular depth estimation near thin or textureless obstacles by integrating low-cost short-range distance sensors (e.g. ultrasound) into the mapping pipeline.
-Our approach could be extended in future work by integrating low-cost short-range distance sensors (e.g. ultrasound) into the mapping pipeline to complement the problem of depth estimation near textureless objects.
+% Our approach could be extended in future work by integrating low-cost short-range distance sensors (e.g. ultrasound) into the mapping pipeline to complement the problem of depth estimation near textureless objects.
 % Furthermore, the proposed map representation could be extended with other geometrical primitives for clustering large areas of free or occupied space, thus increasing performance and allowing 
-\todo{Additionally, we plan to use the proposed mapping approach for building submaps instead of a single large map and performing large-scale map optimization combined with vision-based place recognition 
-to achieve low-cost autonomous exploration at the scale of kilometers, which has only been demonstrated with expensive LiDAR-based systems so far. [NOT IMPORTANT?]}
+% \todo{Additionally, we plan to use the proposed mapping approach for building submaps instead of a single large map and performing large-scale map optimization combined with vision-based place recognition 
+% to achieve low-cost autonomous exploration at the scale of kilometers, which has only been demonstrated with expensive LiDAR-based systems so far. [NOT IMPORTANT?]}
 % and then perform large-scale map optimization using place recognition, 
 
 % As we analyzed in this paper, 

@@ -752,7 +752,7 @@ These frontier points are used to generate exploration viewpoints such that at l
     The frontier points (purple) near textured surfaces are replaced with newly added obstacle points (red).
     % As explained in \autoref{sec:blocking}, the UAV also blocks viewpoint sampling near visited viewpoints (large black arrows).
     The UAV also blocks viewpoint sampling near visited viewpoints (large black arrows) to avoid returning to viewpoints facing textureless areas.
-  }
+    !TODO - CLEARER IMAGE!.}
   \label{fig:exploration_explanation}
 \end{figure}
 % %%}
@@ -933,7 +933,7 @@ The explored volume is measured by dividing the world into $\SI{1}{\meter}$ wide
 
 First, we analyzed the exploration performance in a $\SI{110x70x20}{\meter}$ area over multiple 10 minute runs.
 We compared the performance with the open-area free-space sampling (see \autoref{sec:fake}) both enabled and disabled.
-The qualitative results can be seen in TODO and the resulting maps of the best runs are shown in \autoref{fig:exper_cranes}.
+The qualitative results can be seen in \autoref{table:sim_exper} and the resulting maps of the best runs are shown in \autoref{fig:exper_cranes}.
 Without the additional free-space sampling, the UAV was only able to explore the mostly enclosed area with many obstacles and walls.
 Only when our proposed novel open-space free-space estimation was enabled, the UAV could estimate sufficient free-space for exploration in the open-space area on the right with trees, cars and no enclosing buildings.
 This experiment also shows that even when the more aggresive free-space sampling is enabled, our approach is still sufficiently safe to explore more space before running out of time or crashing.
@@ -964,6 +964,21 @@ Both of these issues could be solved in future work by using a visual front-end 
 % In this experiment, conducted also in the Gazebo simulation, we analyze the method over multiple runs in a smaller urban environment.
 % As can be seen in the table 
 
+\begin{table}[h!]
+\centering
+  \begin{tabular}{p{16mm} p{20mm} p{18mm} p{12mm}} 
+ \hline
+    Open-Space Sampling & Mean Volume Explored [$m^3$] & Mean Visited Viewpoints & Collision rate \\ [0.5ex] 
+ \hline\hline
+ Enabled  & 43951.51 & 124.12 & 3/10 \\ 
+ Disabled & 15412.28 & 76.75 & 2/10 \\
+ \hline
+\end{tabular}
+  \caption{Quantitative results of the smaller-scale exploration tests described in \autoref{sec:sim_exper}}
+\label{table:sim_exper}
+\end{table}
+
+
 \begin{figure}[htb]
   \def\subfigwidth{0.9\linewidth}
   \centering
@@ -989,7 +1004,7 @@ Both of these issues could be solved in future work by using a visual front-end 
      \end{subfigure}
      \hfill
   \centering
-  \caption{Comparsion of the best resulting maps with the open-area free-space sampling disabled (middle) and enabled (bottom) in the smaller-scale exploration experiment.
+  \caption{Comparsion of the best-result maps with the open-area free-space sampling disabled (middle) and enabled (bottom) in the smaller-scale exploration experiment.
   }
   \label{fig:exper_cranes}
 \end{figure}

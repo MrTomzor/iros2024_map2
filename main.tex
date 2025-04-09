@@ -966,12 +966,15 @@ Both of these issues could be solved in future work by using a visual front-end 
 
 \begin{table}[h!]
 \centering
-  \begin{tabular}{p{16mm} p{20mm} p{18mm} p{12mm}} 
+  \begin{tabular}{p{16mm} p{8mm} p{13mm} p{13mm} p{12mm}} 
  \hline
-    Open-Space Sampling & Mean Volume Explored [$m^3$] & Mean Visited Viewpoints & Collision rate \\ [0.5ex] 
+    Method & World & Mean $A$ & Max $A$ & Collisions \\ [0.5ex] 
  \hline\hline
- Enabled  & 43951.51 & 124.12 & 3/10 \\ 
- Disabled & 15412.28 & 76.75 & 2/10 \\
+    MonoSpheres  & Urban & 5425 $m^2$ & 5118 $m^2$ & 2/5 \\ 
+    Grid-Based & Urban  & 1981 $m^2$ & 1825 $m^2$ & 1/5 \\
+    \hline
+    MonoSpheres  & Cave & 5425 $m^2$ & 5118 $m^2$ & 2/5 \\ 
+    Grid-Based & Cave  & 1981 $m^2$ & 1825 $m^2$ & 1/5 \\
  \hline
 \end{tabular}
   \caption{Quantitative results of the smaller-scale exploration tests described in \autoref{sec:sim_exper}}
@@ -979,27 +982,43 @@ Both of these issues could be solved in future work by using a visual front-end 
 \end{table}
 
 
+% FIREWORLD PROGRESS
+\begin{figure}[htb]
+  \def\subfigwidth{0.89\linewidth}
+  \centering
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monospheres_comparsion_fireworld_crop.pdf}};
+      \end{tikzpicture}
+     \end{subfigure}
+  \centering
+  \caption{TODO}
+  \label{fig:exper_sim}
+\end{figure}
+
+% FIREWORLD ENDMAPS
 \begin{figure}[htb]
   \def\subfigwidth{0.9\linewidth}
   \centering
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/explor_cranes_map.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_gazebo1.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.02\width} {0.0\height} {0.0\width} {0.1\height}}, clip=true]{fig/explor_minusfreespace1a.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_max_octomap.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.1\height}}, clip=true]{fig/explor_plusfreespace1.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_max_mono.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -1009,46 +1028,45 @@ Both of these issues could be solved in future work by using a visual front-end 
   \label{fig:exper_cranes}
 \end{figure}
 
-
-\begin{figure}[htb]
-  \def\subfigwidth{0.89\linewidth}
-  \centering
-     % \begin{subfigure}[b]{\subfigwidth}
-     %  \begin{tikzpicture}
-     %    \centering
-     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_gazebo.png}};
-     %  \end{tikzpicture}
-     % \end{subfigure}
-     % \hfill
-     % \begin{subfigure}[b]{\subfigwidth}
-     %  \begin{tikzpicture}
-     %    \centering
-     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_end.png}};
-     %  \end{tikzpicture}
-     % \end{subfigure}
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood3.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood_end_freespace.png}};
-      \draw [latex-latex](0.3,0.1) -- (0.3,6.85);
-      \node[align=center] at (0.75, 4.5) {\scriptsize \color{black}\SI{130}{\meter}};
-        \begin{scope}[x={(a.south east)},y={(a.north west)}]
-          % \node[align=center] at (0.4, 0.925) {\footnotesize \color{black}$t=516\text{s}$};
-        \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
-  \centering
-  \caption{The resulting map (bottom) after 33min of exploring a simulated post-earthquake urban environment (top).
-  The experiment is described in more detail in \autoref{sec:sim_exper}. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. }
-  \label{fig:exper_sim}
-\end{figure}
+% \begin{figure}[htb]
+%   \def\subfigwidth{0.89\linewidth}
+%   \centering
+%      % \begin{subfigure}[b]{\subfigwidth}
+%      %  \begin{tikzpicture}
+%      %    \centering
+%      %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_gazebo.png}};
+%      %  \end{tikzpicture}
+%      % \end{subfigure}
+%      % \hfill
+%      % \begin{subfigure}[b]{\subfigwidth}
+%      %  \begin{tikzpicture}
+%      %    \centering
+%      %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_end.png}};
+%      %  \end{tikzpicture}
+%      % \end{subfigure}
+%      \begin{subfigure}[b]{\subfigwidth}
+%       \begin{tikzpicture}
+%         \centering
+%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood3.png}};
+%       \end{tikzpicture}
+%      \end{subfigure}
+%      \hfill
+%      \begin{subfigure}[b]{\subfigwidth}
+%       \begin{tikzpicture}
+%         \centering
+%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood_end_freespace.png}};
+%       \draw [latex-latex](0.3,0.1) -- (0.3,6.85);
+%       \node[align=center] at (0.75, 4.5) {\scriptsize \color{black}\SI{130}{\meter}};
+%         \begin{scope}[x={(a.south east)},y={(a.north west)}]
+%           % \node[align=center] at (0.4, 0.925) {\footnotesize \color{black}$t=516\text{s}$};
+%         \end{scope}
+%       \end{tikzpicture}
+%      \end{subfigure}
+%   \centering
+%   \caption{The resulting map (bottom) after 33min of exploring a simulated post-earthquake urban environment (top).
+%   The experiment is described in more detail in \autoref{sec:sim_exper}. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. }
+%   \label{fig:exper_sim}
+% \end{figure}
 
 
 

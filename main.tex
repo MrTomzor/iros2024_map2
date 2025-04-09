@@ -923,6 +923,53 @@ Videos from all real-world experiments are available at TODO-YOUTUBE-LINK.
   \label{fig:exper_real}
 \end{figure}
 
+% FIREWORLD PROGRESS
+\begin{figure}[htb]
+  \def\subfigwidth{0.89\linewidth}
+  \centering
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monospheres_comparsion_fireworld_crop.pdf}};
+      \end{tikzpicture}
+     \end{subfigure}
+  \centering
+  \caption{TODO}
+  \label{fig:exper_sim}
+\end{figure}
+
+% FIREWORLD ENDMAPS
+\begin{figure}[htb]
+  \def\subfigwidth{0.9\linewidth}
+  \centering
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_gazebo1.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_max_octomap.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_max_mono.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+  \centering
+  \caption{Comparsion of the best-result maps with the open-area free-space sampling disabled (middle) and enabled (bottom) in the smaller-scale exploration experiment.
+  }
+  \label{fig:exper_cranes}
+\end{figure}
+
+
 
 \subsection{Large-Scale Exploration in Simulation}
 \label{sec:sim_exper}
@@ -981,52 +1028,6 @@ Both of these issues could be solved in future work by using a visual front-end 
 \label{table:sim_exper}
 \end{table}
 
-
-% FIREWORLD PROGRESS
-\begin{figure}[htb]
-  \def\subfigwidth{0.89\linewidth}
-  \centering
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monospheres_comparsion_fireworld_crop.pdf}};
-      \end{tikzpicture}
-     \end{subfigure}
-  \centering
-  \caption{TODO}
-  \label{fig:exper_sim}
-\end{figure}
-
-% FIREWORLD ENDMAPS
-\begin{figure}[htb]
-  \def\subfigwidth{0.9\linewidth}
-  \centering
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_gazebo1.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_max_octomap.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_max_mono.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-  \centering
-  \caption{Comparsion of the best-result maps with the open-area free-space sampling disabled (middle) and enabled (bottom) in the smaller-scale exploration experiment.
-  }
-  \label{fig:exper_cranes}
-\end{figure}
 
 % \begin{figure}[htb]
 %   \def\subfigwidth{0.89\linewidth}

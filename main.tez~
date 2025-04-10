@@ -851,8 +851,16 @@ Videos from all real-world experiments are available at TODO-YOUTUBE-LINK.
 % Additionally, the visual SLAM could be modified to estimate 3D poses of lines as well, as for example in TODO-CITE, but we leave this for future work.
 % }
 
-% REAL EXPERIMENT
-% %%{
+% \begin{figure}[!htb]
+%   % \includegraphics[width=8.5cm]{fig/exper1.png}
+%   \includegraphics[width=8.5cm]{fig/exper4.png}
+%   % \includegraphics[width=8.5cm]{fig/exper3.png}
+%   % \includegraphics[width=8.5cm]{fig/exper4.png}
+%   \centering
+%   \caption{TEMPORARY IMG - Exploration experiment visualization}
+%   \label{fig:exper_real}
+% \end{figure}
+
 \begin{figure}[htb]
   \def\subfigwidth{0.49\linewidth}
   \centering
@@ -914,17 +922,30 @@ Videos from all real-world experiments are available at TODO-YOUTUBE-LINK.
   }
   \label{fig:exper_real}
 \end{figure}
-% %%}
+
+% % FIREWORLD PROGRESS
+% \begin{figure}[htb]
+%   \def\subfigwidth{0.89\linewidth}
+%   \centering
+%      \begin{subfigure}[b]{\subfigwidth}
+%       \begin{tikzpicture}
+%         \centering
+%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monospheres_comparsion_fireworld_crop.pdf}};
+%       \end{tikzpicture}
+%      \end{subfigure}
+%   \centering
+%   \caption{TODO}
+%   \label{fig:exper_sim}
+% \end{figure}
 
 % FIREWORLD ENDMAPS
-% %%{
 \begin{figure}[htb]
   \def\subfigwidth{0.49\linewidth}
   \centering
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/comparsion_fireworld_700.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monospheres_comparsion_fireworld_crop.pdf}};
       \end{tikzpicture}
      \end{subfigure}
      \begin{subfigure}[b]{\subfigwidth}
@@ -949,103 +970,80 @@ Videos from all real-world experiments are available at TODO-YOUTUBE-LINK.
      \end{subfigure}
      \hfill
   \centering
-  \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the urban exploration experiment, and the exploration progress of all the runs (top left). Green = MonoSpheres, Blue = Grid-based.
+  \caption{Comparsion of the best-result maps with the open-area free-space sampling disabled (middle) and enabled (bottom) in the smaller-scale exploration experiment.
   }
-  \label{fig:exper_fireworld}
+  \label{fig:exper_cranes}
 \end{figure}
-% %%}
+
 
 % CAVEWORLD ENDMAPS
-% %%{
 \begin{figure}[htb]
-  \def\subfigwidth{0.49\linewidth}
+  \def\subfigwidth{0.9\linewidth}
   \centering
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/comparsion_cave_700.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1232.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_gazebo1.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/cave_astar_final.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_max_octomap.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/cave_spheremap_final.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_max_mono.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
   \centering
-  \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the cave exploration experiment, and the exploration progress of all the runs (top left). Green = MonoSpheres, Blue = Grid-based. 
+  \caption{Comparsion of the best-result maps with the open-area free-space sampling disabled (middle) and enabled (bottom) in the Cave exploration experiments.
   }
-  \label{fig:exper_cave}
+  \label{fig:exper_caves}
 \end{figure}
-% %%}
 
-
-% SIM TABLE
-% %%{
-\begin{table}[h!]
-\centering
-  \begin{tabular}{p{16mm} p{8mm} p{13mm} p{13mm} p{12mm}} 
- \hline
-    Method & World & Mean $A$ & Max $A$ & Collisions \\ [0.5ex] 
- \hline\hline
-    MonoSpheres  & Urban & 5118 $m^2$ & 5425 $m^2$ & 2/5 \\ 
-    Grid-Based & Urban  & 1825 $m^2$ & 1981 $m^2$ & 1/5 \\
-    \hline
-    MonoSpheres  & Cave & 5937 $m^2$ & 6012 $m^2$ & 0/2 \\ 
-    Grid-Based & Cave  & 3331 $m^2$ & 3375 $m^2$ & 0/2 \\
- \hline
-\end{tabular}
-  \caption{Quantitative results of the simulation experiments described in \autoref{sec:sim_exper}. TODO - run more cave experiments}
-\label{table:sim_exper}
-\end{table}
-% %%}
-
-\subsection{Comparison with Grid-Based Approach in Simulation}
+\subsection{Large-Scale Exploration in Simulation}
 \label{sec:sim_exper}
 % In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
-In the following experiments, we showcase the capabilities of our approach in simulated  urban areas with multiple buildings, collapsed trees, cars and other obstacles.
+In these experiments, we showcase the capabilities of our approach in simulated  urban areas with multiple buildings, collapsed trees, cars and other obstacles.
 The experiments were conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
+The explored volume is measured by dividing the world into $\SI{1}{\meter}$ wide cells and summing the volume of cells that are intersected by at least one sphere.
+
+First, we analyzed the exploration performance in a $\SI{110x70x20}{\meter}$ area over multiple 10 minute runs.
+We compared the performance with the open-area free-space sampling (see \autoref{sec:fake}) both enabled and disabled.
+The qualitative results can be seen in \autoref{table:sim_exper} and the resulting maps of the best runs are shown in \autoref{fig:exper_cranes}.
+Without the additional free-space sampling, the UAV was only able to explore the mostly enclosed area with many obstacles and walls.
+Only when our proposed novel open-space free-space estimation was enabled, the UAV could estimate sufficient free-space for exploration in the open-space area on the right with trees, cars and no enclosing buildings.
+This experiment also shows that even when the more aggresive free-space sampling is enabled, our approach is still sufficiently safe to explore more space before running out of time or crashing.
+
+Secondly, to test the scale limits of the method, we ran an experiment for 40 minutes in a $\SI{130x130x40}{\meter}$ simulated area.
+The resulting map and original environment can be seen in \autoref{fig:exper_sim}.
+The UAV managed to fully autonomously explore the environment while keeping the runtime of both the mapping and planning sufficiently low for real-time operation.
+Additional experiment runs are available in the multimedia materials.
 
 % TODO
-% In this section, we quantitatively evaluate the performance of our method.
-Since the existing monocular exploration methods do not have their code published (with the exception of \cite{simon2023mononav}, which, however, is not ROS-compatible as of writing this paper), we prepared a simple grid-based mapping and exploration pipeline for comparison.
-This reference grid-based method uses the same mapping approach as \cite{from_monoslam_to_explo, los_maps} (i.e. initializing free space between the camera and the 3D points localized by visual SLAM). 
-To explore, the method periodically samples free-space points uniformly in a 40x40x10 area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid that would move the robot as close as possible to the goal while respecting the same distance from obstacles and uknown space as the MonoSpheres method. The robot then follows these paths with the camera pointing forward and replans at 5Hz to handle measurement inacurracies. 
-We use OctoMap for the grid-based mapping with a \SI{0.5}{meter} cell size.
-This value was chosen because smaller cell sizes caused the robot to not find any safe paths due to the free-space gaps documented in \cite{from_monoslam_to_explo} and larger cell sizes blocked exploration of tight corridors. 
+In this section, we quantitatively evaluate the performance of our method. Since the existing monocular exploration methods do not have their code published (with the exception of [1], which, however, is not ROS-compatible as of writing this paper), we set up a reference exploration pipeline that uses the same mapping approach as [2,3] and a simple goal selection  strategy. This method samples free-space points uniformly in a 20x20x20 cube around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid that would move the robot as close as possible to the goal while respecting the same distance from obstacles and uknown space as the MonoSpheres method. The robot then follows these paths with the camera pointing forward and replans at 5Hz to handle changes in the map. 
 
-As the evaluation metric, exploration literature usually uses the volume of the constructed map. However, because of the open-space free-space sampling scheme and the depth interpolation, MonoSpheres constructs vastly more free space than the raytracing mapping approach over the same trajectories. For this reason, this metric would not be fair towards methods using the grid-based raytracing mapping. 
-We instead divide the target exploration area into 2.5x2.5m columns that are marked as explored if the constructed map (sphere-based or grid-based) contains any element in a given column. 
-The metric, $A$, is then the top-down 2D area of all the explored columns.
+TODO - mention ze s mensima i vetsima cubes se to dojebavalo (gaps vs noise). 
 
-We compare the reference grid-based approach with MonoSpheres in multiple 20min experiments on 2 worlds, with the resulting maps and exploration progress in \autoref{fig:exper_fireworld}, \autoref{fig:exper_cave} and the explored area and crash rate in \autoref{table:sim_exper}.
-Videos from these experiments are available in the multimedia materials.
+As the evaluation metric, exploration literature usually uses the volume of the constructed map. However, because of the open-space free-space sampling scheme and the depth interpolation, MonoSpheres constructs vastly more free space than the raytracing mapping approach over the same trajectories. For this reason, this metric would not be fair towards methods using the grid-based raytracing mapping. We instead divide the target exploration area into 3x3m columns that are marked as ¿explored¿ if the constructed map (sphere-based or grid-based) contains any element in a given column. The metric, XXX, is then the percentage of all possible columns in the target area that are marked as explored.
 
-\subsection{Simulation Experiments Discussion}
-In the simulated experiments, our proposed approach was able to fully cover both environments.
-In the "cave" world, which is a texture-rich indoor environment, the grid-based approach works reasonably well and with sufficient side-to-side motion, is able to create sufficient free space to explore the cave corridor.
-With a better viewpoint selection approach, this method could potentially fully explore this environment (and also thus the approach in \cite{los_maps}).
-However, in the "urban" world -- an open-space, texture-sparse environment -- the grid-based approach was never able to explore a large portions of the area that require the UAV to fly over a building or move across an open field. 
-In comparison, the MonoSpheres approach consistently fully covered the environment, utilizing the open-space free-space sampling approach described in Section 2.
-% DISCUSSIONThe mapping approach A is more conservative. This leads to fewer crahes, but limits the areas the UAV can explore. The mapping approach proposed in this paper can occasionally overestimate free space, but allows the UAV to safely move through open-space areas.TODO - disposable so crashes not a problem! and also fixable by better monodepth outside the scope of this!
+We compare both approaches in 20min experiments on 2 worlds, with the results shonw in Fig. 1 and Table 1 and the resulting maps in Fig. 2. In the indoor, texture-rich cave environment, the grid-based approach works reasonably well and with sufficient side-to-side motion, is able to create sufficient free space to explore the cave corridor. However, in the second, open-space, texture-sparse environment, the grid-based approach was not able to explore a large portions of the area that require the UAV to fly over a buildong or facing an open field. In comparison, the MonoSpheres approach consistently fully covered the environment, utilizing the open-space free-space sampling approach described in Section 2.
 
-In all of the experiments, our method achieved long periods of collision-free flight even near complex obstacles such as trees, collapsed houses, and cars in uncommon configurations.
-The few documented crashes were caused by either occasionally incorrect free-space sampling \autoref{sec:fake}, or by small featureless obstacles (such as blackened parts of the simulated burned buildings or exposed metal rods) that were not detected as features by point-based visual SLAM frontend.
+DISCUSSION
+
+The mapping approach A is more conservative. This leads to fewer crahes, but limits the areas the UAV can explore. The mapping approach proposed in this paper can occasionally overestimate free space, but allows the UAV to safely move through open-space areas.
+
+TODO - disposable so crashes not a problem! and also fixable by better monodepth outside the scope of this!
+
+\subsection{Discussion}
+In all the experiments, our method achieved collision-free flight even near complex obstacles such as trees, cranes and radio towers in uncommon configurations.
+The few documented crashes were caused by either occasionally incorrect free-space sampling \autoref{sec:fake}, or by small featureless obstacles (such as the smooth metal pole near the fast-food building) that were not detected as features by point-based visual SLAM frontend.
 Both of these issues could be solved in future work by using a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
@@ -1063,6 +1061,23 @@ Both of these issues could be solved in future work by using a visual front-end 
 % \label{sec:ablation}
 % In this experiment, conducted also in the Gazebo simulation, we analyze the method over multiple runs in a smaller urban environment.
 % As can be seen in the table 
+
+\begin{table}[h!]
+\centering
+  \begin{tabular}{p{16mm} p{8mm} p{13mm} p{13mm} p{12mm}} 
+ \hline
+    Method & World & Mean $A$ & Max $A$ & Collisions \\ [0.5ex] 
+ \hline\hline
+    MonoSpheres  & Urban & 5425 $m^2$ & 5118 $m^2$ & 2/5 \\ 
+    Grid-Based & Urban  & 1981 $m^2$ & 1825 $m^2$ & 1/5 \\
+    \hline
+    MonoSpheres  & Cave & 5425 $m^2$ & 5118 $m^2$ & 2/5 \\ 
+    Grid-Based & Cave  & 1981 $m^2$ & 1825 $m^2$ & 1/5 \\
+ \hline
+\end{tabular}
+  \caption{Quantitative results of the smaller-scale exploration tests described in \autoref{sec:sim_exper}}
+\label{table:sim_exper}
+\end{table}
 
 
 % LARGESCALE EXPLO TOWN

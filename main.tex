@@ -818,13 +818,19 @@ To further increase safety and allow agile maneuvers, the UAV also plans paths w
 \label{sec:experiments}
 In this section, we show the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
 Our implementation of the proposed mapping and exploration methods is single-threaded and written in python.
-Even with this unoptimized implementation, the mapping keeps below $\SI{1.5}{\second}$ per map update on a standard CPU, making it suitable for real-world deployment.
+% Even with this unoptimized implementation, the mapping keeps below $\SI{1.5}{\second}$ per map update on a standard CPU.
+Even with this unoptimized implementation, the mapping takes $\SI{0.5}{\second}$ per map update on average on a standard CPU.
+This has shown to be sufficient for safe flight up to $\SI{3}{\meter/\second}$ in the tested environments, but a more optimized implementation could allow even faster navigation.
+% Combined with a collision-checking thread that checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
+% Our implementation also checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
 
 The UAV used in the experiments was equipped with a monocular global-shutter grayscale fisheye Bluefox camera, and \todo{TODO} IMU.
+% The UAV used in the experiments was equipped with a monocular global-shutter grayscale fisheye Bluefox camera, and a standard commercial UAV IMU.
 The MRS UAV system \cite{mrs_uav_system} was used for low-level motion planning and control.
 % Damping in the form of 3D-printed flexible elements 
 In real-world experiments, the camera and IMU are separated from the rest of the UAV by 3D-printed damping elements, which significantly reduces the IMU noise caused by propellers and improves the SLAM performance.
-For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins} in the inverse-depth measurement mode, without loop closures.
+For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins} in the inverse-depth measurement mode.
+% , without loop closures.
 However, any other monocular-inertial SLAM could be used as the fronted of our method, as long as it tracks points approximately uniformly in the camera's FOV.
 % This is so that the assumption that small objects will be detected at a close range, discussed in \autoref{sec:distance-based}, is fulfilled.
 This property is necessary to assure the assumption that small objects will be detected at a close range, as discussed in \autoref{sec:distance-based}.
@@ -837,7 +843,7 @@ This property is necessary to assure the assumption that small objects will be d
 % \todo{One of the realized real-world experiments is illustrated in \autoref{fig:exper_real}.}
 % In this experiment, the UAV explored up to $\SI{60}{\meter}$ forward around the side of an abandoned farmhouse fully autonomously in an $8\text{min}$ mission.
 % In the experiment shown in \autoref{fig:exper_real}, 
-In \autoref{fig:exper_real}, we present a 20min experiment where our approach is tested in real-world conditions.
+In \autoref{fig:exper_real}, we present a 20min experiment where our approach is validated in real-world conditions.
 We bounded the area for generating exploration goals to a $\SI{70x10x8}{\meter}$ box around the side of an abandoned farmhouse, and the UAV fully autonomously explored nearly all the available space in this region.
 The UAV successfully avoided and mapped all the debris, bushes and the house walls in the area, and when battery levels were getting low, it autonomously returned to the starting position.
 Also note in that the UAV explored a considerable amount of space in the open field to the left of the house.
@@ -1021,26 +1027,28 @@ Videos from real-world experiments are available at TODO-YOUTUBE-LINK.
 \subsection{Comparison with Grid-Based Approach in Simulation}
 \label{sec:sim_exper}
 % In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
-In the following experiments, we showcase the capabilities of our approach in simulated  urban areas with multiple buildings, collapsed trees, cars and other obstacles.
-The experiments were conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
-
+% In the following experiments, we showcase the capabilities of our approach in simulated  urban areas with multiple buildings, collapsed trees, cars and other obstacles.
 % TODO
 % In this section, we quantitatively evaluate the performance of our method.
-Since the existing monocular exploration methods do not have their code published (with the exception of \cite{simon2023mononav}, which, however, is not ROS-compatible as of writing this paper), we prepared a simple grid-based mapping and exploration pipeline for comparison.
-This reference grid-based method uses the same mapping approach as \cite{from_monoslam_to_explo, los_maps} (i.e. initializing free space between the camera and the 3D points localized by visual SLAM). 
-To explore, the method periodically samples free-space points uniformly in a 40x40x10 area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid that would move the robot as close as possible to the goal while respecting the same distance from obstacles and uknown space as the MonoSpheres method. The robot then follows these paths with the camera pointing forward and replans at 5Hz to handle measurement inacurracies. 
-We use OctoMap for the grid-based mapping with a \SI{0.5}{meter} cell size.
-This value was chosen because smaller cell sizes caused the robot to not find any safe paths due to the free-space gaps documented in \cite{from_monoslam_to_explo} and larger cell sizes blocked exploration of tight corridors. 
+As the previously published monocular exploration methods do not have their code published (with the exception of \cite{simon2023mononav}, which, however, is not ROS-compatible as of writing this paper), we prepared a simple grid-based mapping and exploration pipeline for comparison.
+This reference method uses the same mapping approach as \cite{from_monoslam_to_explo, los_maps} (i.e. initializing free space between the camera and the visual SLAM points that have a low position covariance). 
+To explore, the method periodically samples free-space points uniformly in a 40x40x10 area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid that would move the robot as close as possible to the goal while respecting the same distance from obstacles and uknown space as the MonoSpheres method (\SI{1.5}{\meter} in these experiments).
+The robot then follows these paths with the camera pointing forward and replans at 5Hz to handle measurement inacurracies. 
+We use OctoMap \cite{octomap} for the grid-based mapping with a \SI{0.5}{\meter} cell size.
+This value was chosen because smaller cell sizes caused the robot to not find any safe paths due to the free-space gaps documented in \cite{from_monoslam_to_explo} and larger cell sizes blocked exploration of narrow areas. 
 
-As the evaluation metric, exploration literature usually uses the volume of the constructed map. However, because of the open-space free-space sampling scheme and the depth interpolation, MonoSpheres constructs vastly more free space than the raytracing mapping approach over the same trajectories. For this reason, this metric would not be fair towards methods using the grid-based raytracing mapping. 
+As the evaluation metric, the volume of the constructed map is commonly used in exploration literature.
+However, because of the open-space free-space sampling scheme and the depth interpolation, MonoSpheres constructs considerably more free space than the raytracing mapping approach over the same trajectories. 
+For this reason, the volume metric would not be fair towards methods using the grid-based raytracing mapping. 
 We instead divide the target exploration area into 2.5x2.5m columns that are marked as explored if the constructed map (sphere-based or grid-based) contains any element in a given column. 
 The metric, $A$, is then the top-down 2D area of all the explored columns.
 
 We compare the grid-based approach with MonoSpheres in multiple 20min experiments on 2 different worlds, with the resulting maps and exploration progress in \autoref{fig:exper_fireworld}, \autoref{fig:exper_cave} and the explored area and crash rate in \autoref{table:sim_exper}.
-Exploration goal generation was constrained to a \SI{60x50x7}{meter} area of interest in the urban world for both methods, and was unconstrained in the enclosed indoor world.
 Videos from these experiments are available in the multimedia materials.
+The experiments were conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
+Exploration goal generation was constrained to a \SI{60x50x7}{meter} area of interest in the urban world for both methods, and was unconstrained in the enclosed cave world.
 
-\subsection{Simulation Experiments Discussion}
+\subsection{Experiments Discussion}
 % In the simulated experiments, our proposed approach was able to cover both environments.
 In the "cave" world, which is a texture-rich indoor environment, the grid-based approach performed similarly to MonoSpheres in terms of initial exploration speed.
 % and with sufficient side-to-side motion, was able to create sufficient free space to explore the cave corridor.
@@ -1049,14 +1057,14 @@ With a more sophisticated viewpoint selection approach, the grid-based approach 
 
 However, in the "urban" world -- an open-space, texture-sparse environment -- the grid-based approach was never able to explore a large portions of the area that require the UAV to fly over a building or move across an open field. 
 In comparison, MonoSpheres (with the same parameters as in the cave world) was able to consistently cover the outdoor environment.
-These results demonstrate that our proposed open-space free-space sampling approach described in \autoref{sec:fake} enables exploration of outdoor areas where the ray-tracing grid-based mapping is not able to create sufficient free space, while safely mapping even indoor areas.
+These results demonstrate that our proposed open-space free-space sampling approach described in \autoref{sec:fake} enables exploration of outdoor areas where the ray-tracing grid-based mapping is not able to create sufficient free space, while also safely mapping indoor areas.
 % DISCUSSIONThe mapping approach A is more conservative. This leads to fewer crahes, but limits the areas the UAV can explore. The mapping approach proposed in this paper can occasionally overestimate free space, but allows the UAV to safely move through open-space areas.TODO - disposable so crashes not a problem! and also fixable by better monodepth outside the scope of this!
 
 In all of the experiments, our method achieved long periods of collision-free flight even near complex obstacles such as trees, collapsed houses, and cars in uncommon configurations.
 The few documented crashes were caused by either occasionally incorrect free-space sampling \autoref{sec:fake}, or by small featureless obstacles (such as blackened parts of the simulated burned buildings or exposed metal rods) that were not detected as features by point-based visual SLAM frontend.
 % Both of these issues could be solved in future work by using a visual front-end that uses line-based or dense features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 These issues would be solved by leveraging low-cost ultrasound sensors as a bumper for the UAV.
-Another possibility of detecting these object would be to use a visual front-end that uses line-based or dense features, but that is beyond the scope of this article.
+Another possibility of detecting these objects would be to use a visual front-end that uses line-based or dense features, but that is beyond the scope of this article.
 % As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % Also, the explored area could be increased by implementing a more sophisticated exploration strategy, but even the simplistic greedy approach used in this paper demonstrates the usefulness of our mapping approach.
@@ -1123,9 +1131,11 @@ Another possibility of detecting these object would be to use a visual front-end
 In this paper, we proposed a novel approach to building a navigable map of 3D space, departing from the paradigm of tracing rays through a voxel-based grid.
 % [building a graph-of-spheres representation using sparse depth estimates provided by monocular-inertial SLAM. 
 % Our approach shows that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
-Our results show that it is possible to actively build a sphere-based map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
+Our results show that it is possible to actively build a map allowing safe navigation in unstructured environments, even with very sparse depth estimates from a monocular camera. 
 % Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
-Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces, both indoor and outdoor.
+Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
+With the same configuration, our method allows exploration of both indoor and outdoor environments.
+In future work, our method could be improved by adopting a submap-based approach and a better-suited depth estimation frontend, to achieve reliable exploration at the same scale as LiDAR based systems.
 % Our proposed method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.
 % Our method also significantly reduces the cost of autonomous unknown-space exploration and safe navigation that was previously only documented using LiDARs and expensive depth sensors, as it only requires a single camera, a standard IMU and 
 % no GPU for dense depth estimation.

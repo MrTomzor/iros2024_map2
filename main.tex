@@ -949,7 +949,7 @@ Videos from all real-world experiments are available at TODO-YOUTUBE-LINK.
      \end{subfigure}
      \hfill
   \centering
-  \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the urban exploration experiment, and the exploration progress of all the runs (top left). Green = MonoSpheres, Blue = Grid-based.
+  \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the urban exploration experiments, and the exploration progress of all the runs (top left). Green = MonoSpheres, Blue = Grid-based.
   }
   \label{fig:exper_fireworld}
 \end{figure}
@@ -988,7 +988,7 @@ Videos from all real-world experiments are available at TODO-YOUTUBE-LINK.
      \end{subfigure}
      \hfill
   \centering
-  \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the cave exploration experiment, and the exploration progress of all the runs (top left). Green = MonoSpheres, Blue = Grid-based. 
+  \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the cave exploration experiments, and the exploration progress of all the runs (top left). Green = MonoSpheres, Blue = Grid-based. 
   }
   \label{fig:exper_cave}
 \end{figure}
@@ -1034,19 +1034,24 @@ We instead divide the target exploration area into 2.5x2.5m columns that are mar
 The metric, $A$, is then the top-down 2D area of all the explored columns.
 
 We compare the reference grid-based approach with MonoSpheres in multiple 20min experiments on 2 worlds, with the resulting maps and exploration progress in \autoref{fig:exper_fireworld}, \autoref{fig:exper_cave} and the explored area and crash rate in \autoref{table:sim_exper}.
+Exploration goal generation is also constrained to a \SI{60x50x7}{meter} area in the urban world for both methods.
 Videos from these experiments are available in the multimedia materials.
 
 \subsection{Simulation Experiments Discussion}
-In the simulated experiments, our proposed approach was able to fully cover both environments.
-In the "cave" world, which is a texture-rich indoor environment, the grid-based approach works reasonably well and with sufficient side-to-side motion, is able to create sufficient free space to explore the cave corridor.
-With a better viewpoint selection approach, this method could potentially fully explore this environment (and also thus the approach in \cite{los_maps}).
+% In the simulated experiments, our proposed approach was able to cover both environments.
+In the "cave" world, which is a texture-rich indoor environment, the grid-based approach performed similarly to MonoSpheres in terms of initial exploration speed.
+% and with sufficient side-to-side motion, was able to create sufficient free space to explore the cave corridor.
+With a more sophisticated viewpoint selection approach, the grid-based approach could likely explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
+% This finding supports that the mapping approach presented in \cite{from_monoslam_to_explo, los_maps} for textured, indoor spaces.
+
 However, in the "urban" world -- an open-space, texture-sparse environment -- the grid-based approach was never able to explore a large portions of the area that require the UAV to fly over a building or move across an open field. 
-In comparison, the MonoSpheres approach consistently fully covered the environment, utilizing the open-space free-space sampling approach described in Section 2.
+In comparison, MonoSpheres (with the same parameters as in the cave world) was able to consistently cover the outdoor environment.
+These results demonstrate that our proposed open-space free-space sampling approach described in \autoref{sec:fake} enables exploration of outdoor areas where the ray-tracing grid-based mapping is not able to create sufficient free space, while safely mapping even indoor areas.
 % DISCUSSIONThe mapping approach A is more conservative. This leads to fewer crahes, but limits the areas the UAV can explore. The mapping approach proposed in this paper can occasionally overestimate free space, but allows the UAV to safely move through open-space areas.TODO - disposable so crashes not a problem! and also fixable by better monodepth outside the scope of this!
 
 In all of the experiments, our method achieved long periods of collision-free flight even near complex obstacles such as trees, collapsed houses, and cars in uncommon configurations.
 The few documented crashes were caused by either occasionally incorrect free-space sampling \autoref{sec:fake}, or by small featureless obstacles (such as blackened parts of the simulated burned buildings or exposed metal rods) that were not detected as features by point-based visual SLAM frontend.
-Both of these issues could be solved in future work by using a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
+Both of these issues could be solved in future work by using a visual front-end that uses line-based or dense features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % Also, the explored area could be increased by implementing a more sophisticated exploration strategy, but even the simplistic greedy approach used in this paper demonstrates the usefulness of our mapping approach.
@@ -1113,14 +1118,14 @@ Both of these issues could be solved in future work by using a visual front-end 
 In this paper, we proposed a novel approach to building a navigable map of 3D space, departing from the paradigm of tracing rays through a voxel-based grid.
 % [building a graph-of-spheres representation using sparse depth estimates provided by monocular-inertial SLAM. 
 % Our approach shows that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
-Our results show that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
+Our results show that it is possible to actively build a sphere-based map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
 % Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
-Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
+Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces, both indoor and outdoor.
 % Our proposed method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.
-Our method also significantly reduces the cost of autonomous unknown-space exploration and safe navigation that was previously only documented using LiDARs and expensive depth sensors, as it only requires a single camera, a standard IMU and 
+% Our method also significantly reduces the cost of autonomous unknown-space exploration and safe navigation that was previously only documented using LiDARs and expensive depth sensors, as it only requires a single camera, a standard IMU and 
 % no GPU for dense depth estimation.
-a CPU.
-Thus, we hope our method can be a step towards economically viable real-world deployment of UAV systems, especially in search-and-rescue missions.
+% a CPU.
+% Thus, we hope our method can be a step towards economically viable real-world deployment of UAV systems, especially in search-and-rescue missions.
 % As future work, we intend to complement the imperfections of the depth estimation by integrating low-cost, short-range distance sensors (e.g. ultrasound) into the mapping pipeline, thus detecting even thin and textureless objects.
 % As future work, we intend to complement the problems of monocular depth estimation near thin or textureless obstacles by integrating low-cost short-range distance sensors (e.g. ultrasound) into the mapping pipeline.
 % Our approach could be extended in future work by integrating low-cost short-range distance sensors (e.g. ultrasound) into the mapping pipeline to complement the problem of depth estimation near textureless objects.

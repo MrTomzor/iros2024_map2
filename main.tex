@@ -293,7 +293,7 @@ Combined with the sampling scheme described in \autoref{sec:fake}, this approach
 By storing obstacles as a set of geometric primitives (points), we can also assign additional metrics to each obstacle, such as measurement distance. 
 % or, in future work, the modality of its origin.
 This allows for rule-based measurement fusion, which is critical for dealing with problems such as occlusions in monocular depth estimation, as we explain in \autoref{sec:distance-based}.
-In several experiments, we show how this mapping approach, combined with perception-aware planning, enables exploration large-scale unstructured areas which feature both textureless wide open spaces and cluttered narrow passages.
+In several experiments, we show how this mapping approach, combined with perception-aware planning, enables exploration large-scale unstructured areas which feature both textureless wide open spaces and \todo{cluttered narrow passages.}
 % TODO - is neccesary?
 % In this representation, we assign additional metrics
 % This representation allows for fast and safety-aware planning \cite{spheremap}.
@@ -550,8 +550,8 @@ A single map update iteration consists of the following steps in order:
 \subsection{Constructing the Visible Free-Space Polyhedron}
 \label{sec:polyhedron}
 The first step is to construct a polyhedron of space that is estimated to contain free space based on the information in the current timestep.
-To interpolate depth between the sparse SLAM points, we employ a simplified version of the approach described in FLAME \cite{flame}.
-There, the authors focus on constructing a precise mesh from visual keypoint measurements
+To interpolate depth between the sparse SLAM points, we employ a simplified version of the approach described in FLAME \cite{flame}, where
+a precise mesh is constructed from visual keypoint measurements.
 In this paper, we care primarily about mapping the free space for navigation purposes, and thus we do not perform the mesh optimization or split the 2D interpolations as in \cite{flame}.
 
 We project the currently tracked visual SLAM points into the image plane and compute their Delaunay triangulation. 
@@ -561,7 +561,7 @@ This space is enclosed by connecting all points that lie on the edge of $\mathca
 
 \subsection{Estimating Free Space in Open Areas}
 \label{sec:fake}
-When moving in open areas, such as a grassy field without vertical obstacles, visual SLAM often tracks only a few keypoints on the ground, as illustrated in \autoref{fig:mapping_pipeline}.
+When moving in open areas, such as a grassy field without vertical obstacles in \autoref{fig:mapping_pipeline}, visual SLAM often tracks only a few keypoints on the ground. 
 % This would \todo{normally} cause free space to be estimated only below the UAV and not allow flight across the field.
 Using standard free-space estimation methods, this would cause free space to be estimated only below the UAV and not allow flight across the field.
 % This causes free space to be estimated only below the UAV and not allow flight across the field.
@@ -573,12 +573,12 @@ Using standard free-space estimation methods, this would cause free space to be 
 To allow safe flight in open areas, our method estimates additional free space based on the following assumption: 
 % \todo{reformulate - consider an area of the image -> fake depth -> but up to some max dist -> see image}
 % Consider a virtual keypoint $\mathbf{x}_{vir}$ at time $t$ that has been in the UAV's FoV from a given time $t-x$ in the past up to $t$ 
-Consider a virtual point in space $\mathbf{x}_{vir}$ at time $t$ that not left the camera's FoV from a given time $t-x$ in the past up to $t$ 
+Consider a virtual point in space $\mathbf{x}_{vir}$ at time $t$ that has not left the camera's FoV from a given time $t-x$ in the past up to $t$ 
 (i.e. it could have been tracked by visual SLAM).
 % (i.e. it has not left the camera's FOV between $t-x$ and $t$).
 Then, if there is a point on the UAV's trajectory between $t-x$ and $t$ such that there would be enough parallax for estimating the distance of $\mathbf{x}_{vir}$ (according to a user-defined threshold), and if the visual SLAM frontend has not estimated any stable 3D point at approximately that position, then $\mathbf{x}_{vir}$ must lie in free space.
 
-This assumption allows estimating more free space than when only tracing rays towards the visual SLAM points localized in 3D.
+This assumption allows estimating significantly more free space than when only tracing rays towards the visual SLAM points localized in 3D.
 % This approximation does not hold close to large textureless walls, but works quite well in the vast majority of real-world environments.
 % This assumption does not hold close to large textureless objects, and free space could thus be wrongly estimated in the rare cases when such objects occur.
 However, it does not hold close to large textureless objects or thin objects where no features can measured by the sparse visual SLAM frontend.

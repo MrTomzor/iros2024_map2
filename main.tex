@@ -171,8 +171,11 @@ MonoSpheres: Large-Scale Monocular UAV Exploration using Direct Sphere-Based Map
   Intersecting spheres form a topometric map suitable for rapid safety-aware planning.  
   We also present a scheme for safely sampling additional free space in directions \todo{where no textured points can be triangulated}, and show how this enables navigation in outdoor open-space areas. 
   Furthermore, we present a perception-aware exploration approach that is enabled by the proposed mapping method and explicitly handles the problematic properties of monocular depth estimation. 
-  The proposed methods are, to the authors' best knowledge, the first to achieve autonomous exploration in both indoor and outdoor unstructured 3D environments at the presented scale of up to \todo{100x100m}, using only a single monocular camera and an IMU onboard a UAV. 
-  We open-source the code of the proposed methods to provide safety-aware 3D navigation capabilities to any vision-based UAV operating in unknown environments.
+  % The proposed methods are, to the authors' best knowledge, the first to achieve autonomous exploration in both indoor and outdoor unstructured 3D environments at the presented scale of up to \todo{100x100m}, using only a single monocular camera and an IMU onboard a UAV. 
+  The proposed method is, to the authors' best knowledge, the first to achieve monocular exploration in real-world outdoor unstructured 3D environments.
+  In real-world and simulated missions, our method consistently explores both indoor and outdoor environments spanning up to 100x100m in scale.
+  % In addition, our experimental results in simulation show the proposed methods achieve both indoor/outdoor
+  We open-source the code of the proposed method to provide safety-aware 3D navigation capabilities to any vision-based UAV operating in unknown environments.
 
 Code--- %\href{
 \href{TODO}{TODO}
@@ -581,10 +584,11 @@ Then, if there is a point on the UAV's trajectory between $t-x$ and $t$ such tha
 This assumption allows estimating significantly more free space than when only tracing rays towards the visual SLAM points localized in 3D.
 % This approximation does not hold close to large textureless walls, but works quite well in the vast majority of real-world environments.
 % This assumption does not hold close to large textureless objects, and free space could thus be wrongly estimated in the rare cases when such objects occur.
-However, it does not hold close to large textureless objects or thin objects where no features can measured by the sparse visual SLAM frontend.
+However, it does not hold close to large textureless objects or thin objects where no features are measured by the sparse visual SLAM frontend.
 % Therefore, free space could be wrongly estimated in the rare cases when such objects appear in the real world.
 Therefore, free space can sometimes be wrongly estimated when such objects appear.
-In future work, this could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping, or by using a denser depth estimation method.
+% In future work, this could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping.
+Nevertheless, since this issue arises only close to such obstacles, it could be simply resolved by incorporating single-point measurements from a low-cost short-range distance sensor (e.g. ultrasonic) into the mapping.
 % This could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping, 
 % but that would be outside the scope of this paper.
 % which we leave for future work.
@@ -595,15 +599,17 @@ In future work, this could be solved by adding low-cost, short-range distance se
 
 
 % We keep a set of virtual points $\mathbf{x}_vir$ in front of the UAV at all times, and if some of the points become are estimated as free based on the above assumption, 
-We periodically check the described condition for a set of virtual points $\mathbf{x}_{vir}$ at a fixed distance in front of the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration. 
+% We periodically check 
+The mapping method periodically checks 
+the described condition for a set of virtual points $\mathbf{x}_{vir}$ at a fixed distance in front of the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration. 
 % This is only done for a few points, as checking the condition for all points in the UAV's FOV would be computationally demanding. 
-The user can select the amount of these points and how far from the camera they lie, based on the amount of textureless areas and thin obstacles in the environment.
+% The user can select the amount of these points and how far from the camera they lie, based on the amount of textureless areas and thin obstacles in the environment.
 % We take the points that fulfill this condition and add them to the creation of the \textit{depth mesh} $\mathbf{F}_d$.
 The points that fulfill this condition are added to the creation of the \textit{depth mesh} $\mathcal{F}_d$.
 % To further mitigate the depth estimation problem near textureless areas,
 % we discard points such points that would fall into the Delaunay triangulation of the true obstacle points, since there we have a better depth estimate from the SLAM points.
 % However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there we have a better depth estimate from the SLAM points.
-However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there we have at least some depth estimate from interpolating the SLAM points.
+However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there is a more reliable depth estimate from interpolating the SLAM points.
 Free space estimated in this manner also cannot erase existing obstacle points in the map.
 % This also helps to correctly estimate depth when there is at least a little amount of visual texture near to textureless areas.
 % This way, the problem of large featureless objects is mitigated in the majority of cases, when textured objects are visible nearby. 

@@ -208,7 +208,7 @@ Monocular cameras and inertial measurement units (IMUs), on the other hand, are 
 % Exploring an unknown environment using only a monocular camera and IMU is, however, still a largely unsolved research problem.
 % The existing approaches present success only at the scale of one or two indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav, cnn_explo_singleroom}, or outdoor, but with severely limiting assumptions on the environmental structure.
 Monocular exploration of unstructured 3D environments has thus far been presented only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav, cnn_explo_singleroom}.
-Some works have presented outdoor monocular exploration, but designed only for highly specific types of environments (e.g. in corridors only \cite{corridors_mono_nav_2009} or around a single object with no other obstacles [\todo{TODO}]).
+Some works have presented outdoor monocular exploration, but designed only for highly specific types of environments (e.g. in corridors only \cite{corridors_mono_nav_2009} or around a single object with no other obstacles \cite{information_driven_bbx_mapping}).
 % We hypothesize that the main challenge lies in correctly estimating navigable space, since monocular depth estimation methods are not yet fully reliable and cannot simply be used in the same way as dense range sensors.
 % We hypothesize that the main challenge lies in correctly estimating navigable space, since monocular depth estimation methods are not yet fully reliable, and focus on estimating free space in a different way than with dense sensors.
 % These methods use sparse pointclouds from monocular SLAM or dense pointclouds from a monocular depth neural network to build a grid-based map in the same way as with dense range sensors.
@@ -287,8 +287,8 @@ As confirmed by the authors, however, the deep neural depth estimates currently 
 % \todo{in contrast?}In this paper, we present a novel approach to 3D mapping of unstructured large-scale environments using only a monocular camera and IMU. 
 % Our method utilizes a sparse pointcloud of 3D points produced by monocular-inertial SLAM, which is already a necessary part of many vision-based UAV systems.
 % \todo{The main idea is...}
-The main idea of our paper is that instead of traditionally casting rays through a grid towards obstacle points and updating occupancy values of passed voxels \cite{octomap, voxblox}[\todo{MORE CITATIONS}], we construct a polyhedron of approximate visible free space \todo{at each frame} and inscribe spheres of free space inside that polyhedron.
-Intersecting spheres are connected together to form a graph-of-spheres map representation that has been shown to allow rapid and safety-aware planning \cite{spheremap} \todo{MORE CITATIONS}.
+The main idea of our paper is that instead of traditionally casting rays through a grid towards obstacle points and updating occupancy values of passed voxels \cite{octomap, voxblox, ufomap}, we construct a polyhedron of approximate visible free space \todo{at each frame} and inscribe spheres of free space inside that polyhedron.
+Intersecting spheres are connected together to form a graph-of-spheres map representation that has been shown to allow rapid and safety-aware planning \cite{topomap, skeletons, spheremap}.
 This map is built online, directly from the sparse pointclouds, without requiring any grid-based map to be built first.
 % Under assumptions that hold in the majority of real-world environments (see \autoref{sec:fake}), this approach accurately maps free space even in low-texture areas where the traditional raytracing approach might not initialize enough free space to allow flight. 
 Combined with the sampling scheme described in \autoref{sec:fake}, this approach accurately estimates free space even in low-texture areas where the traditional raytracing approach might not initialize sufficient free space to allow flight, as shown in our experimental results in \autoref{sec:sim_exper}. 
@@ -728,7 +728,7 @@ In this section, we describe a monocular exploration approach enabled by the pro
 In principle, we employ the commonly used next-best-view (NBV) \cite{paper_frontier_grandpa} strategy, which has so far been deemed unsuitable for monocular exploration in existing works \cite{from_monoslam_to_explo, los_maps}.
 % We introduce several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments, detailed in the following sections.
 % In the following sections, we introduce several major differences in methodology that are neccessary for NBV in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
-In the following sections, we introduce several major differences in methodology that are critical for allowing the NBV strategy in the case of a robot equipped with only a monocular camera for depth sensing.
+In the following sections, we introduce several major differences in methodology that are critical for allowing the NBV strategy to be used for robots equipped with only a monocular camera for depth sensing.
 % \todo{write assumptions on perception here? mapping doesnt care}
 
 \subsection{Frontier Sampling on Free-Space Polyhedron}

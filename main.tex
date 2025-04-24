@@ -342,7 +342,8 @@ A recent line of research tries to bridge this gap by turning a monocular camera
 % The authors of \cite{simon2023mononav, cnn_explo_singleroom} use deep-learning-based single image depth estimation models to obtain dense point clouds from a monocular camera, essentially turning it into a depth camera.
 The authors of \cite{simon2023mononav, cnn_explo_singleroom} have demonstrated using such depth estimation models combined with traditional navigation approaches.
 However, the authors demonstrate autonomy only at the scale of a single room, while also encountering collisions and map deformations due to depth estimation errors.
-As discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}, current depth estimation models still struggle to provide real-time onboard performance and reliable generalization in domains that the model was not trained on.
+The authors of \cite{mono_airsim_nav_2025} present navigation with obstacle avoidance using pretrained and finetuned monocular depth models in larger outdoor environments in simulation, but also note a high collision and navigation failure rate due to the same problems.
+As further discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}, current depth estimation models still struggle to provide real-time onboard performance and reliable generalization in domains that the model was not trained on.
 In addition, they require a GPU which significantly raises the cost and weight of a UAV.
 % Thus, in this paper, we chose not to go with learning-based depth estimation.
 % In addition, to the fact that a GPU significantly raises the cost and weight of a UAV, this 

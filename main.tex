@@ -296,7 +296,7 @@ Combined with the sampling scheme described in \autoref{sec:fake}, this approach
 By storing obstacles as a set of geometric primitives (points), we can also assign additional metrics to each obstacle, such as measurement distance. 
 % or, in future work, the modality of its origin.
 This allows for rule-based measurement fusion, which is critical for dealing with problems such as occlusions in monocular depth estimation, as we explain in \autoref{sec:distance-based}.
-In several experiments, we show how this mapping approach, combined with perception-aware planning, enables exploration large-scale unstructured areas which feature both textureless wide open spaces and \todo{cluttered narrow passages.}
+In several experiments, we show how this mapping approach, combined with perception-aware planning, enables exploration of large-scale unstructured areas which feature both textureless wide open spaces and \todo{cluttered narrow passages.}
 % TODO - is neccesary?
 % In this representation, we assign additional metrics
 % This representation allows for fast and safety-aware planning \cite{spheremap}.
@@ -343,8 +343,8 @@ A recent line of research tries to bridge this gap by turning a monocular camera
 The authors of \cite{simon2023mononav, cnn_explo_singleroom} have demonstrated using such depth estimation models combined with traditional navigation approaches.
 However, the authors demonstrate autonomy only at the scale of a single room, while also encountering collisions and map deformations due to depth estimation errors.
 As discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}, current depth estimation models still struggle to provide real-time onboard performance and reliable generalization in domains that the model was not trained on.
-In addition, a GPU significantly raises the cost and weight of a UAV.
-Thus, in this paper, we chose not to go with learning-based depth estimation.
+In addition, they require a GPU which significantly raises the cost and weight of a UAV.
+% Thus, in this paper, we chose not to go with learning-based depth estimation.
 % In addition, to the fact that a GPU significantly raises the cost and weight of a UAV, this 
 
 A different line of research focuses on taking the sparse 3D points from monocular SLAM and working with those as the only depth measurements.
@@ -385,6 +385,7 @@ Grid-based maps built by raytracing suffer from the problem of choosing the smal
 If the voxels are too big, then narrow passages can wrongly appear as untraversable or even completely closed, severely limiting the robot's navigation. 
 If the minimum voxel size is too small compared to the density of data, gaps can appear in free space due to rays passing only a thin strip of voxels.
 Moreover, high map resolution requires large amounts of raycasts which can go beyond the computational power available on the onboard computers.
+A different representation and mapping approach is thus desirable for these conditions.
 % \todo{rict ze sfery maj min radius, ale nevadi to scalovani, neni to to samy co grid resolution}
 
 % We argue that using a smaller voxel size would not solve this issue, since that would leave many gaps in the free space.
@@ -395,23 +396,28 @@ Moreover, high map resolution requires large amounts of raycasts which can go be
 % If this is set as too large, narrow passages will not be captured in the map, and if it is too small, the map will need large amounts of raycasts to set all the cells' occupancy values, which is computationally expensive.
 % In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
 
-In previous work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that using a graph of intersecting free-space spheres, rather than a voxel grid, can solve this scaling issue.
+In recent work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that using a graph of intersecting free-space spheres, rather than a grid-based representation, is highly suitable for rapid scale-invariant safety-aware path planning.
 % \todo{TODO - address octree repre vs spheremap, also smallest sphere size}
+% A graph-of-spheres representation efficiently describes large spaces with a few large spheres, while describing narrow passages in more detail by densely-packed smaller spheres.
 A graph-of-spheres representation efficiently describes large spaces with a few large spheres, while describing narrow passages in more detail by densely-packed smaller spheres.
+In addition, the distance to obstacles is stored as the radius of each sphere, and is immediately available for safety-aware planning.
+Thus, this representation combines the scalability of octree-based maps \cite{octomap} with the distance information availability from distance field maps \cite{voxblox}.
 % In previous work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that representing free space by a graph of intersecting spheres \todo{solves this problem by} can efficiently describe large-space while keeping detailed information in narrow spaces.
-In additon, it allows orders of magnitude faster path planning \cite{spheremap, spheregraph} than grid-based representations.
 % In \cite{spheremap}, we also demonstrated that this representation allows path planning that has explicit information about distance to obstacles, in addition to allowing orders of magnitude faster path planning than on an occupancy grid.
 In this paper, we represent free space using spheres as well, but with two major differences: 
 % In this paper, we represent the free space using spheres as well, but also add the obstacle points into the map and use them for constraining the sphere radii, but with \todo{two major differences 
 
-% \begin{itemize}
-  Firstly, the methods presented in \cite{spheremap, spheregraph, bubbleplanner} require building a local occupancy grid with a LiDAR for computing the sphere-based map.
-    % \todo{This can be computationally expensive + there has been now approach shown to build GRID using sparse depth data, making it unsuitable for large featureless environments?}
+  Firstly, the methods presented in \cite{spheremap, spheregraph, bubbleplanner} require building an intermediate local occupancy grid for computing the sphere-based map.
     This can be computationally expensive.
-    Secondly, all methods for building a grid-based occupancy map require the data to be from dense depth sensors. 
+    Secondly, all methods for building a grid-based occupancy map require the data to be from dense depth sensors (LiDARs, RGB-D cameras, ...). 
     In this paper, we build the graph of spheres \textit{directly} out of input  pointclouds without building any intermediate occupancy grid, while also 
     requiring only \textit{sparse} pointclouds from a monocular camera running visual SLAM.
-    
+
+    % Firstly, all methods for building a map for 3D exploration require the data to be from dense depth sensors (LiDARs, RGB-D cameras, etc.). 
+  % Secondly, the methods for constructing a graph-of-spheres topological map presented in \cite{spheremap, spheregraph, bubbleplanner} require first building an intermediate local occupancy grid.
+    % This can be computationally expensive.
+    % In this paper, we build the graph of spheres using only \textit{sparse} pointclouds from a monocular camera running visual SLAM, without building any intermediate occupancy grid.
+
     % \todo{in addition to only describing free space...}
   % Secondly, the representation proposed in this paper stores previously seen SLAM points as obstacle points and remembers their measurement distance. 
   %   These points are important for correctly updating free space when previously seen obstacles are momentarily not detected by the visual SLAM (see \ref{sec:distance-based}).

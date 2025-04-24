@@ -347,18 +347,20 @@ In addition, they require a GPU which significantly raises the cost and weight o
 % Thus, in this paper, we chose not to go with learning-based depth estimation.
 % In addition, to the fact that a GPU significantly raises the cost and weight of a UAV, this 
 
-A different line of research focuses on taking the sparse 3D points from monocular SLAM and working with those as the only depth measurements.
-Most of this research has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} or exploration with strong assumptions on the environment structure \cite{corridors_mono_nav_2009}.
+A different line of research focuses on taking sparse 3D points estimated by visual SLAM and working with those as the only depth measurements.
+Most of this research has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} or exploration with strong assumptions on the environment structure \cite{corridors_mono_nav_2009, information_driven_bbx_mapping}.
 % A different line of research \cite{from_monoslam_to_explo, los_maps} focuses on taking the points from monocular SLAM, treating them as sparse distance measurements, and building the grid-based maps in the same way as with dense pointclouds.
 
 % For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
 % For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
-For full monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed building grid-based maps by tracing rays of free space towards the monocular SLAM points. 
+For general monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed building grid-based maps by tracing rays of free space towards the monocular SLAM points. 
 % A few these works \cite{from_monoslam_to_explo, los_maps} have demonstrated autonomous exploration in unstructured, indoor environments, 
 % As documented in \cite{from_monoslam_to_explo} and as shown in [\todo{TODO-FIG}], this approach causes gaps to appear in the free space of the map, whenever the environment is not texture-rich.
 As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the environment is not texture-rich.
-The authors of \cite{from_monoslam_to_explo} propose an exploration method specifically to cover these gaps.
-However, this only reduces the gaps, as this mapping method can never estimate free space near texture-sparse areas, and the authors show this exploration approach to only work at the scale of a single room.
+The authors of \cite{from_monoslam_to_explo} propose an exploration method specifically to cover these gaps and demonstrate an increase in mapped volume.
+However, the authors show this exploration approach to only work at the scale of a single room.
+% However, this only reduces the gaps, as this mapping method can never estimate free space near texture-sparse areas, and the authors show this exploration approach to only work at the scale of a single room.
+Most importantly though, this mapping approach cannot estimate free space in textureless areas, especially outdoor (as shown in \autoref{sec:sim_exper}).
 % \todo{This technique accurately covers free space when dense input pointclouds are available, such as from a LiDAR or depth camera. 
 % If the voxel size is too small and/or the data is sparse, gaps will appear in the free space.
 % In large open areas where many features are too far to be accurately triangulated, this can lead to no free space being initiated except near the ground, causing the robot to not explore into the open space.
@@ -374,17 +376,17 @@ However, this only reduces the gaps, as this mapping method can never estimate f
 % The authors of \cite{los_maps} work around the gap issue by setting the voxel size to be relatively larger compared to the UAV size, which causes more voxels to be passed by the sparse rays towards measured points.
 % They present exploration on the scale of several indoor rooms and in simulation only. 
 
-The authors of \cite{los_maps} also trace rays towards sparse SLAM points, and present exploration on the scale of several indoor rooms and in simulation only.
+The authors of \cite{los_maps} also trace rays towards sparse SLAM points, and present exploration on the scale of multiple indoor rooms in simulation.
 They work around the gap issue by setting the map voxel size to be relatively large compared to the UAV size.
-A larger voxel size causes a higher percentage of voxels to be passed by the sparse rays towards measured points, reducing the gaps, but leads to the following problem:
+A larger voxel size causes a higher percentage of voxels to be passed by the sparse rays towards measured points, reducing the gaps.
 % This approach can however only work in constant-scale environments.
 % This approach can however only work in constant-scale environments without narrow corridors.
 % Such large voxel size, however, can cause narrow pathways to appear untraversible if the map is not perfectly aligned.
 
-Grid-based maps built by raytracing suffer from the problem of choosing the smallest voxel resolution in multi-scale environments.
+Nevertheless, grid-based maps built by raytracing suffer from the problem of choosing the smallest voxel resolution in multi-scale environments.
 If the voxels are too big, then narrow passages can wrongly appear as untraversable or even completely closed, severely limiting the robot's navigation. 
-If the minimum voxel size is too small compared to the density of data, gaps can appear in free space due to rays passing only a thin strip of voxels.
-Moreover, high map resolution requires large amounts of raycasts which can go beyond the computational power available on the onboard computers.
+If the minimum voxel size is too small compared to the density of data, gaps can appear in free space due to rays passing only a thin strip of voxels, especially with sparse depth data.
+% Moreover, high map resolution requires large amounts of raycasts which can go beyond the computational power available on the onboard computers.
 A different representation and mapping approach is thus desirable for these conditions.
 % \todo{rict ze sfery maj min radius, ale nevadi to scalovani, neni to to samy co grid resolution}
 

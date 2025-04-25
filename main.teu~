@@ -172,8 +172,8 @@ MonoSpheres: Large-Scale Monocular 3D Exploration using Direct Sphere-Based Mapp
   We also present a scheme for safely sampling additional free space in directions \todo{where no textured points can be triangulated}, and show how this enables navigation in outdoor open-space areas. 
   Furthermore, we present a perception-aware exploration approach that is enabled by the proposed mapping method and explicitly handles the problematic properties of monocular depth estimation. 
   % The proposed methods are, to the authors' best knowledge, the first to achieve autonomous exploration in both indoor and outdoor unstructured 3D environments at the presented scale of up to \todo{100x100m}, using only a single monocular camera and an IMU onboard a UAV. 
-We test the capabilities of our method in several real-world and simulated environments. 
-  To the best of the authors' knowledge, the proposed method is the first to achieve both indoor and outdoor 3D monocular exploration in environments up to 100x100m in scale.
+We test the capabilities of our method in several real-world and simulated envionments. 
+  To the best of the authors¿ knowledge, the proposed methods is the first to achieve both indoor and outdoor 3D monocular exploration in environments up to 100x100m in scal
   % The proposed method is, to the authors' best knowledge, the first to achieve monocular exploration in real-world outdoor unstructured 3D environments.
   % In real-world and simulated missions, our method consistently explores both indoor and outdoor environments spanning up to 100x100m in scale.
   % In addition, our experimental results in simulation show the proposed methods achieve both indoor/outdoor
@@ -599,6 +599,7 @@ However, it does not hold close to large textureless objects or thin objects whe
 % Therefore, free space could be wrongly estimated in the rare cases when such objects appear in the real world.
 Therefore, free space can sometimes be wrongly estimated when such objects appear.
 % In future work, this could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping.
+Nevertheless, since this issue arises only close to such obstacles, it could be simply resolved by incorporating single-point measurements from a low-cost short-range distance sensor (e.g. ultrasonic) into the mapping.
 % This could be solved by adding low-cost, short-range distance sensors (e.g. an ultrasonic sensor), which are otherwise not usable for traditional dense raycast-based 3D mapping, 
 % but that would be outside the scope of this paper.
 % which we leave for future work.
@@ -883,7 +884,7 @@ Also note in that the UAV explored a considerable amount of space in the open fi
 This was made possible by our approach to safe estimation of free space in open-space areas, described in \autoref{sec:fake}.
 % The UAV is running OpenVINS \cite{openvins} for odometry estimation, and our proposed inverse depth etstimator and mapper modules.
 
-We have tested the proposed approach extensively in a variety of other real-world environments, including an orchard, a forest path, and a campsite, which our method also explored.
+We have tested the proposed approach extensively in a variety of other real-world environments, including a forest path, a tree in a wide open field, and a campsite, which our method also explored.
 Videos from real-world experiments are available at TODO-YOUTUBE-LINK. 
 % \todo{zkratit, neprisli jsme nato u testovani ale vime o tom a jak to resit (future work - lajny / shortrange sensory a pouzivat tohle na longrange)}
 % \todo{Some of these experiments required the safety pilot to take control due to an important limitation of the method that we encountered during testing --- 
@@ -1057,8 +1058,7 @@ Videos from real-world experiments are available at TODO-YOUTUBE-LINK.
 \end{table}
 % %%}
 
-% \subsection{Comparison with Grid-Based Approach in Simulation}
-\subsection{Simulation Experiments}
+\subsection{Comparison with Grid-Based Approach in Simulation}
 \label{sec:sim_exper}
 % In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
 % In the following experiments, we showcase the capabilities of our approach in simulated  urban areas with multiple buildings, collapsed trees, cars and other obstacles.
@@ -1082,7 +1082,7 @@ Videos from these experiments are available in the multimedia materials.
 The experiments were conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
 Exploration goal generation was constrained to a \SI{60x50x7}{meter} area of interest in the urban world for both methods, and was unconstrained in the enclosed cave world.
 
-\subsection{Discussion}
+\subsection{Experiments Discussion}
 % In the simulated experiments, our proposed approach was able to cover both environments.
 In the "cave" world, which is a texture-rich indoor environment, the grid-based approach performed similarly to MonoSpheres in terms of initial exploration speed.
 % and with sufficient side-to-side motion, was able to create sufficient free space to explore the cave corridor.
@@ -1092,15 +1092,13 @@ With a more sophisticated viewpoint selection approach, the grid-based approach 
 However, in the "urban" world -- an open-space, texture-sparse environment -- the grid-based approach was never able to explore a large portions of the area that require the UAV to fly over a building or move across an open field. 
 In comparison, MonoSpheres (with the same parameters as in the cave world) was able to consistently cover the outdoor environment.
 These results demonstrate that our proposed open-space free-space sampling approach described in \autoref{sec:fake} enables exploration of outdoor areas, where the ray-tracing grid-based mapping is not able to create sufficient free space, while also safely mapping indoor areas.
-\todo{To further analyze the benefit of this feature of the mapping, we also evaluated the performance of the pipeline with the open-space free-space sampling disabled. As expected, this ablation leads to similar performance in the enclosed cave world, but fails in the outdoor world.}
 % DISCUSSIONThe mapping approach A is more conservative. This leads to fewer crahes, but limits the areas the UAV can explore. The mapping approach proposed in this paper can occasionally overestimate free space, but allows the UAV to safely move through open-space areas.TODO - disposable so crashes not a problem! and also fixable by better monodepth outside the scope of this!
 
 In all of the experiments, our method achieved long periods of collision-free flight even near complex obstacles such as trees, collapsed houses, and cars in uncommon configurations.
-As expected, the documented collisions were caused by occasional incorrect free-space sampling (discussed in detail in \autoref{sec:fake}) near small featureless obstacles (such as blackened parts of the simulated burned buildings or exposed metal rods) that were not detected by the point-based visual SLAM frontend.
-% Nevertheless, this could be resolved by incorporating single-point measurements from a low-cost short-range distance sensor (e.g. ultrasonic) into the mapping pipeline, or by leveraging a different visual front-end designed to prioritize detection of such obstacles.
-Nevertheless, this could be resolved by incorporating measurements from low-cost short-range distance sensors (e.g. ultrasonic) into the mapping pipeline.
-Alternatively, designing a visual front-end that would prioritize detection of such obstacles could help as well, but that is outside the scope of this paper.
+The few documented crashes were caused by either occasionally incorrect free-space sampling \autoref{sec:fake}, or by small featureless obstacles (such as blackened parts of the simulated burned buildings or exposed metal rods) that were not detected as features by point-based visual SLAM frontend.
 % Both of these issues could be solved in future work by using a visual front-end that uses line-based or dense features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
+These issues would be solved by leveraging low-cost ultrasound sensors as a bumper for the UAV.
+Another possibility of detecting these objects would be to use a visual front-end that uses line-based or dense features, but that is beyond the scope of this article.
 % As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 % Also, the explored area could be increased by implementing a more sophisticated exploration strategy, but even the simplistic greedy approach used in this paper demonstrates the usefulness of our mapping approach.

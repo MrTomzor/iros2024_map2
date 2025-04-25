@@ -97,7 +97,7 @@
 % MonoSpheres: Direct Sphere-Based Mapping for Large-Scale Monocular-Inertial UAV Exploration}
 % MonoSpheres: Monocular-Inertial Sphere-Based Mapping for Large-Scale UAV Exploration}
 % MonoSpheres: Sphere-Based Mapping with Sparse Depth for Large-Scale Monocular-Inertial 3D Exploration}
-MonoSpheres: Large-Scale Monocular UAV Exploration using Direct Sphere-Based Mapping}
+MonoSpheres: Large-Scale Monocular 3D Exploration using Direct Sphere-Based Mapping}
 % MonoSphere: Monocular-Inertial Mapping and Exploration for UAV Exploration in Large-Scale 3D Environments}
 % Monocular-Inertial 3D Exploration of Large-Scale Outdoor Environments using Sparse Visual SLAM}
 % Monocular-Interital Sphere-Based Mapping for Large-Scale UAV Exploration}
@@ -288,7 +288,7 @@ As confirmed by the authors, however, the deep neural depth estimates currently 
 % Our method utilizes a sparse pointcloud of 3D points produced by monocular-inertial SLAM, which is already a necessary part of many vision-based UAV systems.
 % \todo{The main idea is...}
 The main idea of our paper is that instead of traditionally casting rays through a grid towards obstacle points and updating occupancy values of passed voxels \cite{octomap, voxblox, ufomap}, we construct a polyhedron of approximate visible free space \todo{at each frame} and inscribe spheres of free space inside that polyhedron.
-Intersecting spheres are connected together to form a graph-of-spheres map representation that has been shown to allow rapid and safety-aware planning \cite{topomap, skeletons, spheremap}.
+Intersecting spheres are connected together to form a graph-of-spheres map representation that has been shown to allow rapid and safety-aware planning \cite{spheregraph, spheremap, bubbleplanner}.
 This map is built online, directly from the sparse pointclouds, without requiring any grid-based map to be built first.
 % Under assumptions that hold in the majority of real-world environments (see \autoref{sec:fake}), this approach accurately maps free space even in low-texture areas where the traditional raytracing approach might not initialize enough free space to allow flight. 
 Combined with the sampling scheme described in \autoref{sec:fake}, this approach accurately estimates free space even in low-texture areas where the traditional raytracing approach might not initialize sufficient free space to allow flight, as shown in our experimental results in \autoref{sec:sim_exper}. 
@@ -329,7 +329,7 @@ As a step towards low-cost vision-based UAVs safely and efficiently navigating a
 
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
 In the field of robotic exploration, environments are most often represented by a grid-based map of occupied, unknown, and free space, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
-These grid-based representations are the backbone for nearly all of robotic path planning, exploration \cite{darpa_cerberus_wins, beneath} and higher-level spatial abstraction methods \cite{topomap, skeletons, spheremap}.
+These grid-based representations are the backbone for nearly all of robotic path planning, exploration \cite{darpa_cerberus_wins, beneath} and higher-level spatial abstraction methods \cite{topomap, skeletons, spheregraph, spheremap}.
 However, these maps rely on dense distance sensors, such as LiDARs or depth cameras, to build an accurate map of free and occupied space.
 
 % , has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
@@ -399,7 +399,7 @@ A different representation and mapping approach is thus desirable for these cond
 % If this is set as too large, narrow passages will not be captured in the map, and if it is too small, the map will need large amounts of raycasts to set all the cells' occupancy values, which is computationally expensive.
 % In our previous work \cite{spheremap}, we have shown how a graph of intersecting spheres can be built out of an occupancy grid, and that this representation allows path planning that has explicit information about distance to obstacles, in addition to being orders of magnitude faster than on an occupancy grid.
 
-In recent work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that using a graph of intersecting free-space spheres, rather than a grid-based representation, is highly suitable for rapid scale-invariant safety-aware path planning.
+In recent work \cite{spheregraph, spheremap, bubbleplanner}, it has been shown that using a graph of intersecting free-space spheres, rather than a grid-based representation, is highly suitable for rapid scale-invariant safety-aware path planning.
 % \todo{TODO - address octree repre vs spheremap, also smallest sphere size}
 % A graph-of-spheres representation efficiently describes large spaces with a few large spheres, while describing narrow passages in more detail by densely-packed smaller spheres.
 A graph-of-spheres representation efficiently describes large spaces with a few large spheres, while describing narrow passages in more detail by densely-packed smaller spheres.
@@ -410,7 +410,7 @@ Thus, this representation combines the scalability of octree-based maps \cite{oc
 In this paper, we represent free space using spheres as well, but with two major differences: 
 % In this paper, we represent the free space using spheres as well, but also add the obstacle points into the map and use them for constraining the sphere radii, but with \todo{two major differences 
 
-  Firstly, the methods presented in \cite{spheremap, spheregraph, bubbleplanner} require building an intermediate local occupancy grid for computing the sphere-based map.
+  Firstly, the methods presented in \cite{spheregraph, spheremap , bubbleplanner} require building an intermediate local occupancy grid for computing the sphere-based map.
     This can be computationally expensive.
     Secondly, all methods for building a grid-based occupancy map require the data to be from dense depth sensors (LiDARs, RGB-D cameras, ...). 
     In this paper, we build the graph of spheres \textit{directly} out of input  pointclouds without building any intermediate occupancy grid, while also 
@@ -682,7 +682,7 @@ These points are used to constrain sphere radii in the following update step.
 
 Additionally, to prioritize closer measurements, points seen from a closer distance replace points seen from larger distances, if they are measured close enough to them. 
 In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, which is also visualized in \autoref{fig:distbased}. 
-We enforce these two rules by \todo{deleting any point} $\mathbf{x}$ if
+We enforce these two rules by deleting previously mapped points only $\mathbf{x}$ if
 \begin{equation}
   \exists \mathbf{x}_{prev}: |\mathbf{x} - \mathbf{x}_{prev}| < a \quad \text{and} \quad d_{m,x_{prev}}  < d_{m,x}
 \end{equation}
@@ -734,6 +734,7 @@ This step is important to cover large open areas by only a few spheres to allow 
 \section{Perception-Aware Exploration using the Sphere-Based Map}
 % In this section, we detail how the proposed mapping method is highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a monocular camera and IMU.
 In this section, we describe a monocular exploration approach enabled by the proposed mapping method.
+\todo{[to show that map good for explo?]}
 In principle, we employ the commonly used next-best-view (NBV) \cite{paper_frontier_grandpa} strategy, which has so far been deemed unsuitable for monocular exploration in existing works \cite{from_monoslam_to_explo, los_maps}.
 % We introduce several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments, detailed in the following sections.
 % In the following sections, we introduce several major differences in methodology that are neccessary for NBV in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
@@ -748,7 +749,7 @@ If they do not meet these criteria in any following update, they are deleted.
 
 In enclosed spaces, which are usually considered in autonomous exploration literature, all frontiers are usually worth exploring.
 However, in outdoor exploration with areas of open space, it is also important to assign different value to different frontiers, especially for UAVs. 
-We proposed to constrain the exploration to only consider frontiers that lie near some obstacle points.
+We propose to constrain the exploration to only consider frontiers that lie near some obstacle points.
 This way, the UAV does not explore up into the sky.
 Additionally, this forces the UAV to only explore near texture-rich areas, thus avoiding losing visual odometry tracking.
 % \todo{Lastly, we add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint at a close distance.}
@@ -790,17 +791,18 @@ These frontier points are used to generate exploration viewpoints such that at l
 \subsection{Forced Translation when reaching Viewpoints}
 \label{sec:align}
 In traditional exploration approaches with dense distance sensors, it is sufficient to move the robot to a frontier, aim the sensors towards the unknown space, and assume that the distance sensors will uncover some additional space behind the frontier and thus expand the map.
-This approach will not, in principle, work well with a robot relying on a monocular camera that estimates depth from motion.
+This approach will not, in principle, work reliably with a robot relying on a monocular camera that estimates depth from motion.
 Such a robot requires \textit{translational} motion to obtain correct distance estimates of visual keypoints. 
 % as in monocular structure-from-motion (SfM) TODO-CITE (we do not consider deep learning methods which exploit knowledge about sizes of objects).
 % Excessive rotation without translation cannot lead to reasonable distance estimates.
 % Too much rotation with too little translation of the camera will cause the monocular SLAM or any SfM-based approach to not give reliable depth estimates.
 With rotation only, or motions that have too much rotation compared to translation, reliable depth estimates cannot be obtained.
 
-To solve this, we propose the following perception-aware planning approach: 
-When finding a path to a goal viewpoint that could uncover some frontiers, we compute the target headings on the path so that the UAV maintains a fixed heading in the viewpoint's direction for at least $d_{c}$ meters on the path before reaching the viewpoint, as visualized in \autoref{fig:exploration_explanation}.
+To solve this, we propose a simple perception-aware planning approach: 
+% When finding a path to a goal viewpoint that could uncover some frontiers, we compute the target headings on the path so that the UAV maintains a fixed heading in the viewpoint's direction for at least $d_{c}$ meters on the path before reaching the viewpoint, as visualized in \autoref{fig:exploration_explanation}.
+When finding a path to an exploration  viewpoint, we force the trajectory to aim the UAV in the viewpoint's direction after getting to a pre-defined distance $d_c$ from the goal, as visualized in \autoref{fig:exploration_explanation}.
 % In the experiments detailed in Sec. \autoref{sec:experiments}, we set $d_{c}=TODO$.
-This way, the UAV has enough translational motion before reaching a given viewpoint.
+This way, the UAV reaches the viewpoint with at least $d_c$ meters of translational motion.
 If textured surfaces are visible from that viewpoint, the UAV will most likely observe sufficient parallax to estimate their distances.
 
 \subsection{Explored Viewpoint Blocking}
@@ -811,8 +813,10 @@ This is due to the fact that real-world environments often contain textureless a
 Since obstacle points correspond to textured points triangulated by the visual SLAM, no points ever will be added on textureless surfaces.
 Frontier points will be generated there instead, since the surfaces lie on the edge of the visible free space polyhedron and can be far enough from any obstacle points.
 % but they will be on the boundary of free-space, so frontiers will be generated there.
-However, such frontiers cannot uncover any new space, since there is nothing behind them
-For this reason, we block the sampling of new viewpoints near visited viewpoints, visualized as large black arrows in \autoref{fig:exploration_explanation}, so that the UAV doesn't keep coming back to look at a blank wall.
+However, such frontiers cannot uncover any new space, since there is nothing behind them.
+For this reason, we block the sampling of new viewpoints near visited viewpoints, visualized as large black arrows in \autoref{fig:exploration_explanation}
+This stops the UAV from getting stuck repeatedly trying to uncover such surfaces.
+% , so that the UAV doesn't keep coming back to look at a blank wall.
 % We also put additional blocked viewpoints into the map based on where the UAV flies.
 % \todo{we also add 
 
@@ -833,8 +837,7 @@ the UAV is controlled to always fly in the direction of its camera when not alig
 This approach is crucial for ensuring collision-free flight in the case of incorrectly initialized free space.
 As discussed in \autoref{sec:fake}, some obstacles (e.g. thin wires, twigs) might not be visible in the cameras from a large distance to be detected by the visual SLAM (especially when using fisheye cameras), and can be wrongly estimated as free space.
 Using the forward-facing flight, the UAV has a higher chance to see these obstacles that were previously not detected, and quickly replan.
-
-To further increase safety and allow agile maneuvers, the UAV also plans paths with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is highly suitable, as described in \cite{spheremap, bubbleplanner, spheregraph}.
+To further increase safety and allow agile maneuvers, the paths are planned with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is highly suitable, as described in \cite{spheremap, bubbleplanner, spheregraph}.
 % Furthermore, 
 % the measurement distance of free-space spheres could be used for adaptively decreasing the UAV speed in areas with higher probability of non-detected or wrongly localized obstacles, but we leave this for future work.
 % With all of these considerations, a UAV with only a monocular camera and IMU can perform 3D volumetric exploration in large-scale outdoor environments, as we demonstrate experimentally in Sec. \autoref{sec:experiments}.
@@ -1162,7 +1165,7 @@ In this paper, we proposed a novel approach to building a navigable map of 3D sp
 % Our approach shows that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
 Our results show that it is possible to actively build a map allowing safe navigation in unstructured environments, even with very sparse depth estimates from a monocular camera. 
 % Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
-Compared to the existing approaches to 3D monocular mapping and exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
+Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
 With the same configuration, our method allows exploration of both indoor and outdoor environments.
 In future work, our method could be improved by adopting a submap-based approach and a better-suited depth estimation frontend, to achieve reliable monocular exploration at the same scale as LiDAR based systems.
 % Our proposed method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.

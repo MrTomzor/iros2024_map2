@@ -759,21 +759,25 @@ These frontier points are used to generate exploration viewpoints such that at l
 
 % EXPLORATION EXPLANATION IMG%%{
 \begin{figure}[!htb]
-  \def\subfigwidth{0.9\linewidth}
+  \def\subfigwidth{0.49\linewidth}
   \centering
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_923.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_930.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_930.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1263_peekA1.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1261_peekC1.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1262_peekD1.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_925.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_931.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/exploration/Selection_931.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1262_peekA2.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1262_peekC2.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1261_peekD2.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -781,10 +785,10 @@ These frontier points are used to generate exploration viewpoints such that at l
     Illustration of the exploration approach. The UAV moves to a selected exploration viewpoint (yellow arrows).
     % As described in \autoref{sec:align}, 
     The planned path aligns the UAV with the viewpoint's direction before reaching it so that the monocular SLAM has enough parallax to estimate distances to textured surfaces in that direction.
-    The frontier points (purple) near textured surfaces are replaced with newly added obstacle points (red).
+    The frontier points (blue) near textured surfaces are replaced with newly added obstacle points (red).
     % As explained in \autoref{sec:blocking}, the UAV also blocks viewpoint sampling near visited viewpoints (large black arrows).
-    The UAV also blocks viewpoint sampling near visited viewpoints (large black arrows) to avoid returning to viewpoints facing textureless areas.
-    !TODO - CLEARER IMAGE!.}
+    % The UAV also blocks viewpoint sampling near visited viewpoints (large black arrows) to avoid returning to viewpoints facing textureless areas.
+    }
   \label{fig:exploration_explanation}
 \end{figure}
 % %%}

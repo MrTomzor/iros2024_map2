@@ -1052,11 +1052,11 @@ Videos from real-world experiments are available in the multimedia materials.
  \hline\hline
     MonoSpheres  & Urban & 5118 $m^2$ & 5425 $m^2$ & 2/5 \\ 
     Grid-Based & Urban  & 1825 $m^2$ & 1981 $m^2$ & 1/5 \\
-    OFS-disabled & Urban & TODO $m^2$ & TODO $m^2$ & 0/1 \\ 
+    % OFS-disabled & Urban & TODO $m^2$ & TODO $m^2$ & 0/1 \\ 
     \hline
     MonoSpheres  & Cave & 5581 $m^2$ & 6012 $m^2$ & 0/3 \\ 
     Grid-Based & Cave  & 3119 $m^2$ & 3375 $m^2$ & 0/3 \\
-    OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
+    % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
  \hline
 \end{tabular}
   \caption{Quantitative results of the simulation experiments described in \autoref{sec:sim_exper}. }
@@ -1110,7 +1110,7 @@ With a more sophisticated viewpoint selection approach, the grid-based approach 
 However, in the "urban" world -- an open-space, texture-sparse environment -- the grid-based approach was never able to explore a large portions of the area that require the UAV to fly over a building or move across an open field. 
 In comparison, MonoSpheres (with the same parameters as in the cave world) was able to consistently cover the outdoor environment.
 These results demonstrate that our proposed open-space free-space sampling approach described in \autoref{sec:fake} enables exploration of outdoor areas, where the ray-tracing grid-based mapping is not able to create sufficient free space, while also safely mapping indoor areas.
-\todo{To confirm the utility of this feature of the mapping, we also evaluated the performance of the pipeline with the open-space free-space sampling disabled. As expected, this ablation leads to performance similar as MonoSpheres in the enclosed cave world, but explores only the small enclosed area as the grid-based approach in the outdoor world.}
+% \todo{To confirm the utility of this feature of the mapping, we also evaluated the performance of the pipeline with the open-space free-space sampling disabled. As expected, this ablation leads to performance similar as MonoSpheres in the enclosed cave world, but explores only the small enclosed area as the grid-based approach in the outdoor world.}
 % DISCUSSIONThe mapping approach A is more conservative. This leads to fewer crahes, but limits the areas the UAV can explore. The mapping approach proposed in this paper can occasionally overestimate free space, but allows the UAV to safely move through open-space areas.TODO - disposable so crashes not a problem! and also fixable by better monodepth outside the scope of this!
 
 % Both of these issues could be solved in future work by using a visual front-end that uses line-based or dense features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.

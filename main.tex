@@ -169,11 +169,11 @@ MonoSpheres: Large-Scale Monocular 3D Exploration using Direct Sphere-Based Mapp
   instead of traditionally casting rays of free space towards the points to build an occupancy map. 
   % Our method builds a sphere-based map by inscribing free-space spheres inside a polyhedron constructed around the camera's position and the visible SLAM points with low position covariance.
   Intersecting spheres form a topometric map suitable for rapid safety-aware planning.  
-  We also present a scheme for safely sampling additional free space in directions \todo{where no textured points can be triangulated}, and show how this enables navigation in outdoor open-space areas. 
+  We also present a scheme for safely sampling additional free space in textureless areas where depth estimation is challenging, and show how this enables navigation in outdoor open-space areas. 
   Furthermore, we present a perception-aware exploration approach that is enabled by the proposed mapping method and explicitly handles the problematic properties of monocular depth estimation. 
   % The proposed methods are, to the authors' best knowledge, the first to achieve autonomous exploration in both indoor and outdoor unstructured 3D environments at the presented scale of up to \todo{100x100m}, using only a single monocular camera and an IMU onboard a UAV. 
 We test the capabilities of our method in several real-world and simulated environments. 
-  To the best of the authors' knowledge, the proposed method is the first to achieve both indoor and outdoor 3D monocular exploration in environments up to 100x100m in scale.
+  To the best of the authors' knowledge, the proposed method is the first to achieve both indoor and outdoor 3D monocular exploration in environments up to 170x110m in scale.
   % The proposed method is, to the authors' best knowledge, the first to achieve monocular exploration in real-world outdoor unstructured 3D environments.
   % In real-world and simulated missions, our method consistently explores both indoor and outdoor environments spanning up to 100x100m in scale.
   % In addition, our experimental results in simulation show the proposed methods achieve both indoor/outdoor
@@ -1087,7 +1087,7 @@ The metric, $A$, is then the top-down 2D area of all the explored columns.
 We compare the grid-based approach with MonoSpheres in multiple 20min experiments on 2 different worlds, with the resulting maps and exploration progress in \autoref{fig:exper_fireworld}, \autoref{fig:exper_cave} and the explored area and crash rate in \autoref{table:sim_exper}.
 Videos from these experiments are available in the multimedia materials.
 The experiments were conducted in the Gazebo simulator, with essentially the same UAV and sensory setup as in the real-world experiments.
-Exploration goal generation was constrained to a \SI{60x50x7}{meter} area of interest in the urban world for both methods, and was unconstrained in the enclosed cave world.
+Exploration goal generation was constrained to a \SI{60x50x7}{\meter} area of interest in the urban world for both methods, and to \SI{170x110x20}{\meter} in the cave world.
 
 \subsection{Discussion}
 % In the simulated experiments, our proposed approach was able to cover both environments.
@@ -1182,7 +1182,7 @@ In this paper, we proposed a novel approach to building a navigable map of 3D sp
 % Our approach shows that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
 Our results show that it is possible to actively build a map allowing safe navigation in unstructured environments, even with very sparse depth estimates from a monocular camera. 
 % Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
-Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps,deep_mono_depth_2021, deep_mono_depth_2019}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
+Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav}, our proposed approach enables autonomous exploration both indoors and outdoors, at the scale of an urban area with multiple buildings, trees and wide open spaces.
 With the same configuration, our method allows exploration of both indoor and outdoor environments.
 In future work, our method could be improved by adopting a submap-based approach and a better-suited depth estimation frontend, to achieve reliable monocular exploration at the same scale as LiDAR based systems.
 % Our proposed method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.

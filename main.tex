@@ -330,9 +330,12 @@ As a step towards low-cost vision-based UAVs safely and efficiently navigating a
 \label{sec:related_works}
 
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
-In the field of robotic exploration, environments are most often represented by a grid-based map of occupied, unknown, and free space, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
+In the field of robotic exploration, a grid-based map of occupied, unknown, and free space is most often used as the robot's primary world representation, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
+% In the field of robotic exploration, environments are most often represented by a grid-based map of occupied, unknown, and free space, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
 These grid-based representations are the backbone for nearly all of robotic path planning, exploration \cite{darpa_cerberus_wins, beneath} and higher-level spatial abstraction methods \cite{topomap, skeletons, spheregraph, spheremap}.
-However, these maps rely on dense distance sensors, such as LiDARs or depth cameras, to build an accurate map of free and occupied space.
+\todo{However, these representations rely on dense distance sensors, such as LiDARs or depth cameras, to build an accurate map of free and occupied space.}
+% However, methods using these representations implicitly assume that the map is built with dense distance sensors, such as LiDARs or depth cameras.
+% However, these representations are designed to be used with dense distance sensors, such as LiDARs or depth cameras.
 
 % , has several drawbacks for usage on UAVs without dense range sensors in varying-scale environments.
 
@@ -343,9 +346,9 @@ A monocular camera does not produce dense distance measurements by itself and th
 A recent line of research tries to bridge this gap by turning a monocular camera into a dense depth sensor using deep learning. 
 % The authors of \cite{simon2023mononav, cnn_explo_singleroom} use deep-learning-based single image depth estimation models to obtain dense point clouds from a monocular camera, essentially turning it into a depth camera.
 The authors of \cite{simon2023mononav, cnn_explo_singleroom} have demonstrated using such depth estimation models combined with traditional navigation approaches.
-However, the authors demonstrate autonomy only at the scale of a single room, while also encountering collisions and map deformations due to depth estimation errors.
+However, the authors of \cite{simon2023mononav} demonstrate autonomy only at the scale of a single room, while also encountering collisions and map deformations due to depth estimation errors.
 The authors of \cite{mono_airsim_nav_2025} present navigation with obstacle avoidance using pretrained and finetuned monocular depth models in larger outdoor environments in simulation, but also note a high collision and navigation failure rate due to the same problems.
-As further discussed in recent surveys \cite{deep_mono_depth_2021, deep_mono_depth_2019}, current depth estimation models still struggle to provide real-time onboard performance and reliable generalization in domains that the model was not trained on.
+As further discussed in recent surveys \cite{deep_mono_depth_2021, monodepth_survey_big_2024}, current depth estimation models still struggle to provide real-time onboard performance and reliable generalization in domains that the model was not trained on.
 In addition, they require a GPU which significantly raises the cost and weight of a UAV.
 % Thus, in this paper, we chose not to go with learning-based depth estimation.
 % In addition, to the fact that a GPU significantly raises the cost and weight of a UAV, this 

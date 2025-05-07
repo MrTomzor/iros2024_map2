@@ -210,14 +210,13 @@ Monocular cameras and inertial measurement units (IMUs), on the other hand, are 
 % Exploring an unknown environment using only a monocular camera and IMU is, however, still a largely unsolved research problem.
 % The existing approaches present success only at the scale of one or two indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav, cnn_explo_singleroom}, or outdoor, but with severely limiting assumptions on the environmental structure.
 Monocular exploration of unstructured 3D environments has thus far been presented only at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav, cnn_explo_singleroom}.
-Some works have presented outdoor monocular exploration, but designed only for highly specific types of environments (e.g. in corridors only \cite{corridors_mono_nav_2009} or around a single object with no other obstacles \cite{information_driven_bbx_mapping}).
+% While some works have addressed outdoor monocular exploration, they are restricted to a specific environmental structure, (e.g. corridors only \cite{corridors_mono_nav_2009} or involving a single object without additional obstacles \cite{information_driven_bbx_mapping}).
 % We hypothesize that the main challenge lies in correctly estimating navigable space, since monocular depth estimation methods are not yet fully reliable and cannot simply be used in the same way as dense range sensors.
 % We hypothesize that the main challenge lies in correctly estimating navigable space, since monocular depth estimation methods are not yet fully reliable, and focus on estimating free space in a different way than with dense sensors.
 % These methods use sparse pointclouds from monocular SLAM or dense pointclouds from a monocular depth neural network to build a grid-based map in the same way as with dense range sensors.
 % The existing approaches use monocular depth estimates to build a grid-based map in the same way as with dense range sensors \cite{octomap, voxblox}.
 %
-
-The existing monocular mapping approaches use the same core approach which is used with dense range sensors:
+The existing monocular mapping approaches \cite{from_monoslam_to_explo, los_maps} use the same core approach which is used with dense range sensors:
 They build a grid-based map where cells are set as free if they are passed by rays that go from the sensor towards points that likely lie on some physical surface. 
 % as is done as with dense range sensors.
 % The existing mapping approaches cast rays of free space towards estimated 3D obstacle points to build a grid-based map in the same way as with dense range sensors.
@@ -226,7 +225,7 @@ They build a grid-based map where cells are set as free if they are passed by ra
 % This mapping approach, however, leads to several problems that prohibit large-scale exploration (see \autoref{sec:related_works}).
 % However, casting rays towards sparse pointclouds given by monocular SLAM can lead to large gaps in free space, prohibiting planning, while using depth neural networks can lead to crashes due to depth inaccuracies.
 Some methods \cite{from_monoslam_to_explo, los_maps} cast rays towards sparse pointclouds given by monocular SLAM, which leads to large gaps in free space, prohibiting planning in texture-sparse areas.
-Other methods \cite{simon2023mononav} use depth neural networks to obtain denser pointclouds. 
+Other methods \cite{simon2023mononav, mono_airsim_nav_2025} use depth neural networks to obtain denser pointclouds. 
 As confirmed by the authors, however, the deep neural depth estimates currently lack the reliablity for safe deployment and can often lead to the UAV crashing.
 % but this often leads to crashes,
 % since such networks are not yet very reliable.
@@ -289,7 +288,7 @@ As confirmed by the authors, however, the deep neural depth estimates currently 
 % \todo{in contrast?}In this paper, we present a novel approach to 3D mapping of unstructured large-scale environments using only a monocular camera and IMU. 
 % Our method utilizes a sparse pointcloud of 3D points produced by monocular-inertial SLAM, which is already a necessary part of many vision-based UAV systems.
 % \todo{The main idea is...}
-The main idea of our paper is that instead of traditionally casting rays through a grid towards obstacle points and updating occupancy values of passed voxels \cite{octomap, voxblox, ufomap}, we construct a polyhedron of approximate visible free space \todo{at each frame} and inscribe spheres of free space inside that polyhedron.
+The main idea of our paper is that instead of traditionally tracing rays through a grid towards measured points and updating occupancy values of passed voxels \cite{octomap, voxblox, ufomap}, we construct a polyhedron of approximate visible free space at each iteration and inscribe spheres of free space inside that polyhedron.
 Intersecting spheres are connected together to form a graph-of-spheres map representation that has been shown to allow rapid and safety-aware planning \cite{spheregraph, spheremap, bubbleplanner}.
 This map is built online, directly from the sparse pointclouds, without requiring any grid-based map to be built first.
 % Under assumptions that hold in the majority of real-world environments (see \autoref{sec:fake}), this approach accurately maps free space even in low-texture areas where the traditional raytracing approach might not initialize enough free space to allow flight. 
@@ -298,7 +297,7 @@ Combined with the sampling scheme described in \autoref{sec:fake}, this approach
 By storing obstacles as a set of geometric primitives (points), we can also assign additional metrics to each obstacle, such as measurement distance. 
 % or, in future work, the modality of its origin.
 This allows for rule-based measurement fusion, which is critical for dealing with problems such as occlusions in monocular depth estimation, as we explain in \autoref{sec:distance-based}.
-In several experiments, we show how this mapping approach, combined with perception-aware planning, enables exploration of large-scale unstructured areas which feature both textureless wide open spaces and \todo{cluttered narrow passages.}
+In several experiments, we show how this mapping approach, combined with perception-aware planning, enables exploration of large-scale unstructured areas which feature both textureless wide open spaces and cluttered passages.
 % TODO - is neccesary?
 % In this representation, we assign additional metrics
 % This representation allows for fast and safety-aware planning \cite{spheremap}.
@@ -351,17 +350,15 @@ In addition, they require a GPU which significantly raises the cost and weight o
 % In addition, to the fact that a GPU significantly raises the cost and weight of a UAV, this 
 
 A different line of research focuses on taking sparse 3D points estimated by visual SLAM and working with those as the only depth measurements.
-Most of this research has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} or exploration with strong assumptions on the environment structure \cite{corridors_mono_nav_2009, information_driven_bbx_mapping}.
-% A different line of research \cite{from_monoslam_to_explo, los_maps} focuses on taking the points from monocular SLAM, treating them as sparse distance measurements, and building the grid-based maps in the same way as with dense pointclouds.
-
+Most of this research has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} or exploration with strong assumptions on the environment structure (e.g. corridors only \cite{corridors_mono_nav_2009} or assuming a single object with no other obstacles \cite{information_driven_bbx_mapping}).
 % For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
 % For monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed taking the points from monocular SLAM, treating them as sparse distance measurements, and building grid-based maps in the same way as with dense pointclouds.
-For general monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} proposed building grid-based maps by tracing rays of free space towards the monocular SLAM points. 
+For general monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} propose building grid-based maps by tracing rays of free space towards the monocular SLAM points. 
 % A few these works \cite{from_monoslam_to_explo, los_maps} have demonstrated autonomous exploration in unstructured, indoor environments, 
 % As documented in \cite{from_monoslam_to_explo} and as shown in [\todo{TODO-FIG}], this approach causes gaps to appear in the free space of the map, whenever the environment is not texture-rich.
 As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the environment is not texture-rich.
-The authors of \cite{from_monoslam_to_explo} propose an exploration method specifically to cover these gaps and demonstrate an increase in mapped volume.
-However, the authors show this exploration approach to only work at the scale of a single room.
+The authors of \cite{from_monoslam_to_explo} further present an exploration method specifically to cover these gaps and demonstrate an increase in mapped volume.
+\todo{However, the authors show this exploration approach to only work at the scale of a single room.}
 % However, this only reduces the gaps, as this mapping method can never estimate free space near texture-sparse areas, and the authors show this exploration approach to only work at the scale of a single room.
 Most importantly though, this mapping approach cannot estimate free space in textureless areas, especially outdoor (as shown in \autoref{sec:sim_exper}).
 % \todo{This technique accurately covers free space when dense input pointclouds are available, such as from a LiDAR or depth camera. 

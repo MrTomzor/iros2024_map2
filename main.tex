@@ -216,7 +216,7 @@ Monocular exploration of unstructured 3D environments has thus far been presente
 % These methods use sparse pointclouds from monocular SLAM or dense pointclouds from a monocular depth neural network to build a grid-based map in the same way as with dense range sensors.
 % The existing approaches use monocular depth estimates to build a grid-based map in the same way as with dense range sensors \cite{octomap, voxblox}.
 %
-The existing monocular mapping approaches \cite{from_monoslam_to_explo, los_maps} use the same core approach which is \todo{used with dense range sensors:}
+The existing monocular mapping approaches \cite{from_monoslam_to_explo, los_maps} use the same core approach which is used with dense range sensors:
 They build a grid-based map where cells are set as free if they are passed by rays that go from the sensor towards points that likely lie on some physical surface. 
 % as is done as with dense range sensors.
 % The existing mapping approaches cast rays of free space towards estimated 3D obstacle points to build a grid-based map in the same way as with dense range sensors.
@@ -333,7 +333,8 @@ As a step towards low-cost vision-based UAVs safely and efficiently navigating a
 In the field of robotic exploration, a grid-based map of occupied, unknown, and free space is most often used as the robot's primary world representation, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
 % In the field of robotic exploration, environments are most often represented by a grid-based map of occupied, unknown, and free space, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
 These grid-based representations are the backbone for nearly all of robotic path planning, exploration \cite{darpa_cerberus_wins, beneath} and higher-level spatial abstraction methods \cite{topomap, skeletons, spheregraph, spheremap}.
-\todo{However, these representations rely on dense distance sensors, such as LiDARs or depth cameras, to build an accurate map of free and occupied space.}
+% \todo{However, these representations rely on dense distance sensors, such as LiDARs or depth cameras, to build an accurate map of free and occupied space.}
+However, these methods often implicitly rely on the map being built with sensors that produce dense distance measurements, such as LiDARs or depth cameras.
 % However, methods using these representations implicitly assume that the map is built with dense distance sensors, such as LiDARs or depth cameras.
 % However, these representations are designed to be used with dense distance sensors, such as LiDARs or depth cameras.
 
@@ -362,9 +363,9 @@ For general monocular exploration in unstructured environments, the authors of \
 % As documented in \cite{from_monoslam_to_explo} and as shown in [\todo{TODO-FIG}], this approach causes gaps to appear in the free space of the map, whenever the environment is not texture-rich.
 As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the environment is not texture-rich.
 The authors of \cite{from_monoslam_to_explo} further present an exploration method specifically to cover these gaps and demonstrate an increase in mapped volume.
-\todo{However, the authors show this exploration approach to only work at the scale of a single room.}
+However, the authors show this exploration approach to only work at the scale of a single room.
 % However, this only reduces the gaps, as this mapping method can never estimate free space near texture-sparse areas, and the authors show this exploration approach to only work at the scale of a single room.
-Most importantly though, this mapping approach cannot \todo{fundamentally?} estimate free space in textureless areas, especially outdoor (as shown in \autoref{sec:sim_exper}).
+Most importantly though, this mapping approach fundamentally cannot estimate sufficient free space for navigation in texture-sparse areas, especially outdoor (as shown in \autoref{sec:sim_exper}).
 % \todo{This technique accurately covers free space when dense input pointclouds are available, such as from a LiDAR or depth camera. 
 % If the voxel size is too small and/or the data is sparse, gaps will appear in the free space.
 % In large open areas where many features are too far to be accurately triangulated, this can lead to no free space being initiated except near the ground, causing the robot to not explore into the open space.
@@ -559,7 +560,7 @@ The obstacle points are updated, merged and removed based on criteria designed s
 % A lower minimal measurement distance of a visual keypoint means that the point is less likely to be noise and we make it more difficult to erase it from the map.
 % This is a necessary feature for safe flight when using sparse visual SLAM keypoints as the only depth information, as explained more in \autoref{sec:distance-based}. 
 The mapping runs onboard the UAV in real-time, using only the estimated pose and 3D points from monocular-inertial SLAM as its inputs.
-In this paper, we use the sparse point-based \todo{OpenVINS} \cite{openvins} method as the SLAM frontend, but our method could work with any other monocular-inertial SLAM.
+In this paper, we use the sparse point-based OpenVINS \cite{openvins} method as the SLAM frontend, but our method could work with any other monocular-inertial SLAM.
 A single map update iteration consists of the following steps in order:
 \subsection{Constructing the Visible Free-Space Polyhedron}
 \label{sec:polyhedron}
@@ -842,7 +843,7 @@ The UAV used in the experiments was equipped with a monocular global-shutter gra
 The MRS UAV system \cite{mrs_uav_system} was used for low-level motion planning, control, and the grid-based path planning for the simulation comparisons.
 % Damping in the form of 3D-printed flexible elements 
 In real-world experiments, the camera and IMU are separated from the rest of the UAV by 3D-printed damping elements, which significantly reduces the IMU noise caused by propellers and improves the SLAM performance.
-For state estimation and as the source of sparse visual SLAM points, we used \todo{OpenVINS} \cite{openvins} in the inverse-depth measurement mode.
+For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins} in the inverse-depth measurement mode.
 % , without loop closures.
 However, any other monocular-inertial SLAM could be used as the fronted of our method, as long as it tracks points approximately uniformly in the camera's FOV.
 % This is so that the assumption that small objects will be detected at a close range, discussed in \autoref{sec:distance-based}, is fulfilled.

@@ -1148,11 +1148,11 @@ Alternatively, this issue could be solved by making the mapping pipeline multimo
 In this paper, we proposed a novel approach to building a navigable map of 3D space, departing from the paradigm of tracing rays through a voxel-based grid.
 % [building a graph-of-spheres representation using sparse depth estimates provided by monocular-inertial SLAM. 
 % Our approach shows that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
-Our results show that it is possible to actively build a map allowing safe navigation in unstructured environments, even with very sparse depth estimates from a monocular camera. 
+Our method enables low-cost UAVs to actively build a map allowing safe navigation in unstructured environments, even with very sparse depth estimates from monocular-inertial SLAM. 
 % Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
-Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav}, our proposed approach enables autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
+Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav}, our proposed approach achieves autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
 With the same configuration, our method allows exploration of both indoor and outdoor environments.
-In future work, our method could be improved by adopting a submap-based approach and a better-suited depth estimation frontend, to achieve reliable monocular vision-based exploration at the same scale as LiDAR based systems.
+In future work, our method could be improved by adopting a submap-based approach and a better-suited depth estimation frontend to achieve reliable monocular vision-based exploration at the same scale as LiDAR based systems.
 % Our proposed method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.
 % Our method also significantly reduces the cost of autonomous unknown-space exploration and safe navigation that was previously only documented using LiDARs and expensive depth sensors, as it only requires a single camera, a standard IMU and 
 % no GPU for dense depth estimation.

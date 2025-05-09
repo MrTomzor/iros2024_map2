@@ -501,7 +501,7 @@ In this paper, we represent free space using spheres as well, but with two major
      \hfill
   \caption{
     Illustration of the mapping pipeline. 
-    (a) The stable 3D points (red) used by the monocular SLAM are the only input distance measurements. 
+    (a) The stable 3D points (red) used by the monocular SLAM are the only input depth measurements. 
     Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
     % Additionally, , the TODO-fake points are added to the depth estimation.
     (b) The active assumed-freespace points (blue, see \autoref{sec:fake}) above the ground, where the SLAM cannot accurately localize any points, are added to construct the
@@ -614,7 +614,7 @@ Therefore, free space can sometimes be wrongly estimated when such objects appea
   \caption{Top-down illustration of sphere sampling and map point management: 
   The visible free-space polyhedron $\mathcal{P}_f^{t_2}$ is created using the currently tracked SLAM points (black crosses) and the camera's position $\mathbf{p}_{cam}^{t_2}$ at time $t_2$.
   % Smaller points and higher-opacity spheres have been observed from lower distances.
-  The size of a point $\mathbf{x}$ negatively corresponds to the distance $d_{\mathbf{x}}$ that it was measured from.
+  The size of a point $\mathbf{x}$ inversely corresponds to the distance $d_{\mathbf{x}}$ that it was measured from.
   % Dashed crosses correspond to points that will be deleted (red) or not added to the map (black), as there are better localized (smaller) points near them.
   The (dashed red) point seen far away from the camera at a previous time $t_1$ now lies in $\mathcal{P}_f^{t_2}$ close to the camera and will thus be deleted as noise.
   % The (dashed red) point will be deleted, as it lies in the free-space polyhedron at $t_2$, and it .
@@ -636,20 +636,20 @@ Therefore, free space can sometimes be wrongly estimated when such objects appea
 \subsection{Updating Obstacle Points}
 \label{sec:distance-based}
 As the next step of the update, we decide which tracked SLAM points to add into the map points $\mathcal{X}$, and which points already in the map to delete.
-An important part of the proposed mapping method is that we store the minimum distance from which any point $\mathbf{x}$ has been observed, denoted further as $d_{m, x}$.
+An important part of the proposed mapping method is that we store the minimum distance from which any point $\mathbf{x}$ has been observed, denoted further as $d_{m, x}$, as a very rough approximate of its position covariance.
 % This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
 % An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
-This information is important to solve problems that can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
+This information is crucial for solving problems that can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
 % The visible points corresponding to the wall might not be detected as SLAM keypoints while p.
-Primarily, points corresonding to a small obstacle might momentarily not be detected by the visual frotend, while a larger obstacle behind the small one is detected.
+As illustrated in \autoref{fig:distbased}, points corresonding to a small obstacle might momentarily not be detected by the visual frotend, while a larger obstacle behind the small one is detected.
 % In such situation, the previously mapped points can be momentarily estimated to lie at an incorrect position, or might not be localized by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
 % We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
-Thus, we cannot simply delete every map point that falls into $\mathcal{P}_f$, because then the original points (small red points in \autoref{fig:distbased}) would be wrongly deleted and assumed as free space.
+Thus, we cannot simply delete every map point that falls into $\mathcal{P}_f$, because then the original points would be wrongly deleted and assumed as free space.
 We solve this problem by deleting any map point $\mathbf{x}$ that falls into $\mathcal{P}_f$ only if
 \begin{equation}
   \mathbf{x} \in \mathcal{P}_f \quad \text{and}  \quad |\mathbf{x} - \mathbf{p}_{cam}| < \alpha \cdot d_{m,x},
 \end{equation}
-where $p_{cam}$ is the position of the camera and $\alpha$ is a paremeter, which is usually set to $1.1$ to account for distance measurements uncertainty.
+where $\mathbf{p}_{cam}$ is the position of the camera and $\alpha$ is a paremeter, which is usually set to $1.1$ to account for distance measurements uncertainty.
 % Thanks to this condition, when a small obstacle seen previously from a short distance is currently not visible when further away, but objects are visible behind it, that obstacle will not be wrongly deleted from the map.
 % where $p_{cam}$ is the position of the camera and $\alpha$ is a paremeter.
 % We usually set $\alpha$ to $1.1$ to account for distance measurements uncertainty.
@@ -660,12 +660,12 @@ The points that lie in the free-space polyhedron $\mathcal{P}_f$ and are not del
 These points are used to constrain sphere radii in the following update step.
 
 Additionally, to prioritize closer measurements, points seen from a closer distance replace points seen from larger distances, if they are measured close enough to them. 
-In the same way, new points seen at a large distance are not added to the map, if there are more accurately measured points near them, which is also visualized in \autoref{fig:distbased}. 
-We enforce these two rules by deleting previously mapped points only $\mathbf{x}$ if
+In the same way, new points seen at a large distance are not added to the map, if there are more accurately localized points near them, which is also visualized in \autoref{fig:distbased}. 
+We enforce this rule by deleting any newly added or previously mapped point $\mathbf{x}$ if
 \begin{equation}
   \exists \mathbf{x}_{prev}: |\mathbf{x} - \mathbf{x}_{prev}| < a \quad \text{and} \quad d_{m,x_{prev}}  < d_{m,x}
 \end{equation}
-where $\mathbf{x}_{prev}$ is another point in the map with a higher position accuracy and $a$ is the minimal point-to-point distance set by the user.
+where $\mathbf{x}_{prev}$ is another mapped or newly added point with a higher position accuracy and $a$ is the minimal point-to-point distance set by the user.
 % \todo{TODO - rewrite as sort?}
 
 \subsection{Updating Existing Spheres}
@@ -683,8 +683,8 @@ Then, for any remaining sphere with a center $\mathbf{c}$ and radius $r_{k}$, th
   \label{eq:update}
 \end{equation}
 % where $d(x, \mathbf{P}_f)$ is the signed distance to $\mathbf{P}_f$ (positive if the point is inside the polyhedron, negative if outside) \todo{and} $d(\mathbf{x},\mathbf{X}_{in} \cup \mathbf{X}_p)$ is the minimum distance to all input obstacle points $\mathbf{X}_{in}$, and to the protected map points $\mathbf{X}_p$ described in \autoref{sec:distance-based}.
-In this equation, $d(x, \mathcal{P}_f)$ is the signed distance to $\mathcal{P}_f$ (positive if the point is inside the polyhedron, negative if outside).
-The value of $d(\mathbf{x},\mathcal{X}_{in} \cup \mathcal{X}_p)$ is the minimum distance to all input obstacle points $\mathcal{X}_{in}$, and to the protected map points $\mathcal{X}_p$ described in \autoref{sec:distance-based}.
+In this equation, $d(\mathbf{c}, \mathcal{P}_f)$ is the signed distance to $\mathcal{P}_f$ (positive if the point is inside the polyhedron, negative if outside).
+The value of $d(\mathbf{c},\mathcal{X}_{in} \cup \mathcal{X}_p)$ is the minimum distance to all input obstacle points $\mathcal{X}_{in}$, and to the protected map points $\mathcal{X}_p$ described in \autoref{sec:distance-based}.
 Essentially, this equation means that the polyhedron $\mathcal{P}_f$ is used to increase the radius of a sphere, whereas the protected $\mathcal{X}_p$ and input points $\mathcal{X}_{in}$ are used to constrain it.
 As the last part of this step, we delete all spheres with $r_{k+1} < r_{min}$, where $r_{min}$ is the smallest allowed sphere radius specified by the user.
 % , usually slightly lower than the UAV's minimal allowed distance to obstacles. 

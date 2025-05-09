@@ -1070,8 +1070,9 @@ Exploration goal generation was constrained to a \SI{60x50x7}{\meter} area of in
 In all of the experiments, our approach achieved long periods of collision-free exploration even near complex obstacles such as trees, collapsed houses, and cars in uncommon configurations.
 Since the outdoor environment contains several textureless and thing objects (e.g. exposed metal rods, burned black surfaces), both our approach and the grid-based approach collide with these obstacles occasionally. 
 This is due to the limitation of the utilized point-based SLAM which cannot detect these obstacles, thus not assuring the assumption described in \autoref{sec:fake}.
-However, this could likely be resolved by making the mapping pipeline multimodal and incorporating measurements from low-cost short-range distance sensors (e.g. ultrasonic).
-Alternatively, designing a visual front-end that would prioritize detection of such obstacles could solve this as well. 
+
+However, this can be resolved by making the mapping pipeline multimodal and incorporating measurements from low-cost short-range distance sensors (e.g. ultrasonic).
+Alternatively, designing a visual front-end that would prioritize detection of such obstacles would solve this as well. 
 Either way, the experiments show that our method can explore large-scale areas even with this off-the-shelf visual frontend and challenging obstacles.
 % but that is outside the scope of this paper.
 % As expected, the documented collisions were caused by occasional incorrect free-space sampling (discussed in detail in \autoref{sec:fake}) near small featureless obstacles (such as blackened parts of the simulated burned buildings or exposed metal rods) that were not detected by the point-based visual SLAM frontend.
@@ -1080,7 +1081,7 @@ Either way, the experiments show that our method can explore large-scale areas e
 
 In the "cave" world, which is a texture-rich indoor environment, the grid-based approach performed similarly to MonoSpheres in terms of initial exploration speed.
 % and with sufficient side-to-side motion, was able to create sufficient free space to explore the cave corridor.
-With a more sophisticated viewpoint selection approach, the grid-based approach could likely explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
+With a more sophisticated viewpoint selection approach, the grid-based approach could explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
 % This finding supports that the mapping approach presented in \cite{from_monoslam_to_explo, los_maps} for textured, indoor spaces.
 
 However, in the "urban" world -- an open-space, texture-sparse environment -- the grid-based approach was never able to explore a large portions of the area that require the UAV to fly over a building or move across an open field. 

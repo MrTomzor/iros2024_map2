@@ -3,6 +3,7 @@
 %        1         2         3         4         5         6         7         8
 \UseRawInputEncoding
 \documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+\usepackage[utf8]{inputenc}
 
 %\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
 
@@ -187,7 +188,7 @@ In multimedia materials
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
-In recent years, significant advances have been presented in mobile robot autonomy, enabling robot systems to explore unknown 3D environments that span kilometers in scale \cite{darpa_cerberus_wins, beneath}. 
+In recent years, significant advances have been presented in mobile robot autonomy, enabling robot systems to explore unknown 3D environments that span kilometers in scale \cite{darpa_cerberus_wins, csiro_darpa, beneath}. 
 % These advances are critical for enabling deployment of UAVs in real-world, unknown environments, where global navigation satellite systems (GNSS) are partially or completely unavailable.
 % \todo{These advances are critical for the deployment of UAVs in real-world missions, such as in urban areas after an earthquake, a forest during a wildfire, or exploring caves on other planets.}
 % \todo{These advances are critical for allowing UAVs to be deployed for search-and-rescue missions in urban areas after natural disasters, monitoring wildfires, or mapping caves on other planets.}
@@ -254,7 +255,7 @@ As confirmed by the authors, however, the deep neural depth estimates currently 
 
 \begin{figure}[!t]
   \centering
-     \begin{subfigure}[b]{0.98\linewidth}
+     \begin{subfigure}[b]{0.995\linewidth}
       \begin{tikzpicture}
         \centering
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.1\height} {0.0\width} {0.1\height}}, clip=true]{fig/sar_mono_dji_2.png}};

@@ -351,6 +351,7 @@ As a step towards low-cost vision-based UAVs safely and efficiently navigating a
 
 \section{Related Works}
 \label{sec:related_works}
+\todo{add sensor-specific maps, reorganize, cut}
 
 % The environment representation similar to our previous work \cite{spheremap} -- in \cite{spheremap}, we also built a graph of intersecting free-space spheres, but 
 In the field of robotic exploration, a grid-based map of occupied, unknown, and free space is most often used as the robot's primary world representation, either in the form of a signed distance field \cite{voxblox} or an occupancy grid \cite{occupancy_moravec, octomap}.
@@ -1062,7 +1063,7 @@ Videos from these real-world experiments are available in the multimedia materia
 
 
   \centering
-  \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the urban world (top right) exploration experiments, and the exploration progress of all runs (top left). Green = MonoSpheres, Blue = Grid-based.
+  \caption{Best-result maps of the Grid-based exploration approach (bottom row) and MonoSpheres (middle row) in the simulation experiments.
   }
   \label{fig:exper_fireworld}
 \end{figure*}
@@ -1203,21 +1204,50 @@ Videos from these real-world experiments are available in the multimedia materia
 \end{figure}
 % %%}
 
+% ABL TABLE
+% %%{
+\begin{table}[h!]
+\centering
+  \begin{tabular}{p{22mm} p{12mm} p{13mm} p{13mm} } 
+ \hline
+    Method & Traveled & Mean $A$ & Max $A$  \\ [0.5ex] 
+ \hline\hline
+    MonoSpheres  & 18 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    Grid-Based & 20  & 1825 $m^2$ & 1981 $m^2$ \\
+    ABL-DistBased  & 5 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    ABL-OFS  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    ABL-VPBlocking  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
+ \hline
+\end{tabular}
+  \caption{Ablation tests results - 5 runs for each method in the Urban world }
+\label{table:ablations}
+\end{table}
+% %%}
+
 
 % SIM TABLE
 % %%{
 \begin{table}[h!]
 \centering
-  \begin{tabular}{p{16mm} p{8mm} p{13mm} p{13mm} p{9mm}} 
+  \begin{tabular}{p{22mm} p{8mm} p{13mm} p{13mm} p{7mm}} 
  \hline
-    Method & World & Mean $A$ & Max $A$ & Runs \\ [0.5ex] 
+    Method & World & Mean $A$ & Max $A$ & Traveled \\ [0.5ex] 
  \hline\hline
     MonoSpheres  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
     Grid-Based & Urban  & 1825 $m^2$ & 1981 $m^2$ & 5 \\
-    % OFS-disabled & Urban & TODO $m^2$ & TODO $m^2$ & 0/1 \\ 
+    % ABL-DistBased  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
+    % ABL-OFS  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
+    % ABL-VPBlocking  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
     \hline
     MonoSpheres  & Cave & 5581 $m^2$ & 6012 $m^2$ & 3 \\ 
     Grid-Based & Cave  & 3119 $m^2$ & 3375 $m^2$ & 3 \\
+    \hline
+    MonoSpheres  & Rooftops & 5581 $m^2$ & 6012 $m^2$ & 3 \\ 
+    Grid-Based & Rooftops  & 3119 $m^2$ & 3375 $m^2$ & 3 \\
+    \hline
+    MonoSpheres  & Sparse & 5581 $m^2$ & 6012 $m^2$ & 3 \\ 
+    Grid-Based & Sparse  & 3119 $m^2$ & 3375 $m^2$ & 3 \\
     % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
  \hline
 \end{tabular}

@@ -432,16 +432,63 @@ In recent work \cite{spheregraph, spheremap, bubbleplanner}, it has been shown t
 A graph-of-spheres representation efficiently describes large spaces with a few large spheres, while describing narrow passages in more detail by densely-packed smaller spheres.
 In addition, the distance to obstacles is stored as the radius of each sphere, and is immediately available for safety-aware planning.
 Thus, this representation combines the scalability of octree-based maps \cite{octomap} with the distance information availability from distance field maps \cite{voxblox}.
-% In previous work \cite{spheremap, spheregraph, bubbleplanner}, it has been shown that representing free space by a graph of intersecting spheres \todo{solves this problem by} can efficiently describe large-space while keeping detailed information in narrow spaces.
-% In \cite{spheremap}, we also demonstrated that this representation allows path planning that has explicit information about distance to obstacles, in addition to allowing orders of magnitude faster path planning than on an occupancy grid.
-In this paper, we represent free space using spheres as well, but with two major differences: 
-% In this paper, we represent the free space using spheres as well, but also add the obstacle points into the map and use them for constraining the sphere radii, but with \todo{two major differences 
+% In this paper, we represent free space using spheres as well, but with two major differences: 
 
-  Firstly, the methods presented in \cite{spheregraph, spheremap , bubbleplanner} require building an intermediate local occupancy grid for computing the sphere-based map.
-    This can be computationally expensive.
-    Secondly, all methods for building a grid-based occupancy map require the data to be from dense depth sensors (LiDARs, RGB-D cameras, ...). 
-    In this paper, we build the graph of spheres \textit{directly} out of input  pointclouds without building any intermediate occupancy grid, while also 
-    requiring only \textit{sparse} pointclouds from a monocular camera running visual SLAM.
+% PIPELINE IMG%%{
+\begin{figure*}[!ht]
+  \def\subfigwidth{0.24\linewidth}
+  \centering
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_968_poly1_A.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_970_poly2_A.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_969_poly1_B.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_914_right_poly.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_927_right_free2.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+  \caption{
+    Illustration of the mapping pipeline. 
+    (a) The stable 3D points (red) used by the monocular SLAM are the only input depth measurements. 
+    Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
+    % Additionally, , the TODO-fake points are added to the depth estimation.
+    (b) The active assumed-freespace points (blue, see \autoref{sec:fake}) above the ground, where the SLAM cannot accurately localize any points, are added to construct the
+    (c) resulting visible free-space polyhedron $\mathcal{P}_f$.
+    % (d) Side view of how new spheres are sampled in the polyhedron and added to the others, as well as how new obstacle points are added to the map.
+    (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathcal{X}$.
+    % TODO - desc + delaunay w fake fspace vis
+  }
+  \label{fig:mapping_pipeline}
+\end{figure*}
+% %%}
+
+
+  % Firstly, the methods presented in \cite{spheregraph, spheremap , bubbleplanner} require building an intermediate local occupancy grid for computing the sphere-based map.
+  %   This can be computationally expensive.
+  %   Secondly, all methods for building a grid-based occupancy map require the data to be from dense depth sensors (LiDARs, RGB-D cameras, ...). 
+  %   In this paper, we build the graph of spheres \textit{directly} out of input  pointclouds without building any intermediate occupancy grid, while also 
+  %   requiring only \textit{sparse} pointclouds from a monocular camera running visual SLAM.
 
     % Firstly, all methods for building a map for 3D exploration require the data to be from dense depth sensors (LiDARs, RGB-D cameras, etc.). 
   % Secondly, the methods for constructing a graph-of-spheres topological map presented in \cite{spheremap, spheregraph, bubbleplanner} require first building an intermediate local occupancy grid.
@@ -490,55 +537,6 @@ In this paper, we represent free space using spheres as well, but with two major
 % Thus, the proposed method allows safe and complete explore unknown, multi-scale, indoor/outdoor environments, even without dense sensors or GPU-based depth estimation.
 % In special cases concerning textureless objects, this can cause the UAV to 
 % Compared to all the mentioned approaches to 3D monocular mapping and exploration, we demonstrate that our approach achieves exploration and navigation in 3D using only a monocular camera and an IMU in outdoor, large-scale environments, with all of the computations running on-board the UAV, without requiring a GPU.
-% PIPELINE IMG%%{
-\begin{figure*}[!htb]
-  \def\subfigwidth{0.24\linewidth}
-  \centering
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_968_poly1_A.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_970_poly2_A.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_969_poly1_B.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_914_right_poly.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_927_right_free2.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-  \caption{
-    Illustration of the mapping pipeline. 
-    (a) The stable 3D points (red) used by the monocular SLAM are the only input depth measurements. 
-    Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
-    % Additionally, , the TODO-fake points are added to the depth estimation.
-    (b) The active assumed-freespace points (blue, see \autoref{sec:fake}) above the ground, where the SLAM cannot accurately localize any points, are added to construct the
-    (c) resulting visible free-space polyhedron $\mathcal{P}_f$.
-    % (d) Side view of how new spheres are sampled in the polyhedron and added to the others, as well as how new obstacle points are added to the map.
-    (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathcal{X}$.
-    % TODO - desc + delaunay w fake fspace vis
-  }
-  \label{fig:mapping_pipeline}
-\end{figure*}
-% %%}
-
 \section{Sphere-Based Mapping Using Sparse Visual SLAM Points}
 % \section{Direct Sphere-Based Mapping from Sparse Pointclouds}
 \label{sec:map_building}
@@ -1033,33 +1031,33 @@ Videos from these real-world experiments are available in the multimedia materia
      \end{subfigure}
 
      % ROW 2
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_astar_final.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_cave_astar_final.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/Selection_1324_rooftops_astar.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/Selection_1320_sparse_astar.png}};
-      \end{tikzpicture}
-     \end{subfigure}
+     % \begin{subfigure}[b]{\subfigwidth}
+     %  \begin{tikzpicture}
+     %    \centering
+     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_astar_final.png}};
+     %  \end{tikzpicture}
+     % \end{subfigure}
+     % \hfill
+     % \begin{subfigure}[b]{\subfigwidth}
+     %  \begin{tikzpicture}
+     %    \centering
+     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_cave_astar_final.png}};
+     %  \end{tikzpicture}
+     % \end{subfigure}
+     % \hfill
+     % \begin{subfigure}[b]{\subfigwidth}
+     %  \begin{tikzpicture}
+     %    \centering
+     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/Selection_1324_rooftops_astar.png}};
+     %  \end{tikzpicture}
+     % \end{subfigure}
+     % \hfill
+     % \begin{subfigure}[b]{\subfigwidth}
+     %  \begin{tikzpicture}
+     %    \centering
+     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/Selection_1320_sparse_astar.png}};
+     %  \end{tikzpicture}
+     % \end{subfigure}
 
 
   \centering

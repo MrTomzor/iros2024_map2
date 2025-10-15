@@ -270,7 +270,10 @@ As confirmed by the authors, however, the deep neural depth estimates currently 
      \begin{subfigure}[b]{0.49\linewidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_912_cam.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_912_cam.png}};
+% Selection_971_poly2_B - DELAUNAY+VIR
+% Selection_912_cam.png - VIO
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -423,47 +426,55 @@ Thus, this representation combines the scalability of octree-based maps \cite{oc
 
 % PIPELINE IMG%%{
 \begin{figure*}[!ht]
-  \def\subfigwidth{0.24\linewidth}
-  \centering
-     \begin{subfigure}[b]{\subfigwidth}
+  % \includegraphics[width=1.0\textwidth]{./fig/monospheres_big_diagram_v3.pdf}
+     \begin{subfigure}[b]{0.99\linewidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_968_poly1_A.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_970_poly2_A.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.00\height} {0.0\width} {0.05\height}}, clip=true]{fig/monospheres_big_diagram_v4.pdf}};
       \end{tikzpicture}
      \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_969_poly1_B.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_914_right_poly.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_927_right_free2.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
+  % \def\subfigwidth{0.24\linewidth}
+  % \centering
+  %    \begin{subfigure}[b]{\subfigwidth}
+  %     \begin{tikzpicture}
+  %       \centering
+  %       \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_968_poly1_A.png}};
+  %       % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_970_poly2_A.png}};
+  %     \end{tikzpicture}
+  %    \end{subfigure}
+  %    \hfill
+  %    \begin{subfigure}[b]{\subfigwidth}
+  %     \begin{tikzpicture}
+  %       \centering
+  %       \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_969_poly1_B.png}};
+  %       % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B.png}};
+  %     \end{tikzpicture}
+  %    \end{subfigure}
+  %    \hfill
+  %    \begin{subfigure}[b]{\subfigwidth}
+  %     \begin{tikzpicture}
+  %       \centering
+  %       \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_914_right_poly.png}};
+  %     \end{tikzpicture}
+  %    \end{subfigure}
+  %    \hfill
+  %    \begin{subfigure}[b]{\subfigwidth}
+  %     \begin{tikzpicture}
+  %       \centering
+  %       \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_927_right_free2.png}};
+  %     \end{tikzpicture}
+  %    \end{subfigure}
+  %    \hfill
   \caption{
-    Illustration of the mapping pipeline. 
-    (a) The stable 3D points (red) used by the monocular SLAM are the only input depth measurements. 
-    Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
-    % Additionally, , the TODO-fake points are added to the depth estimation.
-    (b) The active assumed-freespace points (blue, see \autoref{sec:fake}) above the ground, where the SLAM cannot accurately localize any points, are added to construct the
-    (c) resulting visible free-space polyhedron $\mathcal{P}_f$.
-    % (d) Side view of how new spheres are sampled in the polyhedron and added to the others, as well as how new obstacle points are added to the map.
-    (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathcal{X}$.
+    Mapping pipeline overview. The TODO and TODO modules are shown in detail in TODO and TODO respectively.
+    % Illustration of the mapping pipeline. 
+    % (a) The stable 3D points (red) used by the monocular SLAM are the only input depth measurements. 
+    % Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
+    % % Additionally, , the TODO-fake points are added to the depth estimation.
+    % (b) The active assumed-freespace points (blue, see \autoref{sec:fake}) above the ground, where the SLAM cannot accurately localize any points, are added to construct the
+    % (c) resulting visible free-space polyhedron $\mathcal{P}_f$.
+    % % (d) Side view of how new spheres are sampled in the polyhedron and added to the others, as well as how new obstacle points are added to the map.
+    % (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathcal{X}$.
     % TODO - desc + delaunay w fake fspace vis
   }
   \label{fig:mapping_pipeline}
@@ -584,7 +595,23 @@ We estimate the currently visible free space as the volume between the camera's 
 This space is enclosed by connecting all points that lie on the edge of $\mathcal{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathcal{P}_f$, illustrated in \autoref{fig:distbased}.
 
 % \subsection{Estimating Free Space in Open Areas}
-\subsection{Open-Area Free-Space Sampling (OFS)}
+
+% OFS figure, crop top and down
+\begin{figure}[!h]
+  % \includegraphics[width=0.5\textwidth]{fig/monospheres_ofs_v2.pdf}
+     \begin{subfigure}[b]{0.99\linewidth}
+      \begin{tikzpicture}
+        \centering
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.15\height} {0.0\width} {0.15\height}}, clip=true]{fig/monospheres_ofs_v2.pdf}};
+      \end{tikzpicture}
+     \end{subfigure}
+  \centering
+  \caption{Open-area virtual-depth estimation diagram}
+  \label{fig:ofs}
+\end{figure}
+
+% \subsection{Open-Area Free-Space Sampling (OFS)}
+\subsection{Open-Area Virtual-Depth Estimation (OFS)}
 \label{sec:fake}
 When moving in open areas, such as a grassy field without vertical obstacles in \autoref{fig:mapping_pipeline}, point-based visual SLAM can reliably localize only nearby points corresponding to the ground. 
 % This would \todo{normally} cause free space to be estimated only below the UAV and not allow flight across the field.

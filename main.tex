@@ -468,7 +468,7 @@ Thus, this representation combines the scalability of octree-based maps \cite{oc
   %    \end{subfigure}
   %    \hfill
   \caption{
-    Mapping pipeline overview. The OVD and CBOF modules are illustrated in \autoref{fig:ofs} and \autoref{fig:distbased} respectively.
+    Mapping pipeline overview. The OVD and DBOF modules are illustrated in \autoref{fig:ofs} and \autoref{fig:distbased} respectively.
     % Illustration of the mapping pipeline. 
     % (a) The stable 3D points (red) used by the monocular SLAM are the only input depth measurements. 
     % Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
@@ -683,15 +683,18 @@ However, this could be resolved by using a semi-dense or dense SLAM frontend (at
 \end{figure}
 
 
-\subsection{Updating Obstacle Points}
+\subsection{Distance-Based Obstacle Filtering (DBOF)}
 \label{sec:distance-based}
 As the next step of the update, we decide which tracked SLAM points to add into the map points $\mathcal{X}$, and which points already in the map to delete.
-An important part of the proposed mapping method is that we store the minimum distance from which any point $\mathbf{x}$ has been observed, denoted further as $d_{m, x}$, as a very rough approximate of its position covariance.
-% This is due to the fact that the distance uncertainty of any point \todo{grows drastically} with the distance from camera in monocular SLAM \cite{inverse_depth}.
-% An apparent problem can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
+An important piece of information is the position covariance of each SLAM point.
+Since in inverse depth parametrization, the position covariance of a point grows with the distance from which it was measured \cite{inverse_depth}, we approximate the covariance simply as the lowest distance $d_{m, x}$ that a point has been observed from.
+% To simplify the method and reduce memory usage, we do not store the position covariance for each point, but rather we store the minimum distance from which any point $\mathbf{x}$ has been observed, denoted further as $d_{m, x}$.
+% An important part of the proposed mapping method is that we store the minimum distance from which any point $\mathbf{x}$ has been observed, denoted further as $d_{m, x}$, as a very rough approximate of its position covariance.
+% An important part of the proposed mapping method is that we store the minimum distance from which any point $\mathbf{x}$ has been observed, denoted further as $d_{m, x}$, as a very rough approximate of its position covariance.
 This information is crucial for solving problems that can arise when viewing some surface from a much higher distance than before (e.g. observing a wall from 5 m, and then later from 20m).
 % The visible points corresponding to the wall might not be detected as SLAM keypoints while p.
-As illustrated in \autoref{fig:distbased}, points corresonding to a small obstacle might momentarily not be detected by the visual frotend, while a larger obstacle behind the small one is detected.
+
+As illustrated in \autoref{fig:distbased}, points corresonding to a small obstacle might momentarily not be detected by the SLAM frotend, while a larger obstacle behind the small one is detected.
 % In such situation, the previously mapped points can be momentarily estimated to lie at an incorrect position, or might not be localized by the visual SLAM at all (e.g. due to insufficient parallax), while some other points that lie beyond the original points are triangulated.
 % We also cannot simply delete every map point that falls into $\mathbf{P}_f$, because the UAV might be at a distance where the object corresponding to the point is just too far to be seen as a keypoint in the image.
 Thus, we cannot simply delete every map point that falls into $\mathcal{P}_f$, because then the original points would be wrongly deleted and assumed as free space.
@@ -793,7 +796,8 @@ These frontier points are used to generate exploration viewpoints such that at l
       \node[anchor=south west,inner sep=0] (a) at (0,0)
         {\adjincludegraphics[width=1.0\linewidth,
           trim={{0.08\width} {0.1\height} {0.08\width} {0.1\height}},
-          clip=true]{fig/monospheres_exploration_v2_part1.pdf}};
+          % clip=true]{fig/monospheres_exploration_v2_part1.pdf}};
+          clip=true]{fig/monospheres_exploration_cyan_part1.pdf}};
       % label (a) in lower-left corner
       \node[anchor=south west, font=\bfseries, text=black, xshift=2pt, yshift=2pt] at (a.south west) {(a)};
     \end{tikzpicture}
@@ -805,7 +809,8 @@ These frontier points are used to generate exploration viewpoints such that at l
       \node[anchor=south west,inner sep=0] (b) at (0,0)
         {\adjincludegraphics[width=1.0\linewidth,
           trim={{0.08\width} {0.1\height} {0.08\width} {0.1\height}},
-          clip=true]{fig/monospheres_exploration_v2_part2.pdf}};
+          % clip=true]{fig/monospheres_exploration_v2_part2.pdf}};
+          clip=true]{fig/monospheres_exploration_cyan_part2.pdf}};
       % label (b) in lower-left corner
       \node[anchor=south west, font=\bfseries, text=black, xshift=2pt, yshift=2pt] at (b.south west) {(b)};
     \end{tikzpicture}

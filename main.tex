@@ -286,7 +286,9 @@ As confirmed by the authors, however, the deep neural depth estimates currently 
   \caption{
     % Illustration of the proposed method in a real-world outdoor environment with large open areas. 
     Illustration of the proposed approach. 
-    The mapping pipeline uses information from sparse monocular-inertial SLAM (left) running onboard the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right) for safety-aware exploration.
+    % The mapping pipeline uses information from sparse monocular-inertial SLAM (left) running onboard the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right) for safety-aware exploration.
+    The mapping pipeline estimates depth using virtual (blue) and tracked (red) points from sparse monocular-inertial SLAM (left) running onboard the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right) 
+    % for safety-aware exploration.
   }
   % \label{fig:mapping_pipeline}
   \label{fig:smap_intro}
@@ -625,20 +627,27 @@ Using the ray-tracing grid-based mapping method \cite{from_monoslam_to_explo, lo
 To allow flight in open areas, our method estimates additional free space based on the following assumption: 
 % \todo{reformulate - consider an area of the image -> fake depth -> but up to some max dist -> see image}
 % Consider a virtual keypoint $\mathbf{x}_{vir}$ at time $t$ that has been in the UAV's FoV from a given time $t-x$ in the past up to $t$ 
-Consider a virtual point in space $\mathbf{x}_{vir}$ at time $t$ that has not left the camera's FoV from a given time $t-\tau$ in the past up to $t$ 
-(i.e. it could have been tracked by visual SLAM).
-% (i.e. it has not left the camera's FOV between $t-x$ and $t$).
-Then, if the UAV's camera could have observed sufficient parallax for estimating the distance of $\mathbf{x}_{vir}$ between any two points on the trajectory between $t$ and $t-\tau$, and if the visual SLAM frontend has not localized any stable 3D point approximately in the direction of  $\mathbf{x}_{vir}$, then $\mathbf{x}_{vir}$ must lie in free space.
+% Consider a virtual point in space $\mathbf{x}_{vir}$ at time $t$ that has not left the camera's FoV from a given time $t-\tau$ in the past up to $t$ 
+% (i.e. it could have been tracked by visual SLAM).
+% Then, if the UAV's camera could have observed sufficient parallax for estimating the distance of $\mathbf{x}_{vir}$ between any two points on the trajectory between $t$ and $t-\tau$, and if the visual SLAM frontend has not localized any stable 3D point approximately in the direction of  $\mathbf{x}_{vir}$, then $\mathbf{x}_{vir}$ must lie in free space.
+Consider a virtual point in space $\mathbf{x}_{vir}$ that falls into the camera's FoV at the current pose $\mathbf{p}_k$ and also at previous poses $\mathbf{p}_{k-n}, ...,\mathbf{p}_{k-2}, \mathbf{p}_{k-1}$.
+If there is sufficient parallax between any two of these poses for estimating the distance of $\mathbf{x}_{vir}$ (given by the max covariance of the measured SLAM points), and if the visual SLAM frontend has not localized any stable 3D point approximately in the direction of  $\mathbf{x}_{vir}$, then $\mathbf{x}_{vir}$ must lie in free space (see \autoref{fig:ofs}).
+
+% If this point falls into the camera's field of view (FoV) at the current step and a 
 
 The mapping method periodically checks 
-the described condition for a set of virtual points $\mathbf{x}_{vir}$ at fixed positions relative to the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration. 
+the described condition for a set of virtual points $\mathbf{x}_{vir}$ at fixed positions relative to the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration and for a fixed number of previous poses. 
 The points that fulfill this condition are added to the creation of the \textit{depth mesh} $\mathcal{F}_d$.
 However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there is a more reliable depth estimate from interpolating the SLAM points.
 Free space estimated in this manner also cannot erase existing obstacle points in the map.
 
-Adding these assumed free-space points into the construction of the depth mesh allows estimating significantly more free space than when only tracing rays towards the visual SLAM points localized in 3D.
-However, the assumption does not hold close to objects that cannot be detected by the used visual SLAM frontend.
-Therefore, free space can sometimes be wrongly estimated when such objects appear, as we further discuss in \autoref{sec:discussion}.
+% Adding these assumed free-space points into the construction of the depth mesh allows estimating significantly more free space than when only tracing rays towards the visual SLAM points localized in 3D.
+This approach allows flexibly adding more free space in open areas while using the SLAM points for estimating free space near obstacles.
+Of course, the assumption does not hold close to obstacles that are not detectable by the sparse visual SLAM frontend (e.g. textureless objects or thin wires).
+However, this could be resolved by using a semi-dense or dense SLAM frontend (at a higher computational cost), or by adding low-cost ultrasonic sensors to detect close obstacles.
+% If the obstacles are at least detectable from close range, the forced forward-facing flight will 
+% However, the assumption it is based on does not hold close to objects that cannot be detected by the used visual SLAM frontend.
+% Therefore, free space can sometimes be wrongly estimated when such objects appear, as we further discuss in \autoref{sec:discussion}.
 
 % We periodically check 
 
@@ -1224,11 +1233,11 @@ Videos from these real-world experiments are available in the multimedia materia
  \hline
     Method & Traveled & Mean $A$ & Max $A$  \\ [0.5ex] 
  \hline\hline
-    MonoSpheres  & 18 & 5118 $m^2$ & 5425 $m^2$ \\ 
     Grid-Based & 20  & 1825 $m^2$ & 1981 $m^2$ \\
-    ABL-DistBased  & 5 & 5118 $m^2$ & 5425 $m^2$ \\ 
-    ABL-OFS  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
-    ABL-VPBlocking  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    MonoSpheres  & 18 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    No DistBased  & 5 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    No OFS  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    No VPBlocking  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
     % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
  \hline
 \end{tabular}

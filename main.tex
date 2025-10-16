@@ -468,7 +468,7 @@ Thus, this representation combines the scalability of octree-based maps \cite{oc
   %    \end{subfigure}
   %    \hfill
   \caption{
-    Mapping pipeline overview. The TODO and TODO modules are shown in detail in TODO and TODO respectively.
+    Mapping pipeline overview. The OVD and CBOF modules are illustrated in \autoref{fig:ofs} and \autoref{fig:distbased} respectively.
     % Illustration of the mapping pipeline. 
     % (a) The stable 3D points (red) used by the monocular SLAM are the only input depth measurements. 
     % Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
@@ -582,38 +582,41 @@ The obstacle points are updated, merged and removed based on criteria designed s
 % A lower minimal measurement distance of a visual keypoint means that the point is less likely to be noise and we make it more difficult to erase it from the map.
 % This is a necessary feature for safe flight when using sparse visual SLAM keypoints as the only depth information, as explained more in \autoref{sec:distance-based}. 
 The mapping runs onboard the UAV in real-time, using only the estimated pose and 3D points from monocular-inertial SLAM as its inputs.
-In this paper, we use the sparse point-based OpenVINS \cite{openvins} method as the SLAM frontend, but our method could work with any other monocular-inertial SLAM.
-A single map update iteration consists of the following steps in order:
-\subsection{Constructing the Visible Free-Space Polyhedron}
+In this paper, we use the sparse point-based OpenVINS \cite{openvins} method as the SLAM frontend, but our method could work with other monocular-inertial SLAMs.
+A single map update iteration consists of the following steps, visualized also in \autoref{fig:mapping_pipeline}.
+% \subsection{Constructing the Visible Free-Space Polyhedron}
+\subsection{Depth Interpolation and Polyhedron Construction}
 \label{sec:polyhedron}
-The first step is to construct a polyhedron of space that is likely to contain free space based on the information in the current timestep.
+\todo{The first step is} to construct a polyhedron of space that is likely to contain free space based on the information in the current timestep.
 We interpolate depth between the sparse SLAM points using a simplified version of the approach described in FLAME \cite{flame}, where
 a precise mesh is constructed from visual keypoint measurements.
 In this paper, we care primarily about mapping the free space for navigation purposes, and thus we do not perform the mesh optimization or split the 2D interpolations as in \cite{flame}.
 
 We project the currently tracked visual SLAM points into the image plane and compute their Delaunay triangulation. 
 By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $\mathcal{F}_d$ that we call a \textit{depth mesh}, which is used only for the current frame.
-We estimate the currently visible free space as the volume between the camera's position $\mathbf{p}_{cam}$ and all points on $\mathcal{F}_d$.
-This space is enclosed by connecting all points that lie on the edge of $\mathcal{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathcal{P}_f$, illustrated in \autoref{fig:distbased}.
+We estimate the currently visible free space as the volume between the camera's position $\mathbf{p}$ and all points on $\mathcal{F}_d$.
+This space is enclosed by connecting all points that lie on the edge of $\mathcal{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathcal{P}_f$.
+It is only used for the update step at the current time and discarded afterwards.
 
 % \subsection{Estimating Free Space in Open Areas}
 
 % OFS figure, crop top and down
 \begin{figure}[!h]
   % \includegraphics[width=0.5\textwidth]{fig/monospheres_ofs_v2.pdf}
-     \begin{subfigure}[b]{0.99\linewidth}
+     \begin{subfigure}[b]{1\linewidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.15\height} {0.0\width} {0.15\height}}, clip=true]{fig/monospheres_ofs_v2.pdf}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.15\height}}, clip=true]{fig/mononspheres_ofs_diagram_wide2.pdf}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.15\height}}, clip=true]{fig/mononspheres_ofs_diagram_narrow5.pdf}};
       \end{tikzpicture}
      \end{subfigure}
   \centering
-  \caption{Open-area virtual-depth estimation diagram}
+  \caption{Open-area virtual-depth estimation diagram. The thick green points $\mathbf{x}_{vir, k}$ satisfy the condition defined in \autoref{sec:fake} and are added to the construction of $\mathcal{F}_d$}
   \label{fig:ofs}
 \end{figure}
 
 % \subsection{Open-Area Free-Space Sampling (OFS)}
-\subsection{Open-Area Virtual-Depth Estimation (OFS)}
+\subsection{Open-Area Virtual-Depth Estimation (OVDE)}
 \label{sec:fake}
 When moving in open areas, such as a grassy field without vertical obstacles in \autoref{fig:mapping_pipeline}, point-based visual SLAM can reliably localize only nearby points corresponding to the ground. 
 % This would \todo{normally} cause free space to be estimated only below the UAV and not allow flight across the field.
@@ -660,7 +663,7 @@ However, this could be resolved by using a semi-dense or dense SLAM frontend (at
   \caption{Top-down illustration of sphere sampling and obstacle point management: 
   The visible free-space polyhedron $\mathcal{P}_f^{t_2}$ is created using the currently tracked SLAM points (black crosses) and the camera's position $\mathbf{p}_{cam}^{t_2}$ at time $t_2$.
   % Smaller points and higher-opacity spheres have been observed from lower distances.
-  The size of a point $\mathbf{x}$ inversely corresponds to the distance $d_{\mathbf{x}}$ that it was measured from.
+  The size of a point $\mathbf{x}$ corresponds to the distance $d_{\mathbf{x}}$ that it was measured from.
   % Dashed crosses correspond to points that will be deleted (red) or not added to the map (black), as there are better localized (smaller) points near them.
   The (dashed red) point seen far away from the camera at a previous time $t_1$ now lies in $\mathcal{P}_f^{t_2}$ close to the camera and will thus be deleted as noise.
   % The (dashed red) point will be deleted, as it lies in the free-space polyhedron at $t_2$, and it .
@@ -1236,7 +1239,7 @@ Videos from these real-world experiments are available in the multimedia materia
     Grid-Based & 20  & 1825 $m^2$ & 1981 $m^2$ \\
     MonoSpheres  & 18 & 5118 $m^2$ & 5425 $m^2$ \\ 
     No DistBased  & 5 & 5118 $m^2$ & 5425 $m^2$ \\ 
-    No OFS  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
+    No OVDE  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
     No VPBlocking  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
     % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
  \hline

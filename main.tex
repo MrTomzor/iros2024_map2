@@ -968,6 +968,109 @@ Videos from these real-world experiments are available in the multimedia materia
 \end{figure}
 % %%}
 
+
+% ORCHARD IMG%%{
+\begin{figure}[!htb]
+  \centering
+  \begin{tikzpicture}
+    % --- Subfigure (a)
+    \node[anchor=south west,inner sep=0] (suba) at (0,0)
+      {\begin{subfigure}[b]{0.49\linewidth}
+        \adjincludegraphics[width=\linewidth,
+          trim={{0.3\width} {0.08\height} {0.15\width} {0.2\height}},
+          clip=true]{fig/orchard_brightened.png}
+      \end{subfigure}};
+      
+    % --- Subfigure (b)
+    \node[anchor=south west,inner sep=0] (subb) at ([xshift=0.5\linewidth+0.02\linewidth]suba.south west)
+      {\begin{subfigure}[b]{0.49\linewidth}
+        \begin{tikzpicture}
+          \node[anchor=south west,inner sep=0] (image) at (0,0)
+            {\adjincludegraphics[width=1.0\linewidth,
+              trim={{0.1\width} {0.06\height} {0.1\width} {0.13\height}},
+              clip=true]{fig/2025-10-20_17-20_orchard_treesvisible.png}};
+          \begin{scope}[x={(image.south east)}, y={(image.north west)}]
+            \draw[blue, very thick] (0.45,0.35) circle (10pt);
+            \draw[blue, very thick] (0.68,0.34) circle (10pt);
+            \draw[blue, very thick] (0.7,0.55) circle (10pt);
+            \draw[blue, very thick] (0.72,0.78) circle (10pt);
+            \draw[blue, very thick] (0.47,0.57) circle (10pt);
+            \draw[blue, very thick] (0.48,0.8) circle (10pt);
+            \draw[blue, very thick] (0.43,0.12) circle (10pt);
+            \draw[blue, very thick] (0.68,0.10) circle (10pt);
+          \end{scope}
+        \end{tikzpicture}
+      \end{subfigure}};
+
+    % --- Draw arrow between subfigures
+    \draw[->, ultra thick, blue]
+      ([yshift=-0.7cm, xshift=1.5cm]suba.west) -- ([yshift=1.6cm, xshift=-0.65cm]subb.south);
+
+    \draw[->, ultra thick, blue]
+      ([yshift=0.4cm, xshift=3cm]suba.west) -- ([yshift=2.7cm, xshift=-0.6cm]subb.south);
+
+  \end{tikzpicture}
+  
+  \caption{The 4min orchard exploration experiment. The map is noisy due to low-light conditions, trees are highlighted in blue for clarity.}
+  \label{fig:orchard}
+\end{figure}
+
+% \begin{figure}[!htb]
+%   \def\subfigwidth{0.49\linewidth}
+%   \centering
+%   % --- Subfigure (a)
+%   \begin{subfigure}[b]{\subfigwidth}
+%     \begin{tikzpicture}
+%       \node[anchor=south west,inner sep=0] (a) at (0,0)
+%         {\adjincludegraphics[width=1.0\linewidth,
+%           % trim={{0.27\width} {0.05\height} {0.15\width} {0.07\height}},
+%           trim={{0.3\width} {0.08\height} {0.15\width} {0.2\height}},
+%           clip=true]{fig/orchard_brightened.png}};
+%       % label (a) in lower-left corner
+%       % \node[anchor=south west, font=\bfseries, text=black, xshift=2pt, yshift=2pt] at (a.south west) {(a)};
+%     \end{tikzpicture}
+%   \end{subfigure}
+%   \hfill
+%   % --- Subfigure (b)
+%   \begin{subfigure}[b]{\subfigwidth}
+%     \begin{tikzpicture}
+%       \node[anchor=south west,inner sep=0] (image) at (0,0)
+%         {\adjincludegraphics[width=1.0\linewidth,
+%           % trim={{0.09\width} {0.05\height} {0.05\width} {0.13\height}},
+%           % clip=true]{fig/2025-10-20_17-28_orchard_ortho2.png}};
+%           trim={{0.1\width} {0.06\height} {0.1\width} {0.13\height}},
+%           clip=true]{fig/2025-10-20_17-20_orchard_treesvisible.png}};
+%           % clip=true]{fig/2025-10-20_17-31_orchard_3d_v2.png}};
+%           % clip=true]{fig/2025-10-20_17-29_orchard_3d.png}};
+%           % clip=true]{fig/2025-10-20_17-28_orchard_ortho2.png}};
+%           % clip=true]{fig/2025-10-20_17-25_orchard_260_ortho1.png}};
+%           % trim={{0.1\width} {0.03\height} {0.15\width} {0.065\height}},
+%           % clip=true]{fig/2025-10-20_15-21_orchard_rviz_topdown2.png}};
+%           % trim={{0.00\width} {0.00\height} {0.0\width} {0.0\height}},
+%           % clip=true]{fig/2025-10-20_16-14_boxes_poses_topview_blue2.png}};
+%       % label (b) in lower-left corner
+%     \begin{scope}[x={(image.south east)}, y={(image.north west)}]
+%       % FOR TREEVISIBLE
+%         \draw[blue, very thick] (0.45,0.35) circle (10pt);
+%         \draw[blue, very thick] (0.68,0.34) circle (10pt);
+%         \draw[blue, very thick] (0.7,0.55) circle (10pt);
+%         \draw[blue, very thick] (0.72,0.78) circle (10pt);
+%         \draw[blue, very thick] (0.47,0.57) circle (10pt);
+%         \draw[blue, very thick] (0.48,0.8) circle (10pt);
+%         \draw[blue, very thick] (0.43,0.12) circle (10pt);
+%         \draw[blue, very thick] (0.68,0.10) circle (10pt);
+%       \end{scope}
+%       % \node[anchor=south west, font=\bfseries, text=black, xshift=2pt, yshift=2pt] at (b.south west) {(b)};
+%     \end{tikzpicture}
+%   \end{subfigure}
+%      \hfill
+%   \caption{
+%     The 4min orchard exploration experiment.
+%     }
+%   \label{fig:orchard}
+% \end{figure}
+% %%}
+
 % COMBINED ENDMAPS
 % %%{
 \begin{figure*}[htb]
@@ -1208,23 +1311,23 @@ Videos from these real-world experiments are available in the multimedia materia
 
 % ABL TABLE
 % %%{
-\begin{table}[h!]
-\centering
-  \begin{tabular}{p{22mm} p{12mm} p{13mm} p{13mm} } 
- \hline
-    Method & Traveled & Mean $A$ & Max $A$  \\ [0.5ex] 
- \hline\hline
-    Grid-Based & 20  & 1825 $m^2$ & 1981 $m^2$ \\
-    MonoSpheres  & 18 & 5118 $m^2$ & 5425 $m^2$ \\ 
-    No DistBased  & 5 & 5118 $m^2$ & 5425 $m^2$ \\ 
-    No OVDE  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
-    No VPBlocking  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
-    % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
- \hline
-\end{tabular}
-  \caption{Ablation tests results - 5 runs for each method in the Urban world }
-\label{table:ablations}
-\end{table}
+% \begin{table}[h!]
+% \centering
+%   \begin{tabular}{p{22mm} p{12mm} p{13mm} p{13mm} } 
+%  \hline
+%     Method & Traveled & Mean $A$ & Max $A$  \\ [0.5ex] 
+%  \hline\hline
+%     Grid-Based & 20  & 1825 $m^2$ & 1981 $m^2$ \\
+%     MonoSpheres  & 18 & 5118 $m^2$ & 5425 $m^2$ \\ 
+%     No DistBased  & 5 & 5118 $m^2$ & 5425 $m^2$ \\ 
+%     No OVDE  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
+%     No VPBlocking  & 20 & 5118 $m^2$ & 5425 $m^2$ \\ 
+%     % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
+%  \hline
+% \end{tabular}
+%   \caption{Ablation tests results - 5 runs for each method in the Urban world }
+% \label{table:ablations}
+% \end{table}
 % %%}
 
 
@@ -1236,11 +1339,11 @@ Videos from these real-world experiments are available in the multimedia materia
  \hline
     Method & World & Mean $A$ & Max $A$ & Traveled \\ [0.5ex] 
  \hline\hline
-    MonoSpheres  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
     Grid-Based & Urban  & 1825 $m^2$ & 1981 $m^2$ & 5 \\
-    % ABL-DistBased  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
-    % ABL-OFS  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
-    % ABL-VPBlocking  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
+    MonoSpheres  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
+    No DBOF  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
+    No OVDE  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
+    No VPB  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
     \hline
     MonoSpheres  & Cave & 5581 $m^2$ & 6012 $m^2$ & 3 \\ 
     Grid-Based & Cave  & 3119 $m^2$ & 3375 $m^2$ & 3 \\

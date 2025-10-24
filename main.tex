@@ -870,13 +870,12 @@ The UAV used in the experiments was equipped with a monocular global-shutter gra
 % The UAV used in the experiments was equipped with a monocular global-shutter grayscale fisheye Bluefox camera, and a standard commercial UAV IMU.
 The MRS UAV system \cite{mrs_uav_system} was used for low-level motion planning, control, and the grid-based path planning for the simulation comparisons.
 % Damping in the form of 3D-printed flexible elements 
-In real-world experiments, the camera and IMU are separated from the rest of the UAV by 3D-printed damping elements, which significantly reduces the IMU noise caused by propellers and improves the SLAM performance.
 For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins} in the inverse-depth measurement mode.
 % , without loop closures.
+\todo{ (redundant? -> needto specify assumption at start)
 However, any other monocular-inertial SLAM could be used as the fronted of our method, as long as it tracks points approximately uniformly in the camera's FOV.
-% This is so that the assumption that small objects will be detected at a close range, discussed in \autoref{sec:distance-based}, is fulfilled.
 This property is necessary to assure the assumption that small objects will be detected at a close range, as discussed in \autoref{sec:distance-based}.
-% However, any other monocular-inertial SLAM could be used as the fronted of our method, as long as it has the features described in \autoref{sec:
+}
 % \todo{ale muzem pouzit cokoliv}.
 
 
@@ -1445,10 +1444,12 @@ As expected, this led to collisions in both methods, as these objects cannot be 
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided in two runs with a car and with the burned textureless part of a building, albeit after exploring the majority of the environment. 
 % Since the outdoor environment contains several textureless and thing objects (e.g. exposed metal rods, burned black surfaces), both our approach and the grid-based approach collide with these obstacles occasionally. 
 % This is due to the limitation of the utilized point-based SLAM which cannot detect these obstacles, thus not assuring the assumption described in \autoref{sec:fake}.
+% SHORTER
+This is expected, as these objects cannot be detected by the used OpenVINS frontend, and could be improved by using a visual front-end that uses line-based or dense features (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 
-This confirms the expected \todo{limitation of our method} imposed by the used frontend, but also shows that the method can explore substantial areas even with this simple off-the-shelf sparse point-based SLAM frontend.
-This limitation can be resolved in future work by designing a visual front-end that would would maintain the qualities of OpenVINS (mainly the runtime efficiency and precision), but would also allow tracking of both thin and large texture-sparse objects.
-Alternatively, this issue could be solved by making the mapping pipeline multimodal and incorporating measurements from low-cost short-range distance sensors (e.g. ultrasonic).
+% This confirms the expected \todo{limitation of our method} imposed by the used frontend, but also shows that the method can explore substantial areas even with this simple off-the-shelf sparse point-based SLAM frontend.
+% This limitation can be resolved in future work by designing a visual front-end that would would maintain the qualities of OpenVINS (mainly the runtime efficiency and precision), but would also allow tracking of both thin and large texture-sparse objects.
+% Alternatively, this issue could be solved by making the mapping pipeline multimodal and incorporating measurements from low-cost short-range distance sensors (e.g. ultrasonic).
 
 % \todo{To confirm the utility of this feature of the mapping, we also evaluated the performance of the pipeline with the open-space free-space sampling disabled. As expected, this ablation leads to performance similar as MonoSpheres in the enclosed cave world, but explores only the small enclosed area as the grid-based approach in the outdoor world.}
 % DISCUSSIONThe mapping approach A is more conservative. This leads to fewer crahes, but limits the areas the UAV can explore. The mapping approach proposed in this paper can occasionally overestimate free space, but allows the UAV to safely move through open-space areas.TODO - disposable so crashes not a problem! and also fixable by better monodepth outside the scope of this!

@@ -100,7 +100,9 @@
 % MonoSpheres: Sphere-Based Mapping with Sparse Depth for Large-Scale Monocular-Inertial 3D Exploration}
 %
 % MonoSpheres: Large-Scale Monocular UAV Exploration using Direct Sphere-Based Mapping}
-MonoSpheres: Large-Scale Monocular UAV Exploration through Perception-Coupled Mapping and Planning}
+% MonoSpheres: Large-Scale Monocular UAV Exploration through Perception-Coupled Mapping and Planning}
+MonoSpheres: Large-Scale Monocular SLAM-Based UAV Exploration through Perception-Coupled Mapping and Planning}
+% From Monocular SLAM to Large-Scale UAV Exploration}
 % Large-Scale Monocular UAV Exploration using Optimistic Free-Space Estimation and Cautious Navigation}
 % From Sparse Monocular SLAM to Large-Scale UAV Exploration using Tightly Coupled Mapping and Planning}
 % MonoSpheres: Tightly Coupling Sparse Visual SLAM to 3D Mapping and Navigation for Large-Scale Monocular UAV Exploration}
@@ -730,10 +732,8 @@ If any sphere is found to be redundant, it is deleted from the map.
 This step is important to cover large open areas by only a few spheres to allow rapid planning, and tight corridors by a higher density of spheres, capturing the information about potential paths and distances in more detail.
 % This way, large open areas are covered by only a few spheres and can be planned over quickly, and tight corridors have a higher density of spheres, capturing the information about potential paths and distances to obstacles in more detail.
 
-% \section{Monocular-Inertial Exploration Using the Sphere-Based Map}
-% \section{Safety-Aware Monocular-Inertial 3D Exploration}
-% \section{Safe Monocular-Inertial Exploration using the Sphere-Based Map}
-\section{Perception-Aware Exploration using the Sphere-Based Map}
+% \section{Perception-Aware Exploration using the Sphere-Based Map}
+\section{Perception-Aware Exploration with a Sparse Sphere-Based Map}
 % In this section, we detail how the proposed mapping method is highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a monocular camera and IMU.
 In this section, we describe a monocular exploration approach enabled by the proposed mapping method.
 In principle, we employ the commonly used next-best-view (NBV) \cite{paper_frontier_grandpa} strategy, which has so far been deemed unsuitable for monocular exploration in previous works \cite{from_monoslam_to_explo, los_maps}.
@@ -1291,15 +1291,26 @@ Videos from these real-world experiments are available in the multimedia materia
 % \end{figure}
 % %%}
 
-% RUNTIMES
-% %%{
+% ABLATION GRAPH AND TRAJS
 \begin{figure}[htb]
-  \def\subfigwidth{0.9\linewidth}
+  \def\subfigwidth{0.49\linewidth}
   \centering
      \begin{subfigure}[b]{\subfigwidth}
       \begin{tikzpicture}
         \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/ablations2.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_graph_test_square.png}};
+      \end{tikzpicture}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{\subfigwidth}
+      \begin{tikzpicture}
+        \centering
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/ablations1.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_squre_angled.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_ortho.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.1\width} {0.1\height} {0.1\width} {0.1\height}}, clip=true]{fig/abl_ortho_nogrid.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.1\width} {0.1\height} {0.1\width} {0.1\height}}, clip=true]{fig/abl_ortho_heightmap.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_nogrid1.png}};
       \end{tikzpicture}
      \end{subfigure}
   \centering
@@ -1307,7 +1318,34 @@ Videos from these real-world experiments are available in the multimedia materia
   }
   \label{fig:exper_fireworld}
 \end{figure}
-% %%}
+
+%%{
+% \begin{figure}[htb]
+%   \def\subfigwidth{0.9\linewidth}
+%   \centering
+%      \begin{subfigure}[b]{\subfigwidth}
+%       \begin{tikzpicture}
+%         \centering
+%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_progress_wide1.png}};
+%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_graph_timesroman.png}};
+%       \end{tikzpicture}
+%      \end{subfigure}
+%      \hfill
+%      \begin{subfigure}[b]{\subfigwidth}
+%       \begin{tikzpicture}
+%         \centering
+%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/ablations1.png}};
+%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_wide2.png}};
+%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_wide3.png}};
+%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_squre_angled.png}};
+%       \end{tikzpicture}
+%      \end{subfigure}
+%   \centering
+%   \caption{Ablation test results on the Urban world
+%   }
+%   \label{fig:exper_fireworld}
+% \end{figure}
+%%}
 
 % ABL TABLE
 % %%{
@@ -1337,22 +1375,24 @@ Videos from these real-world experiments are available in the multimedia materia
 \centering
   \begin{tabular}{p{22mm} p{8mm} p{13mm} p{13mm} p{7mm}} 
  \hline
-    Method & World & Mean $A$ & Max $A$ & Traveled \\ [0.5ex] 
+    % Method & World & Mean $A$ & Max $A$ & Runs \\ [0.5ex] 
+    \textbf{Method} & \textbf{World} & \textbf{Mean} $A$ & \textbf{Max} $A$ & \textbf{Runs} \\ [0.5ex] 
  \hline\hline
-    Grid-Based & Urban  & 1825 $m^2$ & 1981 $m^2$ & 5 \\
-    MonoSpheres  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
-    No DBOF  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
-    No OVDE  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
-    No VPB  & Urban & 5118 $m^2$ & 5425 $m^2$ & 5 \\ 
+    MonoSpheres  & Urban & 4919 $m^2$ & 6081 $m^2$ & 6 \\ 
+    Grid-Based & Urban  & 1911 $m^2$ & 2306 $m^2$ & 6 \\
+    No FFF  & Urban & 2470 $m^2$ & 3181 $m^2$ & 3 \\ 
+    No DBOF  & Urban & 2308 $m^2$ & 3081 $m^2$ & 3 \\ 
+    No OVDE  & Urban & 747 $m^2$ & 862 $m^2$ & 3 \\ 
+    No VPB  & Urban & 3697 $m^2$ & 4175 $m^2$ & 3 \\ 
     \hline
-    MonoSpheres  & Cave & 5581 $m^2$ & 6012 $m^2$ & 3 \\ 
-    Grid-Based & Cave  & 3119 $m^2$ & 3375 $m^2$ & 3 \\
+    MonoSpheres  & Cave & 7627 $m^2$ & 8006 $m^2$ & 3 \\ 
+    Grid-Based & Cave  & 3171 $m^2$ & 3375 $m^2$ & 3 \\
     \hline
-    MonoSpheres  & Rooftops & 5581 $m^2$ & 6012 $m^2$ & 3 \\ 
-    Grid-Based & Rooftops  & 3119 $m^2$ & 3375 $m^2$ & 3 \\
+    MonoSpheres  & Rooftops & 3760 $m^2$ & 4606 $m^2$ & 3 \\ 
+    Grid-Based & Rooftops  & 1360 $m^2$ & 1556 $m^2$ & 3 \\
     \hline
-    MonoSpheres  & Sparse & 5581 $m^2$ & 6012 $m^2$ & 3 \\ 
-    Grid-Based & Sparse  & 3119 $m^2$ & 3375 $m^2$ & 3 \\
+    MonoSpheres  & Sparse & 5127 $m^2$ & 5150 $m^2$ & 3 \\ 
+    Grid-Based & Sparse  & 2108 $m^2$ & 2168 $m^2$ & 3 \\
     % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
  \hline
 \end{tabular}
@@ -1368,6 +1408,7 @@ Videos from these real-world experiments are available in the multimedia materia
 % In the following experiments, we showcase the capabilities of our approach in simulated  urban areas with multiple buildings, collapsed trees, cars and other obstacles.
 % TODO
 % In this section, we quantitatively evaluate the performance of our method.
+\todo{Q: Does the mapping and planning enable exploration at larger scales than conventional approaches?}
 As the previously published monocular exploration methods do not have code available (with the exception of \cite{simon2023mononav}, which, however, is not ROS-compatible as of writing this paper), we prepared a simple grid-based mapping and exploration pipeline for comparison with MonoSpheres.
 This reference method uses the same mapping approach as \cite{from_monoslam_to_explo, los_maps} (i.e. initializing free space between the camera and the visual SLAM points that have a low position covariance). 
 To explore, the method periodically samples free-space points uniformly in a 40x40x10 \SI{}{\meter} area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid that would move the robot as close as possible to the goal while respecting the same distance from obstacles and uknown space as the MonoSpheres method (\SI{1.5}{\meter} in these experiments).
@@ -1405,7 +1446,7 @@ In particular, the grid-based method collided once with a smooth metal rod, and 
 % Since the outdoor environment contains several textureless and thing objects (e.g. exposed metal rods, burned black surfaces), both our approach and the grid-based approach collide with these obstacles occasionally. 
 % This is due to the limitation of the utilized point-based SLAM which cannot detect these obstacles, thus not assuring the assumption described in \autoref{sec:fake}.
 
-This confirms the expected limitation of our method imposed by the used frontend, but also shows that the method can explore substantial areas even with this simple off-the-shelf sparse point-based SLAM frontend.
+This confirms the expected \todo{limitation of our method} imposed by the used frontend, but also shows that the method can explore substantial areas even with this simple off-the-shelf sparse point-based SLAM frontend.
 This limitation can be resolved in future work by designing a visual front-end that would would maintain the qualities of OpenVINS (mainly the runtime efficiency and precision), but would also allow tracking of both thin and large texture-sparse objects.
 Alternatively, this issue could be solved by making the mapping pipeline multimodal and incorporating measurements from low-cost short-range distance sensors (e.g. ultrasonic).
 
@@ -1477,13 +1518,15 @@ Alternatively, this issue could be solved by making the mapping pipeline multimo
 \section{CONCLUSION}
 % \todo{[In this paper, we reformulate 3D volumetric mapping and exploration to use a graph-of-spheres map instead of a traditionally used voxel-based one.]}
 In this paper, we presented a novel, perception-coupled approach to mapping and planning for UAV exploration of 3D space with a monocular camera.
+Ablation experiments confirm the utility of the individual modules of our proposed method.
 % [building a graph-of-spheres representation using sparse depth estimates provided by monocular-inertial SLAM. 
 % Our approach shows that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
-Our method enables low-cost UAVs to actively build a map allowing safe navigation in unstructured environments, even with very sparse depth estimates from monocular-inertial SLAM. 
+% Our method enables low-cost UAVs to actively build a map allowing safe navigation in unstructured environments, even with very sparse depth estimates from monocular-inertial SLAM. 
 % Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
 Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav}, our proposed approach achieves autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
 % With the same configuration, our method allows exploration of both indoor and outdoor environments.
 With the same configuration, our method allows exploration of various environment topologies -- sparse, dense, indoor, outdoor and environments requiring flight over obstacles in wide open spaces.
+% In future work, our method could be improved by adopting a submap-based approach or by incorporating inexpensive ultrasonic sensors to act as "bumpers" against thin objects that are hard to detect by cameras.
 In future work, our method could be improved by adopting a submap-based approach or by incorporating inexpensive ultrasonic sensors to act as "bumpers" against thin objects that are hard to detect by cameras.
 % and a better-suited depth estimation frontend to achieve reliable monocular vision-based exploration at the same scale as LiDAR based systems.
 % Our proposed method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.

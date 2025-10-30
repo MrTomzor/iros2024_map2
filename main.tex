@@ -1398,27 +1398,45 @@ Videos from these real-world experiments are available in the multimedia materia
 % %%{
 \begin{table}[h!]
 \centering
-  \begin{tabular}{p{22mm} p{8mm} p{13mm} p{13mm} p{7mm}} 
+  \begin{tabular}{p{18mm} p{10mm} p{10mm} p{10mm} p{10mm}} 
  \hline
     % Method & World & Mean $A$ & Max $A$ & Runs \\ [0.5ex] 
-    \textbf{Method} & \textbf{World} & \textbf{Mean} $A$ & \textbf{Max} $A$ & \textbf{Runs} \\ [0.5ex] 
+    \textbf{Method / Ablation} & \textbf{World} & \textbf{Mean} $A \left[m^2 \right] $ & \textbf{Max} $A \left[ m^2 \right] $ & \textbf{Max} $V \left[ m^3 \right] $\\ [0.5ex] 
+    % \textbf{Method} & \textbf{World} & \textbf{Mean} $A$ & \textbf{Max} $A$ & \textbf{Runs} \\ [0.5ex] 
  \hline\hline
-    MonoSpheres  & Urban & 4919 $m^2$ & 6081 $m^2$ & 6 \\ 
-    Grid-Based & Urban  & 1911 $m^2$ & 2306 $m^2$ & 6 \\
-    No FFF  & Urban & 2470 $m^2$ & 3181 $m^2$ & 3 \\ 
-    No DBOF  & Urban & 2308 $m^2$ & 3081 $m^2$ & 3 \\ 
-    No OVDE  & Urban & 747 $m^2$ & 862 $m^2$ & 3 \\ 
-    No VPB  & Urban & 3697 $m^2$ & 4175 $m^2$ & 3 \\ 
+    % MonoSpheres  & Urban & 4919 $m^2$ & 6081 $m^2$ & 6 \\ 
+    % Grid-Based & Urban  & 1911 $m^2$ & 2306 $m^2$ & 6 \\
+    % No FFF  & Urban & 2470 $m^2$ & 3181 $m^2$ & 3 \\ 
+    % No DBOF  & Urban & 2308 $m^2$ & 3081 $m^2$ & 3 \\ 
+    % No OVDE  & Urban & 747 $m^2$ & 862 $m^2$ & 3 \\ 
+    % No VPB  & Urban & 3697 $m^2$ & 4175 $m^2$ & 3 \\ 
+    % \hline
+    % MonoSpheres  & Cave & 7627 $m^2$ & 8006 $m^2$ & 3 \\ 
+    % Grid-Based & Cave  & 3171 $m^2$ & 3375 $m^2$ & 3 \\
+    % \hline
+    % MonoSpheres  & Rooftops & 3760 $m^2$ & 4606 $m^2$ & 3 \\ 
+    % Grid-Based & Rooftops  & 1360 $m^2$ & 1556 $m^2$ & 3 \\
+    % \hline
+    % MonoSpheres  & Sparse & 5127 $m^2$ & 5150 $m^2$ & 3 \\ 
+    % Grid-Based & Sparse  & 2108 $m^2$ & 2168 $m^2$ & 3 \\
+    % % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
+
+    MonoSpheres  & Urban & 1968& 2432& 7082 \\
+    Grid-Based & Urban  & 764& 922& 2072 \\
+    No FFF  & Urban & 988& 1272& 3807 \\
+    No DBOF  & Urban & 923& 1232& 4142 \\
+    No OVDE  & Urban & 299& 345& 735 \\
+    No VPB  & Urban & 1479& 1670& 5390 \\
     \hline
-    MonoSpheres  & Cave & 7627 $m^2$ & 8006 $m^2$ & 3 \\ 
-    Grid-Based & Cave  & 3171 $m^2$ & 3375 $m^2$ & 3 \\
+    MonoSpheres  & Cave & 3051& 3202& 7545 \\
+    Grid-Based & Cave  & 1268& 1350& 3518 \\
     \hline
-    MonoSpheres  & Rooftops & 3760 $m^2$ & 4606 $m^2$ & 3 \\ 
-    Grid-Based & Rooftops  & 1360 $m^2$ & 1556 $m^2$ & 3 \\
+    MonoSpheres  & Rooftops & 1504& 1842& 8685 \\
+    Grid-Based & Rooftops  & 544& 622& 1590 \\
     \hline
-    MonoSpheres  & Sparse & 5127 $m^2$ & 5150 $m^2$ & 3 \\ 
-    Grid-Based & Sparse  & 2108 $m^2$ & 2168 $m^2$ & 3 \\
-    % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
+    MonoSpheres  & Sparse & 2051& 2060& 5677 \\
+    Grid-Based & Sparse  & 843& 867& 1365 \\
+    % OFS-disabled  & Cave & 1964.0& 1964.0& 0.0/0.4 \\
  \hline
 \end{tabular}
   \caption{Quantitative results showing the explored area in the simulation experiments described in \autoref{sec:sim_exper}. }

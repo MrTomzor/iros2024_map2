@@ -1317,8 +1317,8 @@ Videos from these real-world experiments are available in the multimedia materia
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_graph_markers_tall.pdf}};
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_graph_markers_verytall_raster.png}};
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/abl_graph_noframe_smolsquare.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/ab_smolsquare_bubblegumgreen.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/squareholder.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/abl_graph_fixed_snapped.png}};
+        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/squareholder.png}};
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -1398,8 +1398,9 @@ Videos from these real-world experiments are available in the multimedia materia
 % %%{
 \begin{table}[h!]
 \centering
-  \begin{tabular}{p{18mm} p{10mm} p{10mm} p{10mm} p{10mm}} 
+  \begin{tabular}{m{18mm} m{10mm} m{10mm} m{10mm} m{10mm}} 
  \hline
+    % \vspace{0.1mm}
     % Method & World & Mean $A$ & Max $A$ & Runs \\ [0.5ex] 
     \textbf{Method / Ablation} & \textbf{World} & \textbf{Mean} $A \left[m^2 \right] $ & \textbf{Max} $A \left[ m^2 \right] $ & \textbf{Max} $V \left[ m^3 \right] $\\ [0.5ex] 
     % \textbf{Method} & \textbf{World} & \textbf{Mean} $A$ & \textbf{Max} $A$ & \textbf{Runs} \\ [0.5ex] 
@@ -1445,7 +1446,7 @@ Videos from these real-world experiments are available in the multimedia materia
 % %%}
 
 % \subsection{Comparison with Grid-Based Approach in Simulation}
-\subsection{Simulation Experiments}
+\subsection{Multi-World Simulation Evaluation}
 \label{sec:sim_exper}
 % In this experiment, we demonstrate that the method is reliable, by running several experiments in the environment shown in TODO-FIG and noting the exploration results and failure cases.
 % In the following experiments, we showcase the capabilities of our approach in simulated  urban areas with multiple buildings, collapsed trees, cars and other obstacles.
@@ -1469,6 +1470,17 @@ We compare the grid-based approach with MonoSpheres in multiple experiments on 2
 Videos from these experiments are available in the multimedia materials.
 The experiments were conducted in the Gazebo simulator \cite{gazebo} with the same UAV platform and sensory setup as in the real-world experiments.
 Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of interest in the urban world for both methods, and to 170x110x20 \SI{}{\meter} in the cave world.
+
+\subsection{Ablation Experiments}
+To determine the contribution of the individual components of our proposed mapping and exploration method, we performed ablation tests in the urban world with 3 exploration runs for each ablation.
+The results are shown in \autoref{table:sim_exper} and \autoref{fig:exper_fireworld}.
+% Ablating OVDE, DBOF and FFF have drastic effects on the exploration performance, confirming the importance of these components.
+Without DBOF, the UAV tends to quickly delete obstacles and crash into them.
+Without FFF, the UAV is unable to detect previously undetected obstacles and also crashes fast.
+Without virtual depth (OVDE), the UAV is unable to explore open-space areas and stays in the starting "valley" between the houses as expected.
+Since the grid-based method allows casting rays even to faraway points, it has a better performance than this ablation.
+Lastly, removing viewpoint blocking (VPB) does not lead to critical failures, as the simulated environment does not have large featureless walls, but the exploration performance is still notably reduced due to the UAV revisiting some viewpoints.
+In summary, these results confirm the importance of all the proposed components of our mapping and exploration approach.
 
 \subsection{Discussion}
 \label{sec:discussion}

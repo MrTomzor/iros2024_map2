@@ -366,7 +366,7 @@ We base our solution to this problem on the following key assumptions/observatio
 \begin{enumerate}
   \item Depth accuracy generally increases with decreasing distance to obstacles, as the \textit{inverse} of depth errors are gaussian \cite{inverse_depth} and since the objects occupy more pixels in the image, making them more likely to be detected.
     \item In outdoor environments, there can be large textureless areas where no depth can be estimated (e.g. above horizon on a clear day) by classic motion-based methods that initialize depth by tracking texture.
-    \item Measuring depth requires sufficient translational motion, making the depth estimates \textit{trajectory dependent}, which is not the case with dense range sensors.
+    \item Measuring depth requires sufficient translational motion, making the depth measurements \textit{trajectory dependent}, which is not the case with dense range sensors.
 \end{enumerate}
 
 \section{Related Works}
@@ -1339,7 +1339,7 @@ Videos from these real-world experiments are available in the multimedia materia
       \end{tikzpicture}
      \end{subfigure}
   \centering
-  \caption{ablation test results on the urban world
+  \caption{Ablation test results on the urban world. Left: visualization of exploration progress, best runs per method are thick and a marker signifies a crash or mission completion. Right: best-run trajectories for each method.
   }
   \label{fig:exper_fireworld}
 \end{figure}
@@ -1475,8 +1475,8 @@ Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of i
 To determine the contribution of the individual components of our proposed mapping and exploration method, we performed ablation tests in the urban world with 3 exploration runs for each ablation.
 The results are shown in \autoref{table:sim_exper} and \autoref{fig:exper_fireworld}.
 % Ablating OVDE, DBOF and FFF have drastic effects on the exploration performance, confirming the importance of these components.
-Without DBOF, the UAV tends to quickly delete obstacles and crash into them.
-Without FFF, the UAV is unable to detect previously undetected obstacles and also crashes fast.
+Without DBOF, the UAV tends to quickly overwrite previously mapped obstacles with free space and crash.
+Without forward-facing flight (FFF), where the UAV aligns itself with a goal viewpoint's heading when starting to navigate to it, the UAV is unable to detect previously undetected obstacles and also crashes fast.
 Without virtual depth (OVDE), the UAV is unable to explore open-space areas and stays in the starting "valley" between the houses as expected.
 Since the grid-based method allows casting rays even to faraway points, it has a better performance than this ablation.
 Lastly, removing viewpoint blocking (VPB) does not lead to critical failures, as the simulated environment does not have large featureless walls, but the exploration performance is still notably reduced due to the UAV revisiting some viewpoints.

@@ -1271,14 +1271,16 @@ Since the grid-based method allows casting rays even to faraway points, it has a
 Lastly, removing viewpoint blocking (VPB) does not lead to critical failures, as the simulated environment does not have large featureless walls, but the exploration performance is still notably reduced due to the UAV revisiting some viewpoints.
 In summary, these results confirm the importance of all the proposed components of our mapping and exploration approach.
 
-\subsection{Discussion}
+\subsection{Simulation Results Discussion}
 \label{sec:discussion}
-In the "cave" world, which is a texture-rich indoor environment, the grid-based approach performed similarly to MonoSpheres in terms of initial exploration speed.
-% and with sufficient side-to-side motion, was able to create sufficient free space to explore the cave corridor.
-With a more sophisticated viewpoint selection approach, the grid-based approach could explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
+The main result of the simulation experiments is that our approach is capable of exploring many different topologies of environments -- sparse, dense, indoor, outdoor and environments where flight over obstacles in wide open spaces is required.
+As expected based on the findings of \cite{from_monoslam_to_explo, los_maps}, the classical mapping approach was not able to map free space in open-space areas.
+In all of the outdoor worlds, the classical mapping method with random exploration goal sampling was only able to map the area close to tall obstacles near the starting position.
+% In the "cave" world, which is a texture-rich indoor environment, the grid-based approach performed similarly to MonoSpheres in terms of initial exploration speed.
+% With a more sophisticated viewpoint selection approach, the grid-based approach could explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
 % This finding supports that the mapping approach presented in \cite{from_monoslam_to_explo, los_maps} for textured, indoor spaces.
 
-We designed the earthquake environment to test the limits of our method, making it contain textureless areas (e.g. cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
+We designed the earthquake environment to test the limits of our method, making it contain textureless areas (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
 As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided in two runs with a car and with the burned textureless part of a building, albeit after exploring the majority of the environment. 
 This is expected, as these objects cannot be detected by the used OpenVINS frontend, and could be improved by using a visual front-end that uses line-based or dense features (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV.

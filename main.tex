@@ -180,7 +180,7 @@ MonoSpheres: Large-Scale Monocular SLAM-Based UAV Exploration through Perception
   Autonomous exploration of unknown environments is a key capability for mobile robots, but it is largely unsolved for robots equipped with a single monocular camera and no dense range sensors.
   In this paper, we present a novel approach to monocular vision-based exploration that can safely cover large-scale unstructured indoor and outdoor environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
   The mapping module solves the problems of sparse depth data, free-space gaps, and large depth uncertainty by oversampling free space in texture-sparse areas and keeping track of obstacle position uncertainty.
-  The planning module handles the added free-space uncertainty through rapid replanning and forced forward flight.
+  The planning module handles the added free-space uncertainty through rapid replanning and perception-aware heading control.
   We further show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless areas are taken into account.
   We evaluate our approach extensively in various real-world and simulated environments and ablation studies.
   % To the best of the authors' knowledge, the proposed method is the first to achieve both indoor and outdoor 3D monocular exploration in unstructured environments up to 170x110m in scale. 
@@ -600,17 +600,17 @@ In the following sections, we introduce several major differences in methodology
 
 \subsection{Frontier Sampling on Free-Space Polyhedron}
 Firstly, since the proposed map representation is fundamentally different from an occupancy grid, we need to detect frontiers (i.e. the boundary of free and unknown space) in a different way than with an occupancy grid.
-We propose to sample points along the visible free-space polyhedron described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at a user-defined distance from all map obstacle points and other frontiers.
+We propose to sample points along the visible free-space polyhedron $ \mathcal{P}_f $  described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at a \todo{user-defined distance} from all map obstacle points and other frontiers.
 If they do not meet these criteria in any following update, they are deleted. 
+To avoid the loss of SLAM feature tracking we also delete frontiers that are too far from any obstacle points.
 % \todo{complexity and vs octomap?}
-
-In enclosed spaces, which are usually considered in autonomous exploration literature, all frontiers are usually worth exploring.
-However, in outdoor exploration with areas of open space, it is also important to assign different value to different frontiers, especially for UAVs. 
-We propose to constrain the exploration to only consider frontiers that lie near some obstacle points.
-This way, the UAV does not explore up into the sky.
-Additionally, this forces the UAV to only explore near texture-rich areas, thus avoiding losing visual SLAM tracking.
+% In enclosed spaces, which are usually considered in autonomous exploration literature, all frontiers are usually worth exploring.
+% However, in outdoor exploration with areas of open space, it is also important to assign different value to different frontiers, especially for UAVs. 
+% We propose to constrain the exploration to only consider frontiers that lie near some obstacle points.
+% This way, the UAV does not explore up into the sky.
+% Additionally, this forces the UAV to only explore near texture-rich areas, thus avoiding losing visual SLAM tracking.
 % \todo{Lastly, we add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint at a close distance.}
-These frontier points are used to generate exploration viewpoints such that at least some frontier points are visible form each viewpoint.
+These frontier points are used to generate exploration viewpoints such that at least some frontier points are visible from each viewpoint.
 
 % EXPLORATION EXPLANATION IMG%%{
 \begin{figure}[!htb]
@@ -691,6 +691,69 @@ This approach is crucial for ensuring collision-free flight in the case of incor
 As discussed in \autoref{sec:discussion}, some obstacles (e.g. thin wires, twigs) might not be visible in the cameras from a large distance to be detected by the visual SLAM (especially when using fisheye cameras), and can be wrongly estimated as free space.
 Using the forward-facing flight, the UAV has a higher chance to see these obstacles that were previously not detected, and quickly replan.
 To further increase safety and allow agile maneuvers, the paths are planned with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is highly suitable, as described in \cite{spheremap, bubbleplanner, spheregraph}.
+
+
+% ORCHARD IMG%%{
+\begin{figure}[!htb]
+  \centering
+  \begin{tikzpicture}
+    % --- Subfigure (a)
+    % \node[anchor=south west,inner sep=0] (suba) at (0,0)
+    %   {\begin{subfigure}[b]{0.49\linewidth}
+    %     \adjincludegraphics[width=\linewidth,
+    %       trim={{0.3\width} {0.08\height} {0.15\width} {0.2\height}},
+    %       clip=true]{fig/orchard_brightened.png}
+    %   \end{subfigure}};
+
+    % \node[anchor=south west,inner sep=0] (suba) at (0,0)
+    %   {\begin{subfigure}[b]{0.49\linewidth}
+    %     \adjincludegraphics[width=\linewidth,
+    %       trim={{0.0\width} {0.07\height} {0.07\width} {0.0\height}},
+    %       clip=true]{fig/orchard_brightened2.png}
+    %   \end{subfigure}};
+
+    \node[anchor=south west,inner sep=0] (suba) at (0,0)
+      {\begin{subfigure}[b]{0.49\linewidth}
+        \adjincludegraphics[width=\linewidth,
+          trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}},
+          clip=true]{fig/orchard_corrected_hot.png}
+          % clip=true]{fig/orchard_corrected_cool.png}
+      \end{subfigure}};
+      
+    % --- Subfigure (b)
+    \node[anchor=south west,inner sep=0] (subb) at ([xshift=0.5\linewidth+0.02\linewidth]suba.south west)
+      {\begin{subfigure}[b]{0.49\linewidth}
+        \begin{tikzpicture}
+          \node[anchor=south west,inner sep=0] (image) at (0,0)
+            {\adjincludegraphics[width=1.0\linewidth,
+              trim={{0.1\width} {0.06\height} {0.1\width} {0.13\height}},
+              clip=true]{fig/2025-10-20_17-20_orchard_treesvisible.png}};
+          \begin{scope}[x={(image.south east)}, y={(image.north west)}]
+            \draw[blue, very thick] (0.45,0.35) circle (10pt);
+            \draw[blue, very thick] (0.68,0.34) circle (10pt);
+            \draw[blue, very thick] (0.7,0.55) circle (10pt);
+            \draw[blue, very thick] (0.72,0.78) circle (10pt);
+            \draw[blue, very thick] (0.47,0.57) circle (10pt);
+            \draw[blue, very thick] (0.48,0.8) circle (10pt);
+            \draw[blue, very thick] (0.43,0.12) circle (10pt);
+            \draw[blue, very thick] (0.68,0.10) circle (10pt);
+          \end{scope}
+        \end{tikzpicture}
+      \end{subfigure}};
+
+    % --- Draw arrow between subfigures
+    \draw[->, ultra thick, blue]
+      ([yshift=-0.7cm, xshift=1.5cm]suba.west) -- ([yshift=1.6cm, xshift=-0.65cm]subb.south);
+
+    \draw[->, ultra thick, blue]
+      ([yshift=0.4cm, xshift=3cm]suba.west) -- ([yshift=2.7cm, xshift=-0.6cm]subb.south);
+
+  \end{tikzpicture}
+  
+  \caption{The 4min orchard exploration experiment. The map is noisy due to low-light conditions, trees are highlighted in blue for clarity.}
+  \label{fig:orchard}
+\end{figure}
+% %%}
 
 \section{Experiments}
 \label{sec:experiments}
@@ -797,126 +860,9 @@ Videos from these real-world experiments are available in the multimedia materia
 % %%}
 
 
-% ORCHARD IMG%%{
-\begin{figure}[!htb]
-  \centering
-  \begin{tikzpicture}
-    % --- Subfigure (a)
-    % \node[anchor=south west,inner sep=0] (suba) at (0,0)
-    %   {\begin{subfigure}[b]{0.49\linewidth}
-    %     \adjincludegraphics[width=\linewidth,
-    %       trim={{0.3\width} {0.08\height} {0.15\width} {0.2\height}},
-    %       clip=true]{fig/orchard_brightened.png}
-    %   \end{subfigure}};
-
-    % \node[anchor=south west,inner sep=0] (suba) at (0,0)
-    %   {\begin{subfigure}[b]{0.49\linewidth}
-    %     \adjincludegraphics[width=\linewidth,
-    %       trim={{0.0\width} {0.07\height} {0.07\width} {0.0\height}},
-    %       clip=true]{fig/orchard_brightened2.png}
-    %   \end{subfigure}};
-
-    \node[anchor=south west,inner sep=0] (suba) at (0,0)
-      {\begin{subfigure}[b]{0.49\linewidth}
-        \adjincludegraphics[width=\linewidth,
-          trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}},
-          clip=true]{fig/orchard_corrected_hot.png}
-          % clip=true]{fig/orchard_corrected_cool.png}
-      \end{subfigure}};
-      
-    % --- Subfigure (b)
-    \node[anchor=south west,inner sep=0] (subb) at ([xshift=0.5\linewidth+0.02\linewidth]suba.south west)
-      {\begin{subfigure}[b]{0.49\linewidth}
-        \begin{tikzpicture}
-          \node[anchor=south west,inner sep=0] (image) at (0,0)
-            {\adjincludegraphics[width=1.0\linewidth,
-              trim={{0.1\width} {0.06\height} {0.1\width} {0.13\height}},
-              clip=true]{fig/2025-10-20_17-20_orchard_treesvisible.png}};
-          \begin{scope}[x={(image.south east)}, y={(image.north west)}]
-            \draw[blue, very thick] (0.45,0.35) circle (10pt);
-            \draw[blue, very thick] (0.68,0.34) circle (10pt);
-            \draw[blue, very thick] (0.7,0.55) circle (10pt);
-            \draw[blue, very thick] (0.72,0.78) circle (10pt);
-            \draw[blue, very thick] (0.47,0.57) circle (10pt);
-            \draw[blue, very thick] (0.48,0.8) circle (10pt);
-            \draw[blue, very thick] (0.43,0.12) circle (10pt);
-            \draw[blue, very thick] (0.68,0.10) circle (10pt);
-          \end{scope}
-        \end{tikzpicture}
-      \end{subfigure}};
-
-    % --- Draw arrow between subfigures
-    \draw[->, ultra thick, blue]
-      ([yshift=-0.7cm, xshift=1.5cm]suba.west) -- ([yshift=1.6cm, xshift=-0.65cm]subb.south);
-
-    \draw[->, ultra thick, blue]
-      ([yshift=0.4cm, xshift=3cm]suba.west) -- ([yshift=2.7cm, xshift=-0.6cm]subb.south);
-
-  \end{tikzpicture}
-  
-  \caption{The 4min orchard exploration experiment. The map is noisy due to low-light conditions, trees are highlighted in blue for clarity.}
-  \label{fig:orchard}
-\end{figure}
-
-% \begin{figure}[!htb]
-%   \def\subfigwidth{0.49\linewidth}
-%   \centering
-%   % --- Subfigure (a)
-%   \begin{subfigure}[b]{\subfigwidth}
-%     \begin{tikzpicture}
-%       \node[anchor=south west,inner sep=0] (a) at (0,0)
-%         {\adjincludegraphics[width=1.0\linewidth,
-%           % trim={{0.27\width} {0.05\height} {0.15\width} {0.07\height}},
-%           trim={{0.3\width} {0.08\height} {0.15\width} {0.2\height}},
-%           clip=true]{fig/orchard_brightened.png}};
-%       % label (a) in lower-left corner
-%       % \node[anchor=south west, font=\bfseries, text=black, xshift=2pt, yshift=2pt] at (a.south west) {(a)};
-%     \end{tikzpicture}
-%   \end{subfigure}
-%   \hfill
-%   % --- Subfigure (b)
-%   \begin{subfigure}[b]{\subfigwidth}
-%     \begin{tikzpicture}
-%       \node[anchor=south west,inner sep=0] (image) at (0,0)
-%         {\adjincludegraphics[width=1.0\linewidth,
-%           % trim={{0.09\width} {0.05\height} {0.05\width} {0.13\height}},
-%           % clip=true]{fig/2025-10-20_17-28_orchard_ortho2.png}};
-%           trim={{0.1\width} {0.06\height} {0.1\width} {0.13\height}},
-%           clip=true]{fig/2025-10-20_17-20_orchard_treesvisible.png}};
-%           % clip=true]{fig/2025-10-20_17-31_orchard_3d_v2.png}};
-%           % clip=true]{fig/2025-10-20_17-29_orchard_3d.png}};
-%           % clip=true]{fig/2025-10-20_17-28_orchard_ortho2.png}};
-%           % clip=true]{fig/2025-10-20_17-25_orchard_260_ortho1.png}};
-%           % trim={{0.1\width} {0.03\height} {0.15\width} {0.065\height}},
-%           % clip=true]{fig/2025-10-20_15-21_orchard_rviz_topdown2.png}};
-%           % trim={{0.00\width} {0.00\height} {0.0\width} {0.0\height}},
-%           % clip=true]{fig/2025-10-20_16-14_boxes_poses_topview_blue2.png}};
-%       % label (b) in lower-left corner
-%     \begin{scope}[x={(image.south east)}, y={(image.north west)}]
-%       % FOR TREEVISIBLE
-%         \draw[blue, very thick] (0.45,0.35) circle (10pt);
-%         \draw[blue, very thick] (0.68,0.34) circle (10pt);
-%         \draw[blue, very thick] (0.7,0.55) circle (10pt);
-%         \draw[blue, very thick] (0.72,0.78) circle (10pt);
-%         \draw[blue, very thick] (0.47,0.57) circle (10pt);
-%         \draw[blue, very thick] (0.48,0.8) circle (10pt);
-%         \draw[blue, very thick] (0.43,0.12) circle (10pt);
-%         \draw[blue, very thick] (0.68,0.10) circle (10pt);
-%       \end{scope}
-%       % \node[anchor=south west, font=\bfseries, text=black, xshift=2pt, yshift=2pt] at (b.south west) {(b)};
-%     \end{tikzpicture}
-%   \end{subfigure}
-%      \hfill
-%   \caption{
-%     The 4min orchard exploration experiment.
-%     }
-%   \label{fig:orchard}
-% \end{figure}
-% %%}
-
 % COMBINED ENDMAPS
 % %%{
-\begin{figure*}[htb]
+\begin{figure*}[!htb]
   \def\subfigwidth{0.24\linewidth}
   \centering
   % ROW 1
@@ -1180,7 +1126,7 @@ Videos from these real-world experiments are available in the multimedia materia
   \centering
   \caption{Ablation test results on the earthquake world. Left: visualization of exploration progress, best runs per method are thick and a marker signifies a crash or mission completion. Right: best-run trajectories for each method.
   }
-  \label{fig:exper_fireworld}
+  \label{fig:ablations}
 \end{figure}
 
 %%{ ABLATION WIDE
@@ -1305,10 +1251,13 @@ For this reason, the volume metric would not be fair towards methods using the g
 We instead divide the target exploration area into 2.5x2.5m columns that are marked as explored if the constructed map (sphere-based or grid-based) contains any element in a given column. 
 The metric, $A$, is then the top-down 2D area of all the explored columns.
 
-We compare the grid-based approach with MonoSpheres in multiple experiments on 2 different worlds, and terminate each run after \SI{20}{\minute} or sooner if a collision occurs. The resulting maps and exploration progress are shown in \autoref{fig:exper_fireworld}, \autoref{fig:exper_cave} and the mean and max explored area in \autoref{table:sim_exper}.
+We compare the grid-based approach with MonoSpheres in multiple experiments on 4 different worlds, and terminate each run after \SI{20}{\minute} or sooner if a collision occurs.
+The resulting maps and trajectories are shown in \autoref{fig:exper_fireworld} and the explored area and volume in \autoref{table:sim_exper}.
 Videos from these experiments are available in the multimedia materials.
 The experiments were conducted in the Gazebo simulator \cite{gazebo} with the same UAV platform and sensory setup as in the real-world experiments.
-Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of interest in the earthquake world for both methods, and to 170x110x20 \SI{}{\meter} in the cave world.
+% Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of interest in the earthquake world for both methods, and to 170x110x20 \SI{}{\meter} in the cave world.
+Exploration goal generation was constrained by a bounding box in the outdoor worlds.
+\todo{[SIZES? NEEED THEM?]}
 
 \subsection{Ablation Experiments}
 To determine the contribution of the individual components of our proposed mapping and exploration method, we performed ablation tests in the earthquake world with 3 exploration runs for each ablation.
@@ -1328,87 +1277,10 @@ In the "cave" world, which is a texture-rich indoor environment, the grid-based 
 With a more sophisticated viewpoint selection approach, the grid-based approach could explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
 % This finding supports that the mapping approach presented in \cite{from_monoslam_to_explo, los_maps} for textured, indoor spaces.
 
-However, in the "urban" world -- an open-space, texture-sparse environment -- the grid-based approach was never able to explore a large portions of the area that require the UAV to fly over a building or move across an open field. 
-In comparison, MonoSpheres (with the same parameters as in the cave world) was able to consistently cover the outdoor environment.
-These results demonstrate that our proposed open-space free-space sampling approach described in \autoref{sec:fake} enables exploration of outdoor areas, where the ray-tracing grid-based mapping is not able to create sufficient free space, while also safely mapping indoor areas.
-
-In all of the experiments, our approach achieved long periods of collision-free exploration even near complex obstacles such as trees, collapsed houses, and cars in uncommon configurations.
-In the cave world with objects and walls rich in texture, neither of the compared methods collided with the environment.
-Thus, we designed the urban environment to test the limits of our method, making it contain textureless areas (e.g. cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
-As expected, this led to collisions in both methods, as these objects cannot be detected by the used OpenVINS frontend.
+We designed the earthquake environment to test the limits of our method, making it contain textureless areas (e.g. cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
+As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided in two runs with a car and with the burned textureless part of a building, albeit after exploring the majority of the environment. 
-% Since the outdoor environment contains several textureless and thing objects (e.g. exposed metal rods, burned black surfaces), both our approach and the grid-based approach collide with these obstacles occasionally. 
-% This is due to the limitation of the utilized point-based SLAM which cannot detect these obstacles, thus not assuring the assumption described in \autoref{sec:fake}.
-% SHORTER
 This is expected, as these objects cannot be detected by the used OpenVINS frontend, and could be improved by using a visual front-end that uses line-based or dense features (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
-
-% This confirms the expected \todo{limitation of our method} imposed by the used frontend, but also shows that the method can explore substantial areas even with this simple off-the-shelf sparse point-based SLAM frontend.
-% This limitation can be resolved in future work by designing a visual front-end that would would maintain the qualities of OpenVINS (mainly the runtime efficiency and precision), but would also allow tracking of both thin and large texture-sparse objects.
-% Alternatively, this issue could be solved by making the mapping pipeline multimodal and incorporating measurements from low-cost short-range distance sensors (e.g. ultrasonic).
-
-% \todo{To confirm the utility of this feature of the mapping, we also evaluated the performance of the pipeline with the open-space free-space sampling disabled. As expected, this ablation leads to performance similar as MonoSpheres in the enclosed cave world, but explores only the small enclosed area as the grid-based approach in the outdoor world.}
-% DISCUSSIONThe mapping approach A is more conservative. This leads to fewer crahes, but limits the areas the UAV can explore. The mapping approach proposed in this paper can occasionally overestimate free space, but allows the UAV to safely move through open-space areas.TODO - disposable so crashes not a problem! and also fixable by better monodepth outside the scope of this!
-
-% Both of these issues could be solved in future work by using a visual front-end that uses line-based or dense features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
-% As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
-% As described in \autoref{sec:fake}, small featureless obstacles (such as the smooth metal pole near the fast-food building) occasionally cause the UAV to crash, but this can be solved by a visual front-end that uses line-based features, or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
-% Also, the explored area could be increased by implementing a more sophisticated exploration strategy, but even the simplistic greedy approach used in this paper demonstrates the usefulness of our mapping approach.
-
-% In such more topologically complex environment, our greedy exploration strateg
-% Our exploration strategy is greedy, 
-% After running the exploration mission 20 times, the UAV managed to explore the entire environment in 18/20 runs.
-% In the remaining 2 runs, the UAV crashed either into a large featureless metal pole or the roof of a gazebo where the texture only consists of lines.
-% The crashes were caused by the same limitation as discussed in \autoref{sec:real_exper}.
-% Aside from this limitation, the mapping and exploration can be said to work robustly in static environments.
-% Note also that in the experiment shown in \autoref{fig:exper_sim}, the UAV explored up on the roofs of the buildings when it was able to use the large towers to estimate depth and create enough free space for safely moving up to the roof.
-
-% \subsection{Ablation Study - Open-Area Free-Space Sampling }
-% \label{sec:ablation}
-% In this experiment, conducted also in the Gazebo simulation, we analyze the method over multiple runs in a smaller urban environment.
-% As can be seen in the table 
-
-
-% LARGESCALE EXPLO TOWN
-% \begin{figure}[htb]
-%   \def\subfigwidth{0.89\linewidth}
-%   \centering
-%      % \begin{subfigure}[b]{\subfigwidth}
-%      %  \begin{tikzpicture}
-%      %    \centering
-%      %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_gazebo.png}};
-%      %  \end{tikzpicture}
-%      % \end{subfigure}
-%      % \hfill
-%      % \begin{subfigure}[b]{\subfigwidth}
-%      %  \begin{tikzpicture}
-%      %    \centering
-%      %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/sim_exper_end.png}};
-%      %  \end{tikzpicture}
-%      % \end{subfigure}
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood3.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.0\height}}, clip=true]{fig/flood_end_freespace.png}};
-%       \draw [latex-latex](0.3,0.1) -- (0.3,6.85);
-%       \node[align=center] at (0.75, 4.5) {\scriptsize \color{black}\SI{130}{\meter}};
-%         \begin{scope}[x={(a.south east)},y={(a.north west)}]
-%           % \node[align=center] at (0.4, 0.925) {\footnotesize \color{black}$t=516\text{s}$};
-%         \end{scope}
-%       \end{tikzpicture}
-%      \end{subfigure}
-%   \centering
-%   \caption{The resulting map (bottom) after 33min of exploring a simulated post-earthquake urban environment (top).
-%   The experiment is described in more detail in \autoref{sec:sim_exper}. Black arrows indicate visited frontier viewpoints, frontiers are shown as purple points. }
-%   \label{fig:exper_sim}
-% \end{figure}
-
 
 
 \section{CONCLUSION}

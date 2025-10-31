@@ -666,11 +666,11 @@ We enforce this rule by deleting any newly added or previously mapped point $\ma
 where $\mathbf{x}_{prev}$ is another mapped or newly added point with a higher position accuracy and $a$ is the minimal point-to-point distance set by the user.
 % \todo{TODO - rewrite as sort?}
 
-\subsection{Updating Existing Spheres}
+\subsection{Updating and Adding New Spheres}
 \label{sec:existing_spheres_update}
 % Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or the protected points $\mathbf{X}_{p}$.
 % Next, we recompute the radii of spheres that could be updated by $\mathbf{P}_f$ or the input points $\mathbf{X}_{in}$.
-Next, we recompute the radii of spheres that could be updated by $\mathcal{P}_f$ or the input points $\mathcal{X}_{in}$.
+Next, we recompute the radii of existing spheres that could be updated by $\mathcal{P}_f$ or the input points $\mathcal{X}_{in}$.
 To bound the update time of this step, we check the largest sphere radius $r_{max}$ in the map, which allows us to quickly filter out all spheres whose centers fall outside a bounding box around $\mathcal{P}_f$, inflated by $r_{max}$. 
 Then, for any remaining sphere with a center $\mathbf{c}$ and radius $r_{k}$, the updated radius is computed as
 \begin{equation}
@@ -688,8 +688,6 @@ As the last part of this step, we delete all spheres with $r_{k+1} < r_{min}$, w
 % , usually slightly lower than the UAV's minimal allowed distance to obstacles. 
 
 % where TODO.
-\subsection{Sampling New Spheres}
-\label{sec:adding_spheres}
 To introduce new spheres into the map, we sample a fixed number of points inside $\mathcal{P}_f$ at random distances between the camera and the depth mesh $F_o$.
 % \todo{This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.}
 A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
@@ -1324,7 +1322,7 @@ Videos from these real-world experiments are available in the multimedia materia
       \end{tikzpicture}
      \end{subfigure}
   \centering
-  \caption{Ablation test results on the urban world. Left: visualization of exploration progress, best runs per method are thick and a marker signifies a crash or mission completion. Right: best-run trajectories for each method.
+  \caption{Ablation test results on the earthquake world. Left: visualization of exploration progress, best runs per method are thick and a marker signifies a crash or mission completion. Right: best-run trajectories for each method.
   }
   \label{fig:exper_fireworld}
 \end{figure}
@@ -1454,10 +1452,10 @@ The metric, $A$, is then the top-down 2D area of all the explored columns.
 We compare the grid-based approach with MonoSpheres in multiple experiments on 2 different worlds, and terminate each run after \SI{20}{\minute} or sooner if a collision occurs. The resulting maps and exploration progress are shown in \autoref{fig:exper_fireworld}, \autoref{fig:exper_cave} and the mean and max explored area in \autoref{table:sim_exper}.
 Videos from these experiments are available in the multimedia materials.
 The experiments were conducted in the Gazebo simulator \cite{gazebo} with the same UAV platform and sensory setup as in the real-world experiments.
-Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of interest in the urban world for both methods, and to 170x110x20 \SI{}{\meter} in the cave world.
+Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of interest in the earthquake world for both methods, and to 170x110x20 \SI{}{\meter} in the cave world.
 
 \subsection{Ablation Experiments}
-To determine the contribution of the individual components of our proposed mapping and exploration method, we performed ablation tests in the urban world with 3 exploration runs for each ablation.
+To determine the contribution of the individual components of our proposed mapping and exploration method, we performed ablation tests in the earthquake world with 3 exploration runs for each ablation.
 The results are shown in \autoref{table:sim_exper} and \autoref{fig:exper_fireworld}.
 % Ablating OVDE, DBOF and FFF have drastic effects on the exploration performance, confirming the importance of these components.
 Without DBOF, the UAV tends to quickly overwrite previously mapped obstacles with free space and crash.

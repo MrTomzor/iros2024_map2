@@ -1427,46 +1427,6 @@ Ablation experiments confirm the utility of the individual modules of our propos
 Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav}, our proposed approach achieves autonomous exploration at the scale of an urban area with multiple buildings, trees and wide open spaces.
 % With the same configuration, our method allows exploration of both indoor and outdoor environments.
 With the same configuration, our method allows exploration of various environment topologies -- sparse, dense, indoor, outdoor and environments requiring flight over obstacles in wide open spaces.
-% In future work, our method could be improved by adopting a submap-based approach or by incorporating inexpensive ultrasonic sensors to act as "bumpers" against thin objects that are hard to detect by cameras.
-In future work, our method could be improved by adopting a submap-based approach or by incorporating inexpensive ultrasonic sensors to act as "bumpers" against thin objects that are hard to detect by cameras.
-% and a better-suited depth estimation frontend to achieve reliable monocular vision-based exploration at the same scale as LiDAR based systems.
-% Our proposed method significantly reduces the cost of autonomous unknown-space navigation capabilities, as it only requires a single camera, a standard IMU and no GPU for dense depth estimation.
-% Our method also significantly reduces the cost of autonomous unknown-space exploration and safe navigation that was previously only documented using LiDARs and expensive depth sensors, as it only requires a single camera, a standard IMU and 
-% no GPU for dense depth estimation.
-% a CPU.
-% Thus, we hope our method can be a step towards economically viable real-world deployment of UAV systems, especially in search-and-rescue missions.
-% As future work, we intend to complement the imperfections of the depth estimation by integrating low-cost, short-range distance sensors (e.g. ultrasound) into the mapping pipeline, thus detecting even thin and textureless objects.
-% As future work, we intend to complement the problems of monocular depth estimation near thin or textureless obstacles by integrating low-cost short-range distance sensors (e.g. ultrasound) into the mapping pipeline.
-% Our approach could be extended in future work by integrating low-cost short-range distance sensors (e.g. ultrasound) into the mapping pipeline to complement the problem of depth estimation near textureless objects.
-% Furthermore, the proposed map representation could be extended with other geometrical primitives for clustering large areas of free or occupied space, thus increasing performance and allowing 
-% \todo{Additionally, we plan to use the proposed mapping approach for building submaps instead of a single large map and performing large-scale map optimization combined with vision-based place recognition 
-% to achieve low-cost autonomous exploration at the scale of kilometers, which has only been demonstrated with expensive LiDAR-based systems so far. [NOT IMPORTANT?]}
-% and then perform large-scale map optimization using place recognition, 
-
-% As we analyzed in this paper, 
-
-% In future work, we intend to use  
-% Thus, the proposed method 
-% In this paper, we presented a novel sphere-based spatial mapping method 
-% % together with a robust monocular inverse-depth estimator,
-% using sparse point cloud data from monocular visual sensors,
-% and demonstrated how it can enable any UAV equipped with a single camera and any form of odometry to quickly and safely navigate and explore unknown, unstructured 3D environments.
-% We have demonstrated, through testing in simulation and in the real world, that our new mapping approach and spatial representation enable safe, large-scale autonomous navigation and exploration on UAVs without traditionally used expensive range sensors.
-
-% The spatial representation proposed in this paper, consisting of spheres and points, offers an alternative to the traditionally used grid-based representations.
-% We have presented a method of constructing this representation on-board a UAV, using only the keypoints from sparse monocular-inertial SLAM as input depth information.
-% % We have experimentally demonstrated how this new representation allows a UAV to explore and navigate large-scale outdoor environments in the real-world.
-% We have demonstrated how this new mapping approach enables 3D exploration and navigation in large-scale real-world outdoor environments on a UAV equipped with only a monocular camera and IMU as its sensors.
-
-
-% Trough extensive experimental evaluation, we have showed the feasibility of doing pose estimation, autonomous mapping, and exploration on-board a single UAV equipped with a only a monocular camera and IMU as the used sensors.
-
-% In future work, we intend to explore the potential of the proposed representation for multimodal sensing -- e.g. intelligently fusing points and spheres based on the modality that they were created from.
-
-% \section{CONCLUSIONS}
-
-% A conclusion section is not required. Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance of the work or suggest applications and extensions. 
-
 % \addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
                                   % on the last page of the document manually. It shortens
                                   % the textheight of the last page by a suitable amount.

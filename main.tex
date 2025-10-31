@@ -703,15 +703,9 @@ With this implementation, the mapping runs on average at $\SI{4.5}{\hertz}$ on a
 % This has shown to be sufficient for safe flight up to $\SI{3}{\meter/\second}$ in the tested environments, but a more optimized implementation could allow even faster navigation.
 % Combined with a collision-checking thread that checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
 % Our implementation also checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
-
 The UAV used in the experiments was equipped with a monocular global-shutter grayscale fisheye Bluefox camera, and ICM-42688 IMU.
 The MRS UAV system \cite{mrs_uav_system} was used for low-level motion planning, control, and the grid-based path planning for the simulation comparisons.
 For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins} in the inverse-depth measurement mode.
-\todo{ (redundant? -> needto specify assumption at start)
-However, any other monocular-inertial SLAM could be used as the fronted of our method, as long as it tracks points approximately uniformly in the camera's FOV.
-This property is necessary to assure the assumption that small objects will be detected at a close range, as discussed in \autoref{sec:distance-based}.
-}
-
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 \label{sec:real_exper}

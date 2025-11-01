@@ -861,18 +861,17 @@ Videos from these real-world experiments are available in the multimedia materia
 
 % Define a reusable "white X with black border" marker
 \newcommand{\markX}[3][0.01]{%
-  % White background "stroke" for contrast
-  \draw[line width=2.8pt, black]
+  % #1 = optional size (default 0.01, relative to image)
+  % #2 = x position (0¿1 relative to image)
+  % #3 = y position (0¿1 relative to image)
+  \draw[line width=1.2pt, white]
     (#2-#1, #3-#1) -- (#2+#1, #3+#1);
-  \draw[line width=2.8pt, black]
+  \draw[line width=1.2pt, white]
     (#2-#1, #3+#1) -- (#2+#1, #3-#1);
-  % Black outline for visibility
-  \pgfmathsetmacro{\innerscale}{0.85}
-  \pgfmathsetmacro{\s}{#1*\innerscale}
-    \draw[line width=1.2pt, white]
-      (#2-\s, #3-\s) -- (#2+\s, #3+\s);
-    \draw[line width=1.2pt, white]
-      (#2-\s, #3+\s) -- (#2+\s, #3-\s);
+  \draw[line width=0.4pt, black]
+    (#2-#1, #3-#1) -- (#2+#1, #3+#1);
+  \draw[line width=0.4pt, black]
+    (#2-#1, #3+#1) -- (#2+#1, #3-#1);
 }
 
 % COMBINED ENDMAPS
@@ -886,7 +885,6 @@ Videos from these real-world experiments are available in the multimedia materia
         \centering
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.03\width} {0.0\height} {0.03\width} {0.0\height}}, clip=true]{fig/Selection_1344_fireworld_bright_gazebo.png}};
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_gazebo1.jpg}};
-      \markX[0.15]{1.8}{1.2} 
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -909,7 +907,7 @@ Videos from these real-world experiments are available in the multimedia materia
 % \draw[line width=0.4pt, black]
 %   (0.2-\xsize,0.3-\xsize) -- (0.2+\xsize,0.3+\xsize);
 % \draw[line width=0.4pt, black]
-      \markX[0.15]{2.6}{2.2} 
+      \markX[0.15]{0.8}{0.6} % slightly larger one
 %   (0.2-\xsize,0.3+\xsize) -- (0.2+\xsize,0.3-\xsize);
 
       \end{tikzpicture}
@@ -920,7 +918,6 @@ Videos from these real-world experiments are available in the multimedia materia
         \centering
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.05\height}}, clip=true]{fig/Selection_1344_rooftops_gazebo2bright.png}};
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/Selection_1343_rooftops_gazebo2.png}};
-      \markX[0.15]{1.9}{1.7} 
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -928,7 +925,6 @@ Videos from these real-world experiments are available in the multimedia materia
       \begin{tikzpicture}
         \centering
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/sparsebright2.png}};
-      \markX[0.15]{0.95}{1.2} 
       \end{tikzpicture}
      \end{subfigure}
 
@@ -944,7 +940,6 @@ Videos from these real-world experiments are available in the multimedia materia
         % THICK HEIGHTMAP
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-45_urban_heightmap_fallscale2_1m_square_06path.png}};
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-43_urban_fall_heightmap_scale_1m_squares.png}};
-      \markX[0.15]{1.4}{1.5} 
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -955,7 +950,6 @@ Videos from these real-world experiments are available in the multimedia materia
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-50_cave_2600_freespace.png}};
         % HEIGHTMAP
         \node[anchor=south west,inner sep=0] (rooftops_map) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-28_cave_heightmapscale4.png}};
-      \markX[0.15]{3.2}{2.6} 
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -970,14 +964,12 @@ Videos from these real-world experiments are available in the multimedia materia
         % THICK HEIGHTMAP
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-39_rooftops_1m_squares_heightmap_06line.png}};
 
-        % \begin{scope}[x={(rooftops_map.south east)}, y={(rooftops_map.north west)}]
+        \begin{scope}[x={(rooftops_map.south east)}, y={(rooftops_map.north west)}]
 
-        %     \node[fill=none, rounded corners=2pt, font=\bfseries, text=black]
-        %         at (0.1,0.1) {start};
-        %     \draw[black, very thick, -] (0.1,0.15) -- (0.4,0.35);
-        % \end{scope}
-
-        \markX[0.15]{1.7}{1.6} 
+            \node[fill=none, rounded corners=2pt, font=\bfseries, text=black]
+                at (0.1,0.1) {start};
+            \draw[black, very thick, ->] (0.1,0.15) -- (0.4,0.35);
+        \end{scope}
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -996,11 +988,10 @@ Videos from these real-world experiments are available in the multimedia materia
         % Define a coordinate system matching the image
         \begin{scope}[x={(sparse_map.south east)}, y={(sparse_map.north west)}]
 
-            % \node[fill=none, rounded corners=2pt, font=\bfseries, text=black]
-            %     at (0.1,0.1) {start};
-            % \draw[black, very thick, -] (0.1,0.15) -- (0.22,0.47);
+            \node[fill=none, rounded corners=2pt, font=\bfseries, text=black]
+                at (0.1,0.1) {start};
+            \draw[black, very thick, ->] (0.1,0.15) -- (0.22,0.47);
         \end{scope}
-        \markX[0.15]{0.95}{1.8} 
       \end{tikzpicture}
      \end{subfigure}
 

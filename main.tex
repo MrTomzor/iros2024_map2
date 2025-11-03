@@ -342,35 +342,47 @@ We base our solution to this problem on the following key assumptions/observatio
 
 \section{Related Works}
 \label{sec:related_works}
-Existing approaches to solving the monocular exploration problem can be broadly divided into three main categories: 
-methods that use monocular SLAM for sparse depth estimation,
-methods using monocular depth neural networks to turn the monocular camera into a dense depth sensor,
-% or implicit methods that do not build an explicit 3D occupancy map.
-or methods that simplify the problem through limiting assumptions on the environment structure.
+% Existing approaches to solving the monocular exploration problem can be broadly divided into three main categories: 
+% methods that use monocular SLAM for sparse depth estimation,
+% methods using monocular depth neural networks to turn the monocular camera into a dense depth sensor,
+% % or implicit methods that do not build an explicit 3D occupancy map.
+% or methods that simplify the problem through limiting assumptions on the environment structure.
 
-The authors of \cite{simon2023mononav, cnn_explo_singleroom} have demonstrated using such depth estimation models combined with traditional navigation approaches.
+One approach to solving the monocular exploration problem is to use deep learning-based monocular depth estimation models to essentially turn the monocular camera into a dense depth sensor, and then use classical mapping and planning methods.
+The authors of \cite{simon2023mononav, cnn_explo_singleroom} have demonstrated using learning-based depth estimation models combined with traditional navigation approaches.
 However, the authors of \cite{simon2023mononav} demonstrate autonomy only at the scale of a single room, while also encountering collisions and map deformations due to depth estimation errors.
 The authors of \cite{mono_airsim_nav_2025} present navigation with obstacle avoidance using pretrained and finetuned monocular depth models in larger outdoor environments in simulation, but also note a high collision and navigation failure rate due to the same problems.
 As further discussed in recent surveys \cite{deep_mono_depth_2021, monodepth_survey_big_2024}, current depth estimation models still struggle to provide real-time onboard performance and reliable generalization in domains that the model was not trained on.
 In addition, they require a GPU which significantly raises the cost and weight of a UAV.
 
-A different line of research focuses on taking sparse 3D points estimated by visual SLAM and working with those as the only depth measurements.
-Most of this research has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} or exploration with strong assumptions on the environment structure (e.g. corridors only \cite{corridors_mono_nav_2009} or considering a single object with no other obstacles \cite{information_driven_bbx_mapping}).
-For general monocular exploration in unstructured environments, the authors of \cite{from_monoslam_to_explo, los_maps} propose building grid-based maps by tracing rays of free space towards the monocular SLAM points. 
-As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the environment is not texture-rich.
-The authors of \cite{from_monoslam_to_explo} further present an exploration method specifically to cover these gaps and demonstrate an increase in mapped volume.
+% A different line of research focuses on taking sparse 3D points estimated by visual SLAM and working with those as the only depth measurements.
+The other main approach to monocular exploration is to use sparse 3D points estimated by visual SLAM as the only depth measurements and work with those.
+% Most research on using motion-based depth estimation has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} or exploration with strong assumptions on the environment structure (e.g. corridors only \cite{corridors_mono_nav_2009} or considering a single object with no other obstacles \cite{information_driven_bbx_mapping}).
+Most of the research on using motion-based depth estimation has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} with no map building.
+Some works already explored exploration with motion-based depth sensing, but they make limiting assumptions on the environment's structure (e.g. corridors only \cite{corridors_mono_nav_2009} or considering a single object with no other obstacles \cite{information_driven_bbx_mapping}).
+
+For general monocular exploration of \textit{unstructured} environments, the authors of \cite{from_monoslam_to_explo, los_maps} investigated building an occupancy grid \cite{occupancy_moravec} by tracing rays of free space towards low-covariance SLAM points, similarly to classic mapping with dense range sensors. 
+As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the depth measurements are sparse in low-texture environments.
+The authors of \cite{from_monoslam_to_explo} furthered present a perception-aware exploration method specifically to cover these gaps and demonstrate an increase in mapped volume.
 However, the authors show this exploration approach to only work at the scale of a single room.
 % However, this only reduces the gaps, as this mapping method can never estimate free space near texture-sparse areas, and the authors show this exploration approach to only work at the scale of a single room.
-Most importantly though, this mapping approach fundamentally cannot estimate sufficient free space for navigation in texture-sparse areas, especially outdoor (as shown in \autoref{sec:sim_exper}).
+% Most importantly though, this mapping approach fundamentally cannot estimate sufficient free space for navigation in texture-sparse areas, especially outdoor (as shown in \autoref{sec:sim_exper}).
 The authors of \cite{los_maps} also trace rays towards sparse SLAM points, and they present exploration on the scale of multiple indoor rooms in simulation.
 They work around the gap issue by setting the map voxel size to be relatively large compared to the UAV size.
-A larger voxel size causes a higher percentage of voxels to be passed by the sparse rays towards measured points, reducing the gaps.
+A larger voxel size causes a higher percentage of voxels to be passed by the sparse rays towards measured points, reducing the gaps, but can cause narrow passages to be blocked in the map if they are not perfectly aligned with the voxel grid.
 
 % In summary, the existing approaches to monocular exploration either rely on depth neural networks that are not yet reliable enough for safe deployment, or they use sparse monocular SLAM depth in a way that leads to large gaps in free space, prohibiting large-scale exploration.
 
-In this paper, we present an approach to monocular exploration that works by explicitly taking into account the properties of sparse monocular SLAM in both mapping and planning.
-Our system takes advantage of the potential of mapping-planning coupling, while at the same time producing a semi-dense 3D map of free and occupied space.
-Thanks to the coupling, the approach is able to explore large-scale unstructured environments, including outdoor areas with large open spaces, which has not yet been demonstrated in literature.
+Based on the findings of the above described works, we decided that monocular depth sensing is so different from dense sensors, that not only the planning, but also the \textit{mapping} should be redesigned to explicitly take into account the specific depth estimation properties.
+Since safety and flexible representation of both large-scale and narrow spaces are our main concerns, we decided that a graph-of-spheres representation \cite{spheregraph, spheremap, bubbleplanner} could be more suitable for representing free space than voxel grids or TSDFs \cite{octomap, voxblox, ufomap}.
+In comparison to the existing sphere-based mapping methods however, our proposed approach is the first to build the map \textit{directly} from sparse monocular depth data, as the others require a dense occupancy voxel-based map to be built to extract the graph of spheres. 
+% Due to the high uncertainty and sparsity of depth estimates, 
+% The graph-of-spheres representation was chosen due to its scalable free-space representation and rapid path-planning capabilities \cite{spheregraph, spheremap, bubbleplanner}. 
+% The graph-of-spheres representation was chosen due to its scalable free-space representation and rapid path-planning capabilities \cite{spheregraph, spheremap, bubbleplanner}. 
+% However, most of the perception-aware mapping concepts introduced in this paper could be adapted to a voxel-based mapping approach as well.
+% In this paper, we present an approach to monocular exploration that works by explicitly taking into account the properties of sparse monocular SLAM in not only the planning, but also the \textit{mapping}.
+% Our system takes advantage of the potential of mapping-planning coupling, while at the same time producing a semi-dense 3D map of free and occupied space.
+% Thanks to the coupling, the approach is able to explore large-scale unstructured environments, including outdoor areas with large open spaces, which has not yet been demonstrated in literature.
 
 % PIPELINE IMG%%{
 \begin{figure*}[!ht]
@@ -433,18 +445,15 @@ Thanks to the coupling, the approach is able to explore large-scale unstructured
 \section{Sphere-Based Mapping Using Sparse Visual SLAM Points}
 \label{sec:map_building}
 The map representation used in this paper represents free space by a graph of intersecting spheres and obstacles as a set of 3D points.
-The graph-of-spheres representation was chosen for its scalable free-space representation and rapid path-planning capabilities \cite{spheregraph, spheremap, bubbleplanner}. 
-However, most of the perception-aware mapping concepts introduced in this paper could be adapted to a voxel-based mapping approach as well.
 % \todo{kdtree of centers}
 % and obstacles as a set of 3D points corresponding to triangulated visual keypoints from visual SLAM.
-
 Each sphere at the $k$-th update iteration has a static center $\mathbf{c}$ and changing radius $r_k$.
 The radius $r_k$ represents the distance from $\mathbf{c}$ to the nearest unknown space or obstacle at time step $k$.
 % We maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres, and use it for path planning.
 To allow rapid path planning, we maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres.
 % Furthermore, we maintain a set of obstacle points $\mathbf{X}$, which correspond to the textured surfaces measured by the visual SLAM.
 % We represent obstacles by a set of points $\mathcal{X}$, which are .
-\todo{To represent obstacles, we accumulate the stable 3D points (i.e. with low position covariance) estimated by the monocular SLAM into a set of points $\mathcal{X}$ with user-defined minimal point-to-point distance.}
+To represent obstacles, we accumulate the stable 3D points (i.e. with low position covariance) estimated by the monocular SLAM into a set of points $\mathcal{X}$ with a minimal point-to-point distance $\xi$ (anlogous to voxel size in voxel-based maps).
 The obstacle points are updated, merged and removed based on criteria designed specifically for monocular sensing, described in \autoref{sec:distance-based}.
 % The mapping runs onboard the UAV in real-time, using only the estimated pose and 3D points from monocular-inertial SLAM as its inputs.
 % In this paper, we use the sparse point-based OpenVINS \cite{openvins} method as the SLAM frontend, but our method could work with other monocular-inertial SLAMs.
@@ -546,9 +555,9 @@ Additionally, to prioritize closer measurements, points seen from a closer dista
 In the same way, new points seen at a large distance are not added to the map, if there are more accurately localized points near them, which is also visualized in \autoref{fig:distbased}. 
 We enforce this rule by deleting any newly added or previously mapped point $\mathbf{x}$ if
 \begin{equation}
-  \exists \mathbf{x}_{prev}: |\mathbf{x} - \mathbf{x}_{prev}| < a \quad \text{and} \quad d_{m,x_{prev}}  < d_{m,x}
+  \exists \mathbf{x}_{prev}: |\mathbf{x} - \mathbf{x}_{prev}| < \xi \quad \text{and} \quad d_{m,x_{prev}}  < d_{m,x}
 \end{equation}
-where $\mathbf{x}_{prev}$ is another mapped or newly added point with a higher position accuracy and $a$ is the minimal point-to-point distance set by the user.
+where $\mathbf{x}_{prev}$ is another mapped or newly added point with a higher position accuracy and $\xi$ is the obstacle map resolution.
 % \todo{TODO - rewrite as sort?}
 
 \subsection{Updating and Adding New Spheres}
@@ -750,7 +759,10 @@ To further increase safety and allow agile maneuvers, the paths are planned with
 
   \end{tikzpicture}
   
-  \caption{The 4min orchard exploration experiment. The map is noisy due to low-light conditions, trees are highlighted in blue for clarity.}
+  \caption{
+    % The 4min orchard exploration experiment. The map (approx. 40x30m wide) contains noise due to low-light conditions, trees are highlighted in blue for clarity.
+    The 4min orchard exploration experiment. Right: explored map (approx. 40x30m wide), the UAV's trajectory (black arrows) and trees (circles blue).
+  }
   \label{fig:orchard}
 \end{figure}
 % %%}
@@ -853,7 +865,7 @@ Videos from these real-world experiments are available in the multimedia materia
       \end{tikzpicture}
      \end{subfigure}
   \caption{
-    Visualization of the real-world autonomous exploration experiment described in \autoref{sec:real_exper}, along with a satellite image of the explored abandoned farm area. Free space (green) is shown alongside mapped obstacle points (red), frontiers (purple) and explored viewpoints (black). 
+    Visualization of the real-world large-scale exploration experiment described in \autoref{sec:real_exper}, along with a satellite image of the explored abandoned farm area. Free space (green) is shown alongside mapped obstacle points (red), frontiers (purple) and explored viewpoints (black). 
   }
   \label{fig:exper_real}
 \end{figure}

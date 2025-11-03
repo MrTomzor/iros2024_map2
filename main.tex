@@ -597,9 +597,10 @@ This step is important to cover large open areas by only a few spheres to allow 
 % This way, large open areas are covered by only a few spheres and can be planned over quickly, and tight corridors have a higher density of spheres, capturing the information about potential paths and distances to obstacles in more detail.
 
 % \section{Perception-Aware Exploration using the Sphere-Based Map}
-\section{Perception-Aware Exploration with a Sparse Sphere-Based Map}
+\section{Perception-Coupled Exploration with a Sparse Sphere-Based Map}
 % In this section, we detail how the proposed mapping method is highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a monocular camera and IMU.
-In this section, we describe a monocular exploration approach enabled by the proposed mapping method.
+% In this section, we describe a monocular exploration approach enabled by the proposed mapping method.
+\fix{In this section, we describe the proposed perception-coupled navigation and exploration approach, visualized in \autoref{fig:exploration_explanation}.}
 In principle, we employ the commonly used next-best-view (NBV) \cite{paper_frontier_grandpa} strategy, which has so far been deemed unsuitable for monocular exploration in previous works \cite{from_monoslam_to_explo, los_maps}.
 % We introduce several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments, detailed in the following sections.
 % In the following sections, we introduce several major differences in methodology that are neccessary for NBV in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
@@ -608,9 +609,9 @@ In the following sections, we introduce several major differences in methodology
 
 \subsection{Frontier Sampling on Free-Space Polyhedron}
 Firstly, since the proposed map representation is fundamentally different from an occupancy grid, we need to detect frontiers (i.e. the boundary of free and unknown space) in a different way than with an occupancy grid.
-We propose to sample points along the visible free-space polyhedron $ \mathcal{P}_f $  described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at a \todo{user-defined distance} from all map obstacle points and other frontiers.
+We propose to sample points along the visible free-space polyhedron $ \mathcal{P}_f $  described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at a user-defined distance from all map obstacle points and other frontiers.
 If they do not meet these criteria in any following update, they are deleted. 
-To avoid the loss of SLAM feature tracking we also delete frontiers that are too far from any obstacle points.
+To avoid the loss of SLAM tracking due to exploration of completely textureless areas, we also delete frontiers that are too far from any obstacle points.
 % \todo{complexity and vs octomap?}
 % In enclosed spaces, which are usually considered in autonomous exploration literature, all frontiers are usually worth exploring.
 % However, in outdoor exploration with areas of open space, it is also important to assign different value to different frontiers, especially for UAVs. 
@@ -663,7 +664,7 @@ These frontier points are used to generate exploration viewpoints such that at l
 % %%}
 
 
-\subsection{Forced Translation when reaching Viewpoints}
+\subsection{Perception-Aware Heading Control}
 \label{sec:align}
 In traditional exploration approaches with dense distance sensors, it is sufficient to move the robot to a frontier, aim the sensors towards the unknown space, and assume that the distance sensors will uncover some additional space behind the frontier and thus expand the map.
 This approach will not, in principle, work reliably with a robot using a monocular camera for estimating depth from motion.
@@ -680,25 +681,26 @@ When finding a path to an exploration  viewpoint, we force the trajectory to aim
 This way, the UAV reaches the viewpoint with at least $d_c$ meters of translational motion.
 If textured surfaces are visible from that viewpoint, the UAV will most likely observe sufficient parallax to estimate their distances.
 
+\fix{When not aligning itself with a viewpoint as described above,
+the UAV is controlled to always aim in the direction of its camera.
+This approach is simple, but as we show in \autoref{sec:ablations}, it is crucial for ensuring collision-free flight in the case of incorrectly initialized free space.
+As discussed in \autoref{sec:discussion}, some obstacles (e.g. thin wires, twigs) might not be visible in the cameras from a large distance to be detected by the visual SLAM (especially when using fisheye cameras), and can be wrongly estimated as free space.
+Using the forward-facing flight, the UAV has a higher chance to see these obstacles that were previously not detected, and quickly replan.
+To further increase safety and allow agile maneuvers, the paths are planned with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is highly suitable, as described in \cite{spheremap, bubbleplanner, spheregraph}.
+}
+
+
 \subsection{Explored Viewpoint Blocking}
 \label{sec:blocking}
 % This is an important part of the method also due to the second major distinction -- we block the sampling of new exploration viewpoints near explored viewpoints.
-Another necessary distinction we propose for NBV exploration with a monocular camera is to block sampling of new exploration viewpoints near visited viewpoints.
-This is due to the fact that real-world environments often contain textureless areas (mainly in buildings or other man-made structures).
-Since obstacle points correspond to textured points localized by the visual SLAM, no points will ever be added on textureless surfaces.
+Another important distinction we propose for NBV exploration with a monocular camera is to block sampling of new exploration viewpoints near visited viewpoints.
+% This is due to the fact that real-world environments often contain textureless areas (mainly in buildings or other man-made structures).
+\fix{This is done because with motion-based depth sensing, no points will ever be measured on textureless surfaces.}
 Frontier points will be generated there instead, since the surfaces lie on the edge of the visible free space polyhedron and can be far enough from any obstacle points.
 % but they will be on the boundary of free-space, so frontiers will be generated there.
 However, such frontiers cannot uncover any new space, since there is nothing behind them.
 For this reason, we block the sampling of new viewpoints near visited viewpoints, visualized as large black arrows in \autoref{fig:exper_real}
 This stops the UAV from getting stuck repeatedly trying to uncover such surfaces.
-
-\subsection{Safety-Aware Planning}
-Lastly,
-the UAV is controlled to always fly in the direction of its camera when not aligning itself with a viewpoint as described in \autoref{sec:align}.
-This approach is crucial for ensuring collision-free flight in the case of incorrectly initialized free space.
-As discussed in \autoref{sec:discussion}, some obstacles (e.g. thin wires, twigs) might not be visible in the cameras from a large distance to be detected by the visual SLAM (especially when using fisheye cameras), and can be wrongly estimated as free space.
-Using the forward-facing flight, the UAV has a higher chance to see these obstacles that were previously not detected, and quickly replan.
-To further increase safety and allow agile maneuvers, the paths are planned with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is highly suitable, as described in \cite{spheremap, bubbleplanner, spheregraph}.
 
 
 % ORCHARD IMG%%{
@@ -1326,6 +1328,7 @@ Exploration goal generation was constrained by a bounding box in the outdoor wor
 \todo{[SIZES? NEEED THEM?]}
 
 \subsection{Ablation Experiments}
+\label{sec:ablations}
 To determine the contribution of the individual components of our proposed mapping and exploration method, we performed ablation tests in the earthquake world with 3 exploration runs for each ablation.
 The results are shown in \autoref{table:sim_exper} and \autoref{fig:exper_fireworld}.
 % Ablating OVDE, DBOF and FFF have drastic effects on the exploration performance, confirming the importance of these components.

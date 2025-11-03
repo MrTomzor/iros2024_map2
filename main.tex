@@ -274,7 +274,7 @@ Thus, when when classical mapping methods are used with any monocular existing d
 
 
 % The core idea of our paper is that if the properties of sparse monocular SLAM are explicitly taken into account in designing both the mapping and the planning parts of an exploration system, its performance can be superior to methods that apply dense mapping approaches to the sparse depth frontend.
-In this paper, we identify three core properties of motion-based depth sensing and show that explicitly designing the mapping and planning based on these principles can enable autonomy at similar scales as with dense range sensors.
+In this paper, we identify three core properties of motion-based depth sensing and show that explicitly designing the mapping and planning based on these principles can enable autonomy both indoor and outdoor, and at scales comparable to dense sensing methods.
 % In essence, our mapping approach (\autoref{fig:smap_intro}) focuses on building a reliable map of both obstacles and free space by oversampling free space in texture-sparse areas and keeping track of obstacle position uncertainty.
 % In essence, our mapping approach interpolates depth and intelligently estimates free space in texture-sparse areas, solving the problem of sparse free space
 % , but potentially overestimates free space.
@@ -283,8 +283,8 @@ In this paper, we identify three core properties of motion-based depth sensing a
 % , and it keeps track of obstacle position uncertainties to avoid deleting 
 In essence, our mapping approach interpolates depth and intelligently estimates free space in texture-sparse areas, solving the problem of sparse free space, while keeping track of obstacle position uncertainties to avoid wrongly deleting mapped obstacles.
 % Our planning approach then 
-Our planning approach handles the uncertain depth estimates by flying in the direction of the camera, rapidly replanning when new information is obtained.
-We also show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless areas are taken into account.
+Our planning approach handles the uncertain depth estimates by flying in the direction of the camera, rapidly replanning when new information is obtained and ensuring pure translational motion when visiting exploration viewpoints.
+% We also show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless areas are taken into account.
 
 We evaluate our approach in multiple real-world scenarios, simulations and ablation studies and show that our approach 
 achieves exploration in both indoor and outdoor environments, and at considerably larger scales than existing monocular exploration methods.
@@ -303,7 +303,7 @@ As a step towards low-cost vision-based UAV autonomy in unknown environments, ou
   % \item A perception-aware mapping method that constructs a sphere-based map for safety-aware navigation using only sparse pointclouds and pose estimates from monocular-inertial SLAM as input,
   %   with the ability to map sufficient free space for flight even in texture-sparse open-space areas.
   % \item A monocular 3D mapping method that builds a reliable map of obstacles and navigable space thanks to tight coupling with sparse monocular-inertial SLAM, 
-  \item A sphere-based monocular 3D mapping method with perception-coupled modules that significantly increase the reliability of mapped free space and obstacles with unreliable, sparse, motion-based depth data as input 
+  \item A monocular 3D mapping method with perception-coupled modules that significantly increase the reliability of mapped free space and obstacles with unreliable, sparse, motion-based depth data as input 
   \item A perception-aware exploration approach, enabled by the proposed mapping method, that achieves large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
     \item Open-sourced code for the proposed methods, along with example simulation scripts for replicating our results, providing a benchmark for new monocular exploration methods.
@@ -312,15 +312,15 @@ As a step towards low-cost vision-based UAV autonomy in unknown environments, ou
 
 \section{Problem Statement}
 % The problem addressed in this paper is actively building an explicit 3D map of free and occupied space in an unknown environment with motion-based monocular depth sensing facilitated by a monocular-inertial SLAM frontend.
-The problem addressed in this paper is to actively build an explicit 3D map of free and occupied space in a bounded unknown environment.
-In the case of robots equipped with classic dense depth sensors (most commonly LiDAR, RGBD, stereo cameras), this is a well-studied research problem \cite{surveys_explo_nav_1, surveys_explo_nav_2, surveys_explo_nav_3}.
+The problem addressed in this paper is actively building an explicit 3D map of free and occupied space in a bounded unknown environment.
+In the case of robots equipped with dense depth sensors (most commonly LiDAR, RGBD, stereo cameras), this is a well-studied research problem \cite{darpa_cerberus_wins, beneath, paper_frontier_grandpa}.
 % Autonomous navigation of unknown environments usually separated into 2 main parts: mapping and planning.
 % Exploration, and navigation in general, are usually separated into 2 main parts: mapping and planning.
 % The vast majority of existing works on mapping and planning rely on dense range sensors, such as LiDARs or depth cameras, to build a 3D occupancy map of the environment \cite{darpa_cerberus_wins, beneath, csiro_darpa, octomap, voxblox, ufomap}.
 % These works implicitly assume that the environment is composed of occupied and free space, and that all occupied obstacles within the sensor's field-of-view and range will be detected.
 % These works implicitly assume that at any given pose, the sensor (usually LiDAR or depth camera) will correctly classify all occupied and free space within its field-of-view and visible range. 
 % These works implicitly assume that the distance measurements from the sensor are dense and accurate enough to build a reliable occupancy map by tracing rays from the sensor origin towards the measured points and classifying the traversed space as occupied or free \cite{occupancy_moravec, octomap, voxblox, ufomap}.
-These works implicitly assume that from any given viewpoint, the sensor will uncover all obstacles up to its sensing range, and that non-detection of obstacles almost always means that free-space can be initialized in the given direction  \cite{occupancy_moravec, octomap, voxblox, ufomap}.
+These works implicitly assume that from any given viewpoint, the sensor will uncover all obstacles up to its sensing range, and that non-detection of obstacles means that free-space can be initialized in the given direction  \cite{occupancy_moravec, octomap, voxblox, ufomap}.
 
 However, this assumption does not apply for monocular depth sensing.
 Motion-based depth sensing, as used in monocular SLAM algorithms, can only estimate depth for textured areas and requires sufficient parallax to do so.

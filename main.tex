@@ -774,7 +774,9 @@ This stops the UAV from getting stuck repeatedly trying to uncover such surfaces
 \label{sec:experiments}
 In this section, we analyze the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
 The presented implementation of the proposed mapping and exploration methods is currently single-threaded and written in python.
-\fix{With this implementation, the mapping runs on average at $\SI{4.5}{\hertz}$ on average on a standard CPU.
+\fix{With this implementation, the mapping runs on average at $\SI{4.5}{\hertz}$ on average on 
+% a standard CPU.
+an AMD Ryzen 7 4800 CPU.
 This is sufficient for exploration planning, but can be slow to detect obstacles at high speeds. For this reason, the UAV also checks the predicted trajectory for potential collisions with the input pointclouds at the SLAM's update rate and stops on collision detection.
 }
 % , but could be further optimized with a parallelized implementation or a submap-based approach.
@@ -790,7 +792,7 @@ For state estimation and as the source of sparse visual SLAM points, we used Ope
 % \todo{One of the realized real-world experiments is illustrated in \autoref{fig:exper_real}.}
 % In this experiment, the UAV explored up to $\SI{60}{\meter}$ forward around the side of an abandoned farmhouse fully autonomously in an $8\text{min}$ mission.
 % In the experiment shown in \autoref{fig:exper_real}, 
-In \autoref{fig:exper_real}, we present an \SI{8}{\minute} experiment where our approach is validated in real-world conditions.
+In \autoref{fig:exper_real}, we present an \SI{8}{\minute} experiment where our approach was validated in real-world conditions.
 % We bounded the area for generating exploration goals to a $\SI{70x10x8}{\meter}$ box around the side of an abandoned farmhouse, and the UAV fully autonomously explored nearly all the available space in this region.
 We bounded the area for generating exploration goals to a 70x10x8 $\SI{}{\meter}$ box around the side of an abandoned farmhouse, and the UAV fully autonomously explored nearly all the available space in this region.
 The UAV successfully avoided and mapped all the debris, bushes and the house walls in the area, and when battery levels were getting low, it autonomously returned to the starting position.
@@ -1262,39 +1264,21 @@ Videos from these real-world experiments are available in the multimedia materia
     \textbf{Method / Ablation} & \textbf{World} & \textbf{Mean} $A \left[m^2 \right] $ & \textbf{Max} $A \left[ m^2 \right] $ & \textbf{Max} $V \left[ m^3 \right] $\\ [0.5ex] 
     % \textbf{Method} & \textbf{World} & \textbf{Mean} $A$ & \textbf{Max} $A$ & \textbf{Runs} \\ [0.5ex] 
  \hline\hline
-    % MonoSpheres  & Urban & 4919 $m^2$ & 6081 $m^2$ & 6 \\ 
-    % Grid-Based & Urban  & 1911 $m^2$ & 2306 $m^2$ & 6 \\
-    % No FFF  & Urban & 2470 $m^2$ & 3181 $m^2$ & 3 \\ 
-    % No DBOF  & Urban & 2308 $m^2$ & 3081 $m^2$ & 3 \\ 
-    % No OVDE  & Urban & 747 $m^2$ & 862 $m^2$ & 3 \\ 
-    % No VPB  & Urban & 3697 $m^2$ & 4175 $m^2$ & 3 \\ 
-    % \hline
-    % MonoSpheres  & Cave & 7627 $m^2$ & 8006 $m^2$ & 3 \\ 
-    % Grid-Based & Cave  & 3171 $m^2$ & 3375 $m^2$ & 3 \\
-    % \hline
-    % MonoSpheres  & Rooftops & 3760 $m^2$ & 4606 $m^2$ & 3 \\ 
-    % Grid-Based & Rooftops  & 1360 $m^2$ & 1556 $m^2$ & 3 \\
-    % \hline
-    % MonoSpheres  & Sparse & 5127 $m^2$ & 5150 $m^2$ & 3 \\ 
-    % Grid-Based & Sparse  & 2108 $m^2$ & 2168 $m^2$ & 3 \\
-    % % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
-
-    MonoSpheres  & Earthquake & 1968& 2432& 17706 \\
+    MonoSpheres  & Earthquake & \textbf{1968}& \textbf{2432}& \textbf{17706} \\
     No FFF  & Earthquake & 988& 1272& 9518 \\
     No DBOF  & Earthquake & 923& 1232& 10356 \\
     No OVDE  & Earthquake & 299& 345& 1837 \\
     No VPB  & Earthquake & 1479& 1670& 13475 \\
     Grid-Based & Earthquake  & 764& 922& 5181 \\
     \hline
-    MonoSpheres  & Cave & 3051& 3202& 18350 \\
+    MonoSpheres  & Cave & \textbf{3051}& \textbf{3202} & \textbf{18350} \\
     Grid-Based & Cave  & 1268& 1350& 8794 \\
     \hline
-    MonoSpheres  & Rooftops & 1504& 1842& 21713 \\
+    MonoSpheres  & Rooftops & \textbf{1504}& \textbf{1842}& \textbf{21713} \\
     Grid-Based & Rooftops  & 544& 622& 3975 \\
     \hline
-    MonoSpheres  & Sparse & 2051& 2060& 14193 \\
+    MonoSpheres  & Sparse & \textbf{2051}& \textbf{2060}& \textbf{14193} \\
     Grid-Based & Sparse  & 843& 867& 3413 \\
-    % OFS-disabled  & Cave & 1964.0& 1964.0& 0.0/0.4 \\
  \hline
 \end{tabular}
   \caption{Quantitative results showing the explored area in the simulation experiments described in \autoref{sec:sim_exper}. }
@@ -1348,7 +1332,7 @@ This is due to the inability of the depth estimation frontend to detect such obj
 \subsection{Ablation Experiments}
 \label{sec:ablations}
 To determine the contribution of the individual components of our proposed mapping and exploration method, we performed ablation tests in the earthquake world with 3 exploration runs for each ablation.
-The results are shown in \autoref{table:sim_exper} and \autoref{fig:exper_fireworld}.
+The results are shown in \autoref{table:sim_exper} and \autoref{fig:ablations}.
 % Ablating OVDE, DBOF and FFF have drastic effects on the exploration performance, confirming the importance of these components.
 Without DBOF, the UAV tends to quickly overwrite previously mapped obstacles with free space and crash.
 Without forward-facing flight (FFF), where the UAV aligns itself with a goal viewpoint's heading immediately after starting to navigate to it, the UAV is unable to detect previously undetected obstacles and also crashes quickly.

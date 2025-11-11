@@ -448,7 +448,7 @@ The radius $r_k$ represents the distance from $\mathbf{c}$ to the nearest unknow
 To allow rapid path planning, we maintain a graph $\mathcal{G}$, which contains an edge for each pair of intersecting spheres.
 % Furthermore, we maintain a set of obstacle points $\mathbf{X}$, which correspond to the textured surfaces measured by the visual SLAM.
 % We represent obstacles by a set of points $\mathcal{X}$, which are .
-To represent obstacles, we accumulate the stable 3D points (i.e. with low position covariance) estimated by a sparse monocular SLAM frontend into a set of points $\mathcal{X}_{map}$ with a minimal point-to-point distance $\xi$.
+To represent obstacles, we accumulate the stable 3D points (i.e. with depth covariance below a fixed threshold $\gamma$) estimated by a sparse monocular SLAM frontend into a set of points $\mathcal{X}_{map}$ with a minimal point-to-point distance $\xi$.
 The obstacle points are updated, merged and removed based on criteria designed specifically for monocular sensing, described in \autoref{sec:distance-based}.
 % The mapping runs onboard the UAV in real-time, using only the estimated pose and 3D points from monocular-inertial SLAM as its inputs.
 % In this paper, we use the sparse point-based OpenVINS \cite{openvins} method as the SLAM frontend, but our method could work with other monocular-inertial SLAMs.
@@ -490,7 +490,10 @@ When moving in open areas, such as a grassy field without tall obstacles in \aut
 Using the ray-tracing grid-based mapping method \cite{from_monoslam_to_explo, los_maps}, this would cause free space to be estimated only in a downward direction and not allow flight across the field.
 To allow flight in open areas, our method estimates additional free space based on the following assumption: 
 Consider a virtual point in space $\mathbf{x}_{vir}$ that falls into the camera's FoV at the current pose $\mathbf{p}_k$ and also at previous poses $\mathbf{p}_{k-n}, ...,\mathbf{p}_{k-2}, \mathbf{p}_{k-1}$.
-If there is sufficient parallax between any two of these poses for estimating the distance of $\mathbf{x}_{vir}$ (given by the max covariance of the measured SLAM points), and if the visual SLAM frontend has not detected any obstacle point approximately in the direction of  $\mathbf{x}_{vir}$, then $\mathbf{x}_{vir}$ must lie in free space (see \autoref{fig:ofs}).
+If there is sufficient parallax between any two of these poses for estimating the distance of $\mathbf{x}_{vir}$ 
+% (given by the max covariance of the measured SLAM points), 
+(based on the max depth covariance of the measured SLAM points $\gamma$), 
+and if the visual SLAM frontend has not detected any obstacle point approximately in the direction of  $\mathbf{x}_{vir}$, then $\mathbf{x}_{vir}$ must lie in free space (see \autoref{fig:ofs}).
 
 The mapping method periodically checks 
 the described condition for a set of virtual points $\mathbf{x}_{vir}$ at predefined fixed positions relative to the UAV (see \autoref{fig:ofs}) at each mapping iteration and for a fixed number of previous poses. 

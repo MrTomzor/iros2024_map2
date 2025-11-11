@@ -221,7 +221,7 @@ Such sensors are heavy, expensive, and thus severely limit the affordability and
 % Monocular cameras and inertial measurement units (IMUs) are orders of magnitude lighter and less expensive, but autonomous navigation using only these sensors remains an open research problem.
 Monocular cameras and inertial measurement units (IMUs) are orders of magnitude lighter and less expensive, but monocular-only exploration of unknown environments has only been demonstrated at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav, cnn_explo_singleroom}.
 The main challenge can be attributed to the fact that the existing methods depend on \textit{reliable} and \textit{dense} depth estimates and obtaining such estimates from a monocular camera is not yet fully solved \cite{deep_mono_depth_2021, monodepth_survey_big_2024}.
-Thus, when when classical mapping methods are used with any existing monocular depth estimation method, the resulting maps are either too sparse to allow planning in large-scale environments \cite{from_monoslam_to_explo, los_maps}, or they contain wrongly estimated free space, which leads to crashes \cite{simon2023mononav, mono_airsim_nav_2025}.
+Thus, when classical mapping methods are used with any existing monocular depth estimation method, the resulting maps are either too sparse to allow planning in large-scale environments \cite{from_monoslam_to_explo, los_maps}, or they contain wrongly estimated free space, which leads to crashes \cite{simon2023mononav, mono_airsim_nav_2025}.
 
 % INTRO IMG%%{
 % \begin{figure}[!t]
@@ -265,7 +265,7 @@ Thus, when when classical mapping methods are used with any existing monocular d
     % Illustration of the proposed method in a real-world outdoor environment with large open areas. 
     Illustration of the proposed approach. 
     % The mapping pipeline uses information from sparse monocular-inertial SLAM (left) running onboard the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right) for safety-aware exploration.
-    The mapping pipeline estimates depth using virtual (blue) and tracked (red) points from sparse monocular-inertial SLAM (left) running onboard the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right) 
+    The mapping pipeline estimates depth using virtual (blue) and tracked (red) points from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right).
     % for safety-aware exploration.
   }
   % \label{fig:mapping_pipeline}
@@ -287,7 +287,7 @@ In essence, our mapping approach interpolates depth and intelligently estimates 
 Our planning approach handles the uncertain depth estimates by flying in the direction of the camera, rapidly replanning when new information is obtained and ensuring pure translational motion when visiting exploration viewpoints.
 % We also show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless areas are taken into account.
 
-We evaluate our approach in multiple real-world scenarios, simulations and ablation studies and show that our approach 
+We evaluate our approach in multiple real-world scenarios, simulations, and ablation studies, demonstrating that i 
 achieves exploration in both indoor and outdoor environments, and at considerably larger scales than existing monocular exploration methods.
 % achieves exploration of large-scale unstructured indoor and outdoor areas.
 % achieves exploration at a scale comparable to methods using dense range sensors.
@@ -304,7 +304,7 @@ As a step towards low-cost vision-based UAV autonomy in unknown environments, ou
   % \item A perception-aware mapping method that constructs a sphere-based map for safety-aware navigation using only sparse pointclouds and pose estimates from monocular-inertial SLAM as input,
   %   with the ability to map sufficient free space for flight even in texture-sparse open-space areas.
   % \item A monocular 3D mapping method that builds a reliable map of obstacles and navigable space thanks to tight coupling with sparse monocular-inertial SLAM, 
-  \item A monocular 3D mapping method with perception-coupled modules that significantly increase the reliability of mapped free space and obstacles with unreliable, sparse, motion-based depth data as input 
+  \item A monocular 3D mapping method with perception-coupled modules that significantly increase the reliability of mapped free space and obstacles with unreliable, sparse, motion-based depth data as input.
   \item A perception-aware exploration approach, enabled by the proposed mapping method, that achieves large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
     \item Open-sourced code for the proposed methods, along with example simulation scripts for replicating our results, providing a benchmark for new monocular exploration methods.
@@ -364,7 +364,7 @@ Some works already investigated exploration with motion-based depth sensing, but
 
 For general monocular exploration of \textit{unstructured} environments, the authors of \cite{from_monoslam_to_explo, los_maps} investigated building an occupancy grid \cite{occupancy_moravec} by tracing rays of free space towards low-covariance SLAM points, similarly to classic mapping with dense range sensors. 
 As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the depth measurements are sparse in low-texture environments.
-The authors of \cite{from_monoslam_to_explo} furthered present a perception-aware exploration method specifically to cover these gaps and demonstrate an increase in mapped volume.
+The authors of \cite{from_monoslam_to_explo} further present a perception-aware exploration method specifically to cover these gaps and demonstrate an increase in mapped volume.
 However, the authors show this exploration approach to only work at the scale of a single room.
 % However, this only reduces the gaps, as this mapping method can never estimate free space near texture-sparse areas, and the authors show this exploration approach to only work at the scale of a single room.
 % Most importantly though, this mapping approach fundamentally cannot estimate sufficient free space for navigation in texture-sparse areas, especially outdoor (as shown in \autoref{sec:sim_exper}).
@@ -451,7 +451,7 @@ The proposed mapping method represents free space by a graph of intersecting sph
 Each sphere at the $k$-th update iteration has a static center $\mathbf{c}$ and changing radius $r_k$.
 The radius $r_k$ represents the distance from $\mathbf{c}$ to the nearest unknown space or obstacle at time step $k$.
 % We maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres, and use it for path planning.
-To allow rapid path planning, we maintain a graph $\mathbf{G}$, which contains an edge for each pair of intersecting spheres.
+To allow rapid path planning, we maintain a graph $\mathcal{G}$, which contains an edge for each pair of intersecting spheres.
 % Furthermore, we maintain a set of obstacle points $\mathbf{X}$, which correspond to the textured surfaces measured by the visual SLAM.
 % We represent obstacles by a set of points $\mathcal{X}$, which are .
 To represent obstacles, we accumulate the stable 3D points (i.e. with low position covariance) estimated by a sparse monocular SLAM frontend into a set of points $\mathcal{X}_{map}$ with a minimal point-to-point distance $\xi$.
@@ -466,7 +466,7 @@ A single map update iteration consists of the following steps, visualized also i
 We interpolate depth between the sparse SLAM points using a simplified version of the approach described in FLAME \cite{flame}, where
 a precise mesh is constructed from visual keypoint measurements.
 In this paper, we care primarily about mapping the free space for navigation purposes, and thus we do not perform the mesh optimization or split the 2D interpolations as in \cite{flame}.
-We project the currently tracked visual SLAM points into the image plane and compute their Delaunay triangulation. 
+We project the currently tracked visual SLAM points onto the image plane and compute their Delaunay triangulation. 
 By connecting the points in 3D according to their Delaunay triangulation in 2D, we obtain a mesh $\mathcal{F}_d$ that we call a \textit{depth mesh}, which is used only for the current frame.
 We estimate currently visible free space as the volume between the camera's position $\mathbf{p}$ and all points on $\mathcal{F}_d$.
 This space is enclosed by connecting all points that lie on the edge of $\mathcal{F}_d$ to the camera's focal point, which forms an \textit{estimated visible free space polyhedron} $\mathcal{P}_f$.
@@ -499,7 +499,7 @@ Consider a virtual point in space $\mathbf{x}_{vir}$ that falls into the camera'
 If there is sufficient parallax between any two of these poses for estimating the distance of $\mathbf{x}_{vir}$ (given by the max covariance of the measured SLAM points), and if the visual SLAM frontend has not detected any obstacle point approximately in the direction of  $\mathbf{x}_{vir}$, then $\mathbf{x}_{vir}$ must lie in free space (see \autoref{fig:ofs}).
 
 The mapping method periodically checks 
-the described condition for a set of virtual points $\mathbf{x}_{vir}$ at fixed positions relative to the UAV (see \autoref{fig:mapping_pipeline}) at each mapping iteration and for a fixed number of previous poses. 
+the described condition for a set of virtual points $\mathbf{x}_{vir}$ at predefined fixed positions relative to the UAV (see \autoref{fig:ofs}) at each mapping iteration and for a fixed number of previous poses. 
 The points that fulfill this condition are used to recompute the \textit{depth mesh} $\mathcal{F}_d$ as if they were measured by the SLAM frontend.
 However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there is a more reliable depth estimate from interpolating the SLAM points.
 Free space estimated in this manner also cannot erase existing obstacle points in the map.
@@ -517,11 +517,12 @@ However, this could be resolved by using a dense SLAM frontend (at a higher comp
   % Smaller points and higher-opacity spheres have been observed from lower distances.
   The size of a point $\mathbf{x}$ corresponds to the distance $d_{\mathbf{x}}$ that it was measured from.
   % Dashed crosses correspond to points that will be deleted (red) or not added to the map (black), as there are better localized (smaller) points near them.
-  The (dashed red) point seen far away from the camera at a previous time $t_1$ now lies in $\mathcal{P}_f^{t_2}$ close to the camera and will thus be deleted as noise.
+  % The (dashed red) point seen far away from the camera at a previous time $t_1$ now lies in $\mathcal{P}_f^{t_2}$ very close to the camera and will thus be deleted as noise.
+  Since our method prioritizes closer measurements (of obstacles and lack thereof), only the (dashed red) point seen far away from the camera at a previous time $t_1$, which now lies in $\mathcal{P}_f^{t_2}$ very close to the camera, will be deleted as noise.
+  New spheres are inscribed inside $\mathcal{P}_f^{t_2}$, but their radii are also bound by the protected points (solid red) $\mathcal{X}_p$, which were added to the map at $t_1$ and not deleted at $t_2$ even though they lie in $\mathcal{P}_f^{t_2}$.
   % The (dashed red) point will be deleted, as it lies in the free-space polyhedron at $t_2$, and it .
-  The (dashed black) two points observed far from the camera at $t_2$ are not added to the map, as there are more precisely localized (red) points close to them.
+  The (dashed black) two points observed far from the camera at $t_2$ are not added to the map, as there are more precisely localized (red) points nearby.
   % New spheres are inscribed inside $\mathcal{P}_f^{t_2}$, but their radii are also bound by the protected points (non-dashed red) $\mathcal{X}_p$, which were added to the map at $t_1$.
-  New spheres are inscribed inside $\mathcal{P}_f^{t_2}$, but their radii are also bound by the protected points (non-dashed red) $\mathcal{X}_p$, which were added to the map at $t_1$.
   % New spheres are inscribed inside the visible free-space polyhedron $\mathbf{P}_f$.
   % Visible free-space polygon $\mathbf{P}_f$ (-);
   % Newly sampled spheres (O);
@@ -589,7 +590,7 @@ If the potential radius is larger than $r_{min}$, the sphere is added to the map
 
 \subsection{Recomputing and Sparsifying Sphere Graph}
 \label{sec:graph_update}
-After all the sphere radii updates have been made, we update the graph of spheres used for path planning, so that all intersecting spheres are connected in the graph.
+After all the sphere radii updates have been made, we update the graph of spheres $\mathcal{G}$ used for path planning, so that all intersecting spheres are connected in the graph.
 % TODO - EXPLAIN???
 Furthermore, to constrain map update time and path planning time, we perform a redundancy check on the updated and added spheres in the same way as in \cite{spheremap}.
 If any sphere is found to be redundant, it is deleted from the map.
@@ -1021,7 +1022,8 @@ Videos from these real-world experiments are available in the multimedia materia
 
 
   \centering
-  \caption{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulated experiments per each world (top row) along with the resulting MonoSpheres maps (bottom row). The map points are colored by height for clarity.
+  % \caption{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulated experiments per each world (top row) along with the resulting MonoSpheres maps (bottom row). The map points are colored by height for clarity.
+  \caption{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulated experiments per each world (top) along with the resulting MonoSpheres mapped obstacle points (bottom) colored by height. X marks the starting position.
   % From left to right: Earthquake, Cave, Rooftops, Sparse.
   }
   \label{fig:exper_fireworld}

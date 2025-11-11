@@ -429,23 +429,17 @@ In comparison to the existing sphere-based mapping methods however, our proposed
   %    \hfill
   \caption{
     Mapping pipeline overview. The OVDE and DBOF modules are illustrated in \autoref{fig:ofs} and \autoref{fig:distbased} respectively.
-    % Illustration of the mapping pipeline. 
-    % (a) The stable 3D points (red) used by the monocular SLAM are the only input depth measurements. 
-    % Delaunay triangulation is performed on the input points projected to 2D as a rough depth interpolation. 
-    % % Additionally, , the TODO-fake points are added to the depth estimation.
-    % (b) The active assumed-freespace points (blue, see \autoref{sec:fake}) above the ground, where the SLAM cannot accurately localize any points, are added to construct the
-    % (c) resulting visible free-space polyhedron $\mathcal{P}_f$.
-    % % (d) Side view of how new spheres are sampled in the polyhedron and added to the others, as well as how new obstacle points are added to the map.
-    % (d) New spheres are sampled in the polyhedron and added to the graph, and the visible SLAM points are added to the set of obstacle points $\mathcal{X}$.
-    % TODO - desc + delaunay w fake fspace vis
+    % Low-covariance SLAM points $\mathcal{X}_{in,k}$ and robot pose $\mathbf{p}_k$ at time step $k$ are used to update the map points $\mathcal{X}_{map}$, spheres $\mathcal{S}$ and sphere graph $\mathcal{G}$.
   }
   \label{fig:mapping_pipeline}
+  \vspace{-0.5cm}
 \end{figure*}
 % %%}
 
 \section{Sphere-Based Mapping Using Sparse Visual SLAM Points}
 \label{sec:map_building}
-The proposed mapping method represents free space by a graph of intersecting spheres and obstacles as a set of 3D points.
+% The proposed mapping method represents free space by a graph of intersecting spheres and obstacles as a set of 3D points.
+The proposed mapping method represents free space by a graph $\mathcal{G}$ of intersecting spheres $\mathcal{S}$ and obstacles as a set of 3D points $\mathcal{X}_{map}$.
 % \todo{kdtree of centers}
 % and obstacles as a set of 3D points corresponding to triangulated visual keypoints from visual SLAM.
 Each sphere at the $k$-th update iteration has a static center $\mathbf{c}$ and changing radius $r_k$.
@@ -501,12 +495,15 @@ If there is sufficient parallax between any two of these poses for estimating th
 The mapping method periodically checks 
 the described condition for a set of virtual points $\mathbf{x}_{vir}$ at predefined fixed positions relative to the UAV (see \autoref{fig:ofs}) at each mapping iteration and for a fixed number of previous poses. 
 The points that fulfill this condition are used to recompute the \textit{depth mesh} $\mathcal{F}_d$ as if they were measured by the SLAM frontend.
-However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there is a more reliable depth estimate from interpolating the SLAM points.
+% However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there is a more reliable depth estimate from interpolating the SLAM points.
+However, we discard points that would project into the original Delaunay triangulation of the current SLAM points, since there is a more reliable depth estimate from interpolating the SLAM points.
 Free space estimated in this manner also cannot erase existing obstacle points in the map.
 
 This approach allows flexibly adding more free space in open areas while using the SLAM points for estimating free space near obstacles.
-Of course, the assumption does not hold close to obstacles that are not detectable by the sparse visual SLAM frontend (e.g. textureless objects or thin wires).
-However, this could be resolved by using a dense SLAM frontend (at a higher computational cost), or by adding low-cost ultrasonic sensors to detect close thin obstacles.
+Of course, the assumption does not hold close to obstacles that are not detectable by the sparse visual SLAM frontend (e.g. textureless objects or thin wires). 
+We discuss potential solutions to this in \autoref{sec:discussion}.
+% However, this could be resolved by using a dense SLAM frontend (at a higher computational cost), or by adding low-cost ultrasonic sensors to detect close thin obstacles.
+% However, this could be resolved by adding low-cost ultrasonic sensors to detect close thin obstacles.
 
 \begin{figure}[!h]
   % \includegraphics[width=8.5cm]{fig/smap2.png}
@@ -1318,7 +1315,9 @@ Exploration goal generation was constrained by a bounding box in the outdoor wor
 \label{sec:discussion}
 The main result of the simulation experiments is that our approach is capable of exploring many different topologies of environments -- sparse, dense, indoor, outdoor and environments where flight over obstacles in wide open spaces is required.
 As expected based on the findings of \cite{from_monoslam_to_explo, los_maps}, the classical mapping approach was not able to map free space in open-space areas.
-In all of the outdoor worlds, the classical mapping method with random exploration goal sampling was only able to map the area close to tall obstacles near the starting position.
+In all of the outdoor worlds, the classical mapping approach with random exploration goal sampling was only able to map the area close to tall obstacles near the starting position
+.
+% and did not estimate sufficient free space to 
 % In the "cave" world, which is a texture-rich indoor environment, the grid-based approach performed similarly to MonoSpheres in terms of initial exploration speed.
 % With a more sophisticated viewpoint selection approach, the grid-based approach could explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
 % This finding supports that the mapping approach presented in \cite{from_monoslam_to_explo, los_maps} for textured, indoor spaces.
@@ -1326,7 +1325,7 @@ In all of the outdoor worlds, the classical mapping method with random explorati
 We designed the earthquake environment to test the limits of our method, making it contain textureless areas (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
 As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
-% This is expected, as these objects cannot be detected by the used OpenVINS frontend, and could be improved by using a visual front-end that uses line-based or dense features (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
+% This is due to the inability of the depth estimation frontend to detect such objects, and could be improved by using dense SLAM frontend (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV in future work.
 This is due to the inability of the depth estimation frontend to detect such objects, and could be improved by using dense SLAM frontend (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV in future work.
 
 \subsection{Ablation Experiments}

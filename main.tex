@@ -58,7 +58,8 @@
 \usepackage{cite}
 
 % REVISIONS
-\newcommand{\fix}[1]{{\hypersetup{allcolors=blue}{\color{blue} {#1}}}}
+% \newcommand{\fix}[1]{{\hypersetup{allcolors=blue}{\color{blue} {#1}}}}
+\newcommand{\fix}[1]{{\hypersetup{allcolors=black}{\color{black} {#1}}}}
 % \newcommand{\vkcaption}[1]{{\color{blue} {#1}}}
 \newcommand{\todo}[1]{{\hypersetup{allcolors=red}{\color{red} {#1}}}}
 \newcommand{\todocaption}[1]{{\color{red} {#1}}}
@@ -218,9 +219,9 @@ Such sensors are heavy, expensive, and thus severely limit the affordability and
 
 
 % Monocular cameras and inertial measurement units (IMUs) are orders of magnitude lighter and less expensive, but autonomous navigation using only these sensors remains an open research problem.
-Monocular cameras and inertial measurement units (IMUs) are orders of magnitude lighter and less expensive, but monocular-only exploration of unknown environments has only been demonstrated the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav, cnn_explo_singleroom}.
+Monocular cameras and inertial measurement units (IMUs) are orders of magnitude lighter and less expensive, but monocular-only exploration of unknown environments has only been demonstrated at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav, cnn_explo_singleroom}.
 The main challenge can be attributed to the fact that the existing methods depend on \textit{reliable} and \textit{dense} depth estimates and obtaining such estimates from a monocular camera is not yet fully solved \cite{deep_mono_depth_2021, monodepth_survey_big_2024}.
-Thus, when when classical mapping methods are used with any monocular existing depth estimation method, the resulting maps are either too sparse to allow planning in large-scale environments \cite{from_monoslam_to_explo, los_maps}, or they contain wrongly estimated free space, which leads to crashes \cite{simon2023mononav, mono_airsim_nav_2025}.
+Thus, when when classical mapping methods are used with any existing monocular depth estimation method, the resulting maps are either too sparse to allow planning in large-scale environments \cite{from_monoslam_to_explo, los_maps}, or they contain wrongly estimated free space, which leads to crashes \cite{simon2023mononav, mono_airsim_nav_2025}.
 
 % INTRO IMG%%{
 % \begin{figure}[!t]
@@ -359,7 +360,7 @@ In addition, they require a GPU which significantly raises the cost and weight o
 The other main approach to monocular exploration is to use sparse 3D points estimated by visual SLAM as the only depth measurements and work with those.
 % Most research on using motion-based depth estimation has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} or exploration with strong assumptions on the environment structure (e.g. corridors only \cite{corridors_mono_nav_2009} or considering a single object with no other obstacles \cite{information_driven_bbx_mapping}).
 Most of the research on using motion-based depth estimation has been on reactive obstacle avoidance \cite{flame, avoidance_mono1} with no map building.
-Some works already explored exploration with motion-based depth sensing, but they make limiting assumptions on the environment's structure (e.g. corridors only \cite{corridors_mono_nav_2009} or considering a single object with no other obstacles \cite{information_driven_bbx_mapping}).
+Some works already investigated exploration with motion-based depth sensing, but they make limiting assumptions on the environment's structure (e.g. corridors only \cite{corridors_mono_nav_2009} or considering a single object with no other obstacles \cite{information_driven_bbx_mapping}).
 
 For general monocular exploration of \textit{unstructured} environments, the authors of \cite{from_monoslam_to_explo, los_maps} investigated building an occupancy grid \cite{occupancy_moravec} by tracing rays of free space towards low-covariance SLAM points, similarly to classic mapping with dense range sensors. 
 As documented in \cite{from_monoslam_to_explo}, this approach causes gaps to appear in the free space of the map when the depth measurements are sparse in low-texture environments.
@@ -491,7 +492,7 @@ It is only used for the update step at the current time and discarded afterwards
 % \subsection{Open-Area Free-Space Sampling (OFS)}
 \subsection{Open-Area Virtual-Depth Estimation (OVDE)}
 \label{sec:fake}
-When moving in open areas, such as a grassy field without vertical obstacles in \autoref{fig:mapping_pipeline}, point-based visual SLAM can accurately localize only nearby points corresponding to the ground. 
+When moving in open areas, such as a grassy field without tall obstacles in \autoref{fig:smap_intro}, point-based visual SLAM can accurately localize only nearby points corresponding to the ground. 
 Using the ray-tracing grid-based mapping method \cite{from_monoslam_to_explo, los_maps}, this would cause free space to be estimated only in a downward direction and not allow flight across the field.
 To allow flight in open areas, our method estimates additional free space based on the following assumption: 
 Consider a virtual point in space $\mathbf{x}_{vir}$ that falls into the camera's FoV at the current pose $\mathbf{p}_k$ and also at previous poses $\mathbf{p}_{k-n}, ...,\mathbf{p}_{k-2}, \mathbf{p}_{k-1}$.
@@ -546,7 +547,7 @@ We solve this problem by deleting any map point $\mathbf{x}$ that falls into $\m
 \begin{equation}
   \mathbf{x} \in \mathcal{P}_f \quad \text{and}  \quad |\mathbf{x} - \mathbf{p}_{cam}| < \alpha \cdot d_{m,x},
 \end{equation}
-where $\mathbf{p}_{cam}$ is the position of the camera and $\alpha$ is a paremeter, which we empirically set to $1.1$ to account for distance measurement noise.
+where $\mathbf{p}_{cam}$ is the position of the camera and $\alpha$ is a parameter, which we empirically set to $1.1$ to account for distance measurement noise.
 The points that lie in the free-space polyhedron $\mathcal{P}_f$ and are not deleted from the map are labeled as \textit{protected points} $\mathcal{X}_p$.
 These points are used to constrain sphere radii in the following update step.
 
@@ -581,7 +582,7 @@ As the last part of this step, we delete all spheres with $r_{k+1} < r_{min}$, w
 % , usually slightly lower than the UAV's minimal allowed distance to obstacles. 
 
 % where TODO.
-To introduce new spheres into the map, we sample a fixed number of points inside $\mathcal{P}_f$ at random distances between the camera and the depth mesh $F_o$.
+To introduce new spheres into the map, we sample a fixed number of points inside $\mathcal{P}_f$ at random distances between the camera and the depth mesh $\mathcal{F}_d$.
 % \todo{This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.}
 A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
 If the potential radius is larger than $r_{min}$, the sphere is added to the map.
@@ -699,7 +700,7 @@ Another important distinction we propose for NBV exploration with a monocular ca
 Frontier points will be generated there instead, since the surfaces lie on the edge of the visible free space polyhedron and can be far enough from any obstacle points.
 % but they will be on the boundary of free-space, so frontiers will be generated there.
 However, such frontiers cannot uncover any new space, since there is nothing behind them.
-For this reason, we block the sampling of new viewpoints near visited viewpoints, visualized as large black arrows in \autoref{fig:exper_real}
+For this reason, we block the sampling of new viewpoints near visited viewpoints, visualized as large black arrows in \autoref{fig:exper_real}.
 This stops the UAV from getting stuck repeatedly trying to uncover such surfaces.
 
 
@@ -1277,11 +1278,11 @@ Videos from these real-world experiments are available in the multimedia materia
     % % OFS-disabled  & Cave & 4910 $m^2$ & 4910 $m^2$ & 0/1 \\ 
 
     MonoSpheres  & Earthquake & 1968& 2432& 17706 \\
-    Grid-Based & Earthquake  & 764& 922& 5181 \\
     No FFF  & Earthquake & 988& 1272& 9518 \\
     No DBOF  & Earthquake & 923& 1232& 10356 \\
     No OVDE  & Earthquake & 299& 345& 1837 \\
     No VPB  & Earthquake & 1479& 1670& 13475 \\
+    Grid-Based & Earthquake  & 764& 922& 5181 \\
     \hline
     MonoSpheres  & Cave & 3051& 3202& 18350 \\
     Grid-Based & Cave  & 1268& 1350& 8794 \\
@@ -1338,7 +1339,7 @@ In all of the outdoor worlds, the classical mapping method with random explorati
 
 We designed the earthquake environment to test the limits of our method, making it contain textureless areas (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
 As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
-In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with a the textureless roof of a bus. 
+In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
 % This is expected, as these objects cannot be detected by the used OpenVINS frontend, and could be improved by using a visual front-end that uses line-based or dense features (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV.
 This is due to the inability of the depth estimation frontend to detect such objects, and could be improved by using dense SLAM frontend (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV in future work.
 
@@ -1350,7 +1351,7 @@ The results are shown in \autoref{table:sim_exper} and \autoref{fig:exper_firewo
 Without DBOF, the UAV tends to quickly overwrite previously mapped obstacles with free space and crash.
 Without forward-facing flight (FFF), where the UAV aligns itself with a goal viewpoint's heading immediately after starting to navigate to it, the UAV is unable to detect previously undetected obstacles and also crashes quickly.
 Without virtual depth (OVDE), the UAV is unable to explore open-space areas and stays in the starting "valley" between the houses as expected.
-Since the grid-based method allows casting thin rays even to faraway points, it maps a larger are than this ablation.
+Since the grid-based method allows casting thin rays even to faraway points, it maps a larger area than this ablation.
 Lastly, removing viewpoint blocking (VPB) does not lead to critical failures, as the simulated environment does not have large featureless walls, but the exploration performance is still notably reduced due to the UAV revisiting some viewpoints.
 In summary, these results confirm the importance of all the proposed components of our mapping and exploration approach.
 

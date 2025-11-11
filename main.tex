@@ -611,9 +611,9 @@ In the following sections, we introduce several major differences in methodology
 
 \subsection{Frontier Sampling on Free-Space Polyhedron}
 Firstly, since the proposed map representation is fundamentally different from an occupancy grid, we need to detect frontiers (i.e. the boundary of free and unknown space) in a different way than with an occupancy grid.
-We propose to sample points along the visible free-space polyhedron $ \mathcal{P}_f $  described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at a user-defined distance from all map obstacle points and other frontiers.
+We propose to sample points along the visible free-space polyhedron $ \mathcal{P}_f $  described in \autoref{sec:map_building} at each map update, and add the points as frontiers, if they do not lie inside any free-space sphere and if they are at a pre-defined distance $\zeta$ from all map obstacle points and other frontiers.
 If they do not meet these criteria in any following update, they are deleted. 
-To avoid the loss of SLAM tracking due to exploration of completely textureless areas, we also delete frontiers that are too far from any obstacle points.
+To avoid the loss of SLAM tracking due to exploration of completely textureless areas, we also delete frontiers that are further than $\zeta$ from any obstacle points.
 % \todo{complexity and vs octomap?}
 % In enclosed spaces, which are usually considered in autonomous exploration literature, all frontiers are usually worth exploring.
 % However, in outdoor exploration with areas of open space, it is also important to assign different value to different frontiers, especially for UAVs. 
@@ -622,6 +622,7 @@ To avoid the loss of SLAM tracking due to exploration of completely textureless 
 % Additionally, this forces the UAV to only explore near texture-rich areas, thus avoiding losing visual SLAM tracking.
 % \todo{Lastly, we add new exploration viewpoints into the map only if a sufficient number of such frontier points would be visible from a given viewpoint at a close distance.}
 These frontier points are used to generate exploration viewpoints such that at least some frontier points are visible from each viewpoint.
+% To find informative viewpoints, we sample poses within free space and store viewpoints that can see at least a given number $n_f$ of frontier points within the camera's reliable depth sensing range and that are further than $\nu$ from existing viewpoints.
 
 % EXPLORATION EXPLANATION IMG%%{
 \begin{figure}[!htb]
@@ -686,9 +687,13 @@ If textured surfaces are visible from that viewpoint, the UAV will most likely o
 \fix{When not aligning itself with a viewpoint as described above,
 the UAV is controlled to always aim in the direction of its camera.
 This approach is simple, but as we show in \autoref{sec:ablations}, it is crucial for ensuring collision-free flight in the case of incorrectly initialized free space.
-As discussed in \autoref{sec:discussion}, some obstacles (e.g. thin wires, twigs) might not be visible in the cameras from a large distance to be detected by the visual SLAM (especially when using fisheye cameras), and can be wrongly estimated as free space.
-Using the forward-facing flight, the UAV has a higher chance to see these obstacles that were previously not detected, and quickly replan.
-To further increase safety and allow agile maneuvers, the paths are planned with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is highly suitable, as described in \cite{spheremap, bubbleplanner, spheregraph}.
+Using the forward-facing flight (FFF), the UAV has a higher chance to see obstacles that were not detected from afar, and quickly replan.
+% To further increase safety and allow agile maneuvers, the path planning considers not only path length, but also the distances to obstacles, for which the graph-of-spheres representation is ideal \cite{spheremap, bubbleplanner, spheregraph}.
+To further increase safety and allow agile maneuvers, path planning on the graph of spheres uses the criterion combining path length and distances to obstacles (sphere radii) described in \cite{spheremap}, making it prefer slightly longer paths with higher clearance from obstacles where possible.
+% This approach is simple, but as we show in \autoref{sec:ablations}, it is crucial for ensuring collision-free flight in the case of incorrectly initialized free space.
+% As discussed in \autoref{sec:discussion}, some obstacles (e.g. thin wires, twigs) might not be visible in the cameras from a large distance to be detected by the visual SLAM (especially when using fisheye cameras), and can be wrongly estimated as free space.
+% To further increase safety and allow agile maneuvers, the paths are planned with a strong preference for high distance from obstacles, for which the graph-of-spheres representation is highly suitable, as described in \cite{spheremap, bubbleplanner, spheregraph}.
+% Using the forward-facing flight, the UAV has a higher chance to see these obstacles that were previously not detected, and quickly replan.
 }
 
 

@@ -685,7 +685,7 @@ This way, the UAV reaches the viewpoint with at least $d_c$ meters of translatio
 If textured surfaces are visible from that viewpoint, the UAV will most likely observe sufficient parallax to estimate their distances.
 
 \fix{When not aligning itself with a viewpoint as described above,
-the UAV is controlled to always aim in the direction of its camera.
+the UAV is controlled to always aim in the direction of its movement.
 This approach is simple, but as we show in \autoref{sec:ablations}, it is crucial for ensuring collision-free flight in the case of incorrectly initialized free space.
 Using the forward-facing flight (FFF), the UAV has a higher chance to see obstacles that were not detected from afar, and quickly replan.
 % To further increase safety and allow agile maneuvers, the path planning considers not only path length, but also the distances to obstacles, for which the graph-of-spheres representation is ideal \cite{spheremap, bubbleplanner, spheregraph}.
@@ -779,10 +779,13 @@ This stops the UAV from getting stuck repeatedly trying to uncover such surfaces
 \label{sec:experiments}
 In this section, we analyze the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
 The presented implementation of the proposed mapping and exploration methods is currently single-threaded and written in python.
-\fix{With this implementation, the mapping runs on average at $\SI{4.5}{\hertz}$ on average on 
+\fix{With this implementation, the mapping runs on average at $\SI{4.5}{\hertz}$ on 
 % a standard CPU.
 an AMD Ryzen 7 4800 CPU.
+% A different implementation could speed up the method further, but we leave this for future work.
 This is sufficient for exploration planning, but can be slow to detect obstacles at high speeds. For this reason, the UAV also checks the predicted trajectory for potential collisions with the input pointclouds at the SLAM's update rate and stops on collision detection.
+The most computationally intensive part, the frontier sampling, takes around TODO \%, while the other modules take significantly less time.
+% A full re-implementation in C++ and a different way of computing exploration value than the current sampling approach could speed up the method further, but this is out of the scope of this paper.
 }
 % , but could be further optimized with a parallelized implementation or a submap-based approach.
 % This has shown to be sufficient for safe flight up to $\SI{3}{\meter/\second}$ in the tested environments, but a more optimized implementation could allow even faster navigation.
@@ -790,7 +793,8 @@ This is sufficient for exploration planning, but can be slow to detect obstacles
 % Our implementation also checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
 The UAV used in the experiments was equipped with a monocular global-shutter grayscale fisheye Bluefox camera, and ICM-42688 IMU.
 The MRS UAV system \cite{mrs_uav_system} was used for low-level motion planning, control, and the grid-based path planning for the simulation comparisons.
-For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins} in the inverse-depth measurement mode.
+For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins}.
+% in the inverse-depth measurement mode.
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 \label{sec:real_exper}

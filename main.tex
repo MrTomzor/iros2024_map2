@@ -906,16 +906,20 @@ Videos from these real-world experiments are available in the multimedia materia
     anchor=south east,                        % hardcoded bottom-right corner
     % anchor=north west,                        % hardcoded bottom-right corner
     % anchor=north east,                        % hardcoded bottom-right corner
+    % anchor=north,                        % hardcoded bottom-right corner
     inner sep=2pt,                             % padding
     fill=white!30,                             % background color
     draw=black,                                % border color
-    font=\sffamily\fontsize{10}{10}\selectfont,  % fixed font size
+    % font=\sffamily\fontsize{10}{10}\selectfont,  % fixed font size
+    font=\sffamily\fontsize{9}{9}\selectfont,  % fixed font size
     text=black,
     line width=0.8pt
   % ] at ([xshift=-4pt,yshift=4pt]#1.south east) {#2};  % fixed offset from corner
-  ] at ([xshift=-2pt,yshift=2pt]#1.south east) {#2};  % fixed offset from corner
+  ] at ([xshift=-3pt,yshift=3pt]#1.south east) {#2};  % fixed offset from corner
+  % ] at ([xshift=-2pt,yshift=2pt]#1.south east) {#2};  % fixed offset from corner
   % ] at ([xshift=2pt,yshift=-2pt]#1.north west) {#2};  % fixed offset from corner
   % ] at ([xshift=-2pt,yshift=-2pt]#1.north east) {#2};  % fixed offset from corner
+  % ] at ([xshift=0pt,yshift=-2pt]#1.north) {#2};  % fixed offset from corner
 }
 
 
@@ -990,7 +994,7 @@ Videos from these real-world experiments are available in the multimedia materia
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-11_urban_blue_black_red.png}};
         % HEIGHTMAP
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-24_urban_heightmap_05squares_topdown.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-24_urban_heightmap_05squares_topdown.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-24_urban_heightmap_05squares_topdown.png}};
         % THICK HEIGHTMAP
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-45_urban_heightmap_fallscale2_1m_square_06path.png}};
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-43_urban_fall_heightmap_scale_1m_squares.png}};
@@ -1004,7 +1008,7 @@ Videos from these real-world experiments are available in the multimedia materia
         % RED BLUE BLACK GREEN
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-50_cave_2600_freespace.png}};
         % HEIGHTMAP
-        \node[anchor=south west,inner sep=0] (rooftops_map) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-28_cave_heightmapscale4.png}};
+        \node[anchor=south west,inner sep=0] (rooftops_map) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_16-28_cave_heightmapscale4.png}};
       \markX[0.15]{3.2}{2.6} 
       \end{tikzpicture}
      \end{subfigure}
@@ -1038,7 +1042,7 @@ Videos from these real-world experiments are available in the multimedia materia
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-23_16-03_sparse_trajs3_thinner.png}};
         % HEIGHTMAP
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-44_sparse_heightmap_05squares.png}};
-        \node[anchor=south west,inner sep=0] (sparse_map) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-45_sparse_range2_05squares.png}};
+        \node[anchor=south west,inner sep=0] (sparse_map) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-45_sparse_range2_05squares.png}};
         % THICK HEIGHTMAP
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-45_sparse_range2_1msquares.png}};
 

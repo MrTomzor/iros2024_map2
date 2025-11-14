@@ -898,6 +898,27 @@ Videos from these real-world experiments are available in the multimedia materia
       (#2-\s, #3+\s) -- (#2+\s, #3-\s);
 }
 
+% Fixed styling bottom-right textbox: only pass node name and text
+\newcommand{\textbox}[2]{%
+  % #1 = node name (e.g., a)
+  % #2 = text content
+  \node[
+    anchor=south east,                        % hardcoded bottom-right corner
+    % anchor=north west,                        % hardcoded bottom-right corner
+    % anchor=north east,                        % hardcoded bottom-right corner
+    inner sep=2pt,                             % padding
+    fill=white!30,                             % background color
+    draw=black,                                % border color
+    font=\sffamily\fontsize{10}{10}\selectfont,  % fixed font size
+    text=black,
+    line width=0.8pt
+  % ] at ([xshift=-4pt,yshift=4pt]#1.south east) {#2};  % fixed offset from corner
+  ] at ([xshift=-2pt,yshift=2pt]#1.south east) {#2};  % fixed offset from corner
+  % ] at ([xshift=2pt,yshift=-2pt]#1.north west) {#2};  % fixed offset from corner
+  % ] at ([xshift=-2pt,yshift=-2pt]#1.north east) {#2};  % fixed offset from corner
+}
+
+
 % COMBINED ENDMAPS
 % %%{
 \begin{figure*}[!htb]
@@ -910,6 +931,7 @@ Videos from these real-world experiments are available in the multimedia materia
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.03\width} {0.0\height} {0.03\width} {0.0\height}}, clip=true]{fig/Selection_1344_fireworld_bright_gazebo.png}};
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_gazebo1.jpg}};
       \markX[0.15]{1.8}{1.2} 
+      \textbox{a}{Earthquake}
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -933,6 +955,8 @@ Videos from these real-world experiments are available in the multimedia materia
 %   (0.2-\xsize,0.3-\xsize) -- (0.2+\xsize,0.3+\xsize);
 % \draw[line width=0.4pt, black]
       \markX[0.15]{2.6}{2.2} 
+
+      \textbox{a}{Cave}
 %   (0.2-\xsize,0.3+\xsize) -- (0.2+\xsize,0.3-\xsize);
 
       \end{tikzpicture}
@@ -944,6 +968,7 @@ Videos from these real-world experiments are available in the multimedia materia
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.05\height}}, clip=true]{fig/Selection_1344_rooftops_gazebo2bright.png}};
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/Selection_1343_rooftops_gazebo2.png}};
       \markX[0.15]{1.9}{1.7} 
+      \textbox{a}{Rooftops}
       \end{tikzpicture}
      \end{subfigure}
      \hfill
@@ -952,6 +977,8 @@ Videos from these real-world experiments are available in the multimedia materia
         \centering
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/sparsebright2.png}};
       \markX[0.15]{0.95}{1.2} 
+
+      \textbox{a}{Sparse}
       \end{tikzpicture}
      \end{subfigure}
 

@@ -1343,12 +1343,12 @@ However, because of the open-area free-space sampling scheme and the depth inter
 We instead divide the target exploration area into 2.5x2.5m columns that are marked as explored if the constructed map (sphere-based or grid-based) contains any element in a given column. 
 The metric, $A$, is then the top-down 2D area of all the explored columns.
 
-We compare the grid-based approach with MonoSpheres in multiple experiments on 4 different worlds using the same parameters, and terminate each run after \SI{20}{\minute} (\SI{40}{\minute} in the Cave world due to its size) or sooner if a collision occurs.
+We compare the classical mapping + random exploration approach with MonoSpheres with fixed parameters in simulations on 4 different worlds in 3 runs per method (6 in the Earthquake world for better comparison), and terminate each run after \SI{20}{\minute} (\SI{40}{\minute} in the Cave world due to its size) or sooner if a collision occurs.
 The resulting maps and trajectories are shown in \autoref{fig:exper_fireworld} and the explored area and volume in \autoref{table:sim_exper}.
 Videos from example runs are available in the multimedia materials.
 The experiments were conducted in the Gazebo simulator \cite{gazebo} with the same UAV platform and sensory setup as in the real-world experiments.
 % Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of interest in the earthquake world for both methods, and to 170x110x20 \SI{}{\meter} in the cave world.
-Exploration goal generation was constrained by a bounding box in the outdoor worlds.
+Exploration goal generation was constrained by a 3D bounding box in the outdoor worlds for both methods.
 
 \subsection{Simulation Results Discussion}
 \label{sec:discussion}

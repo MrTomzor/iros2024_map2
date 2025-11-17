@@ -1024,7 +1024,7 @@ Videos from these real-world experiments are available in the multimedia materia
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-23_16-12_rooftops_blackbluered.png}};
         % HEIGHTMAP
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-37_rooftops_heightmap_pts_topdown.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-40_rooftops_topdown_betterheightmap.png}};
+        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-40_rooftops_topdown_betterheightmap.png}};
         % THICK HEIGHTMAP
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-39_rooftops_1m_squares_heightmap_06line.png}};
 
@@ -1386,15 +1386,21 @@ In summary, these results confirm the importance of all the proposed components 
 
 \section{CONCLUSION}
 % \todo{[In this paper, we reformulate 3D volumetric mapping and exploration to use a graph-of-spheres map instead of a traditionally used voxel-based one.]}
-In this paper, we presented a novel, perception-coupled approach to mapping and planning for UAV exploration of 3D space with a monocular camera.
-Ablation experiments confirm the utility of the individual modules of our proposed method.
+In this paper, we presented a novel, perception-coupled approach to mapping and planning for monocular UAV 3D exploration.
+% Ablation experiments confirm the importance of the individual modules of our proposed method that were motivated by specific properties of monocular motion-based depth sensing.
+Through ablation experiments, we have confirmed the importance of the individual modules of our proposed method that are tightly coupled to the properties of monocular motion-based depth sensing.
 % [building a graph-of-spheres representation using sparse depth estimates provided by monocular-inertial SLAM. 
 % Our approach shows that it is possible to actively build a map allowing safe navigation and large-scale exploration, even with very sparse and rough depth estimates from a monocular camera. 
 % Our method enables low-cost UAVs to actively build a map allowing safe navigation in unstructured environments, even with very sparse depth estimates from monocular-inertial SLAM. 
 % Our method only requires a monocular camera and an IMU, and can run on a standard onboard computer without needing a GPU.
-Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav}, our proposed approach achieves autonomous exploration at the scale of \fix{urban areas} with multiple buildings, trees and wide open spaces.
+Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav}, 
+our proposed approach achieves autonomous exploration at considerably larger scales, both in simulation and in the real world.
+% our proposed approach achieves autonomous exploration at the scale of \fix{urban areas} with multiple buildings, trees and wide open spaces, both indoor and outdoor, in simulation and in the real world.
+% our proposed approach achieves autonomous exploration at larger scales and in various environmental topologies, indoor and outdoor, in simulation and in the real world.
+% scale of \fix{urban areas} with multiple buildings, trees and wide open spaces
+% , while also working in indoor areas with the same configuration.
 % With the same configuration, our method allows exploration of both indoor and outdoor environments.
-With the same configuration, our method allows exploration of various environment topologies -- sparse, dense, indoor, outdoor and environments requiring flight over obstacles in wide open spaces.
+% With the same configuration, our method allows exploration of various environment topologies -- sparse, dense, indoor, outdoor and environments requiring flight over obstacles in wide open spaces.
 % \addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
                                   % on the last page of the document manually. It shortens
                                   % the textheight of the last page by a suitable amount.

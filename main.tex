@@ -603,7 +603,7 @@ This step is important to cover large open areas by only a few spheres to allow 
 % In this section, we detail how the proposed mapping method is highly suitable for autonomous path planning and exploration, and how volumetric exploration can be achieved, even with only a monocular camera and IMU.
 % In this section, we describe a monocular exploration approach enabled by the proposed mapping method.
 \fix{In this section, we describe the proposed perception-coupled navigation and exploration approach, visualized in \autoref{fig:exploration_explanation}.}
-In principle, we employ the commonly used next-best-view (NBV) \cite{paper_frontier_grandpa} strategy, which has so far been deemed unsuitable for monocular exploration in previous works \cite{from_monoslam_to_explo, los_maps}.
+In principle, we employ the commonly used greedy next-best-view (NBV) \cite{paper_frontier_grandpa} strategy, which has so far been deemed unsuitable for monocular exploration in previous works \cite{from_monoslam_to_explo, los_maps}.
 % We introduce several major differences in methodology that are neccessary in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments, detailed in the following sections.
 % In the following sections, we introduce several major differences in methodology that are neccessary for NBV in the case of a robot with a monocular camera for depth sensing in large-scale, real-world environments.
 In the following sections, we introduce several major differences in methodology that are critical for allowing the NBV strategy to be used for robots equipped with only a monocular camera for depth sensing.

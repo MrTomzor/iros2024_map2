@@ -40,6 +40,7 @@
 \usepackage{amssymb}
 \usepackage{pdfpages}
 \usepackage{subcaption}
+% \captionsetup[subfigure]{labelfont=rm,textfont=rm}
 \usepackage{siunitx}
 % \usepackage[dvipsnames]{xcolor}
 \usepackage{xcolor}
@@ -58,8 +59,8 @@
 \usepackage{cite}
 
 % REVISIONS
-% \newcommand{\fix}[1]{{\hypersetup{allcolors=blue}{\color{blue} {#1}}}}
-\newcommand{\fix}[1]{{\hypersetup{allcolors=black}{\color{black} {#1}}}}
+\newcommand{\fix}[1]{{\hypersetup{allcolors=blue}{\color{blue} {#1}}}}
+% \newcommand{\fix}[1]{{\hypersetup{allcolors=black}{\color{black} {#1}}}}
 % \newcommand{\vkcaption}[1]{{\color{blue} {#1}}}
 \newcommand{\todo}[1]{{\hypersetup{allcolors=red}{\color{red} {#1}}}}
 \newcommand{\todocaption}[1]{{\color{red} {#1}}}
@@ -238,37 +239,36 @@ Thus, when classical mapping methods are used with any existing monocular depth 
 
 \begin{figure}[!t]
   \centering
-     \begin{subfigure}[b]{0.995\linewidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.1\height} {0.0\width} {0.1\height}}, clip=true]{fig/sar_mono_dji_2.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.49\linewidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_912_cam.png}};
-% Selection_971_poly2_B - DELAUNAY+VIR
-% Selection_912_cam.png - VIO
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.49\linewidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/mono_sar_cover.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-  \caption{
-    % Illustration of the proposed method in a real-world outdoor environment with large open areas. 
-    Illustration of the proposed approach. 
-    % The mapping pipeline uses information from sparse monocular-inertial SLAM (left) running onboard the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right) for safety-aware exploration.
-    The mapping pipeline estimates depth using virtual (blue) and tracked (red) points from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right).
-    % for safety-aware exploration.
+
+  % ---------- Top: full-width subfigure ----------
+  \subfloat{%
+    \begin{tikzpicture}
+      \node[anchor=south west,inner sep=0] (a) at (0,0) {%
+        \adjincludegraphics[width=0.995\linewidth,
+          trim={{0.0\width} {0.1\height} {0.0\width} {0.1\height}}, clip=true]{fig/sar_mono_dji_2.png}%
+      };
+    \end{tikzpicture}%
   }
-  % \label{fig:mapping_pipeline}
+
+  % ---------- Bottom row: two half-width subfigures ----------
+  \subfloat{%
+    \begin{tikzpicture}
+      \node[anchor=south west,inner sep=0] (a) at (0,0) {%
+        \adjincludegraphics[width=0.49\linewidth,
+          trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B}%
+      };
+    \end{tikzpicture}%
+  }\hfill
+  \subfloat{%
+    \begin{tikzpicture}
+      \node[anchor=south west,inner sep=0] (a) at (0,0) {%
+        \adjincludegraphics[width=0.49\linewidth,
+          trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/mono_sar_cover.png}%
+      };
+    \end{tikzpicture}%
+  }
+
+  \caption{Illustration of the proposed approach. The mapping pipeline estimates depth using virtual (blue) and tracked (red) points from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right).}
   \label{fig:smap_intro}
 \end{figure}
 % %%}
@@ -627,35 +627,38 @@ These frontier points are used to generate exploration viewpoints such that at l
 
 % EXPLORATION EXPLANATION IMG%%{
 \begin{figure}[!htb]
-  \def\subfigwidth{0.49\linewidth}
+ \def\subfigwidth{0.48\linewidth}
   \centering
-  % --- Subfigure (a)
-  \begin{subfigure}[b]{\subfigwidth}
-    \begin{tikzpicture}
-      \node[anchor=south west,inner sep=0] (a) at (0,0)
-        {\adjincludegraphics[width=1.0\linewidth,
-          trim={{0.08\width} {0.1\height} {0.08\width} {0.1\height}},
-          % clip=true]{fig/monospheres_exploration_v2_part1.pdf}};
-          % clip=true]{fig/monospheres_exploration_cyan_part1.pdf}};
-          clip=true]{fig/monospheres_exploration_purple_red.pdf}};
-      % label (a) in lower-left corner
-      \node[anchor=south west, font=\bfseries, text=black, xshift=2pt, yshift=2pt] at (a.south west) {(a)};
-    \end{tikzpicture}
-  \end{subfigure}
+
+  % ---------- Subfigure (a) ----------
+  \subfloat{%
+    \begin{minipage}{\subfigwidth}
+      \begin{tikzpicture}
+        \node[anchor=south west,inner sep=0] (a) at (0,0)
+          {\adjincludegraphics[width=1.0\linewidth,
+            trim={{0.08\width} {0.1\height} {0.08\width} {0.1\height}},
+            clip=true]{fig/monospheres_exploration_purple_red.pdf}};
+        % (a) label
+        \node[anchor=south west, font=\bfseries, text=black,
+              xshift=2pt, yshift=2pt] at (a.south west) {(a)};
+      \end{tikzpicture}
+    \end{minipage}
+  }%
   \hfill
-  % --- Subfigure (b)
-  \begin{subfigure}[b]{\subfigwidth}
-    \begin{tikzpicture}
-      \node[anchor=south west,inner sep=0] (b) at (0,0)
-        {\adjincludegraphics[width=1.0\linewidth,
-          trim={{0.08\width} {0.1\height} {0.08\width} {0.1\height}},
-          % clip=true]{fig/monospheres_exploration_v2_part2.pdf}};
-          % clip=true]{fig/monospheres_exploration_cyan_part2.pdf}};
-          clip=true]{fig/monospheres_exploration_part2_purple_red.pdf}};
-      % label (b) in lower-left corner
-      \node[anchor=south west, font=\bfseries, text=black, xshift=2pt, yshift=2pt] at (b.south west) {(b)};
-    \end{tikzpicture}
-  \end{subfigure}
+  % ---------- Subfigure (b) ----------
+  \subfloat{%
+    \begin{minipage}{\subfigwidth}
+      \begin{tikzpicture}
+        \node[anchor=south west,inner sep=0] (b) at (0,0)
+          {\adjincludegraphics[width=1.0\linewidth,
+            trim={{0.08\width} {0.1\height} {0.08\width} {0.1\height}},
+            clip=true]{fig/monospheres_exploration_part2_purple_red.pdf}};
+        % (b) label
+        \node[anchor=south west, font=\bfseries, text=black,
+              xshift=2pt, yshift=2pt] at (b.south west) {(b)};
+      \end{tikzpicture}
+    \end{minipage}
+  }%
      \hfill
   \caption{
     Top-down illustration of the exploration approach.
@@ -682,7 +685,7 @@ To solve this, we propose a simple perception-aware planning approach:
 % When finding a path to a goal viewpoint that could uncover some frontiers, we compute the target headings on the path so that the UAV maintains a fixed heading in the viewpoint's direction for at least $d_{c}$ meters on the path before reaching the viewpoint, as visualized in \autoref{fig:exploration_explanation}.
 When finding a path to an exploration  viewpoint, we force the trajectory to aim the UAV in the viewpoint's direction after getting to a pre-defined distance $d_c$ from the goal, as visualized in \autoref{fig:exploration_explanation}.
 % In the experiments detailed in Sec. \autoref{sec:experiments}, we set $d_{c}=TODO$.
-This way, the UAV reaches the viewpoint with at least $d_c$ meters of translational motion.
+This way, the UAV reaches the viewpoint with at least $d_c$ meters of \fix{purely translational motion}.
 If textured surfaces are visible from that viewpoint, the UAV will most likely observe sufficient parallax to estimate their distances.
 
 \fix{When not aligning itself with a viewpoint as described above,
@@ -713,63 +716,44 @@ This stops the UAV from getting stuck repeatedly trying to uncover such surfaces
 
 % ORCHARD IMG%%{
 \begin{figure}[!htb]
-  \centering
+\centering
   \begin{tikzpicture}
-    % --- Subfigure (a)
-    % \node[anchor=south west,inner sep=0] (suba) at (0,0)
-    %   {\begin{subfigure}[b]{0.49\linewidth}
-    %     \adjincludegraphics[width=\linewidth,
-    %       trim={{0.3\width} {0.08\height} {0.15\width} {0.2\height}},
-    %       clip=true]{fig/orchard_brightened.png}
-    %   \end{subfigure}};
+    % --- Left image
+    \node[anchor=south west,inner sep=0] (imgA) at (0,0) {
+      \adjincludegraphics[width=0.49\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}},
+        clip=true]{fig/orchard_corrected_hot.png}
+    };
 
-    % \node[anchor=south west,inner sep=0] (suba) at (0,0)
-    %   {\begin{subfigure}[b]{0.49\linewidth}
-    %     \adjincludegraphics[width=\linewidth,
-    %       trim={{0.0\width} {0.07\height} {0.07\width} {0.0\height}},
-    %       clip=true]{fig/orchard_brightened2.png}
-    %   \end{subfigure}};
+    % --- Right image
+    \node[anchor=south west,inner sep=0] (imgB) at ([xshift=0.51\linewidth]imgA.south west) {
+      \begin{tikzpicture}
+        \node[anchor=south west,inner sep=0] (image) at (0,0) {
+          \adjincludegraphics[width=0.49\linewidth,
+            trim={{0.1\width} {0.06\height} {0.1\width} {0.13\height}},
+            clip=true]{fig/2025-10-20_17-20_orchard_treesvisible.png}
+        };
+        \begin{scope}[x={(image.south east)}, y={(image.north west)}]
+          \draw[blue, very thick] (0.45,0.35) circle (10pt);
+          \draw[blue, very thick] (0.68,0.34) circle (10pt);
+          \draw[blue, very thick] (0.7,0.55) circle (10pt);
+          \draw[blue, very thick] (0.72,0.78) circle (10pt);
+          \draw[blue, very thick] (0.47,0.57) circle (10pt);
+          \draw[blue, very thick] (0.48,0.8) circle (10pt);
+          \draw[blue, very thick] (0.43,0.12) circle (10pt);
+          \draw[blue, very thick] (0.68,0.10) circle (10pt);
+        \end{scope}
+      \end{tikzpicture}
+    };
 
-    \node[anchor=south west,inner sep=0] (suba) at (0,0)
-      {\begin{subfigure}[b]{0.49\linewidth}
-        \adjincludegraphics[width=\linewidth,
-          trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}},
-          clip=true]{fig/orchard_corrected_hot.png}
-          % clip=true]{fig/orchard_corrected_cool.png}
-      \end{subfigure}};
-      
-    % --- Subfigure (b)
-    \node[anchor=south west,inner sep=0] (subb) at ([xshift=0.5\linewidth+0.02\linewidth]suba.south west)
-      {\begin{subfigure}[b]{0.49\linewidth}
-        \begin{tikzpicture}
-          \node[anchor=south west,inner sep=0] (image) at (0,0)
-            {\adjincludegraphics[width=1.0\linewidth,
-              trim={{0.1\width} {0.06\height} {0.1\width} {0.13\height}},
-              clip=true]{fig/2025-10-20_17-20_orchard_treesvisible.png}};
-          \begin{scope}[x={(image.south east)}, y={(image.north west)}]
-            \draw[blue, very thick] (0.45,0.35) circle (10pt);
-            \draw[blue, very thick] (0.68,0.34) circle (10pt);
-            \draw[blue, very thick] (0.7,0.55) circle (10pt);
-            \draw[blue, very thick] (0.72,0.78) circle (10pt);
-            \draw[blue, very thick] (0.47,0.57) circle (10pt);
-            \draw[blue, very thick] (0.48,0.8) circle (10pt);
-            \draw[blue, very thick] (0.43,0.12) circle (10pt);
-            \draw[blue, very thick] (0.68,0.10) circle (10pt);
-          \end{scope}
-        \end{tikzpicture}
-      \end{subfigure}};
-
-    % --- Draw arrow between subfigures
+    % --- Arrows between images
     \draw[->, ultra thick, blue]
-      ([yshift=-0.7cm, xshift=1.5cm]suba.west) -- ([yshift=1.6cm, xshift=-0.65cm]subb.south);
-
+      ([yshift=-0.7cm, xshift=1.5cm]imgA.west) -- ([yshift=1.6cm, xshift=-0.65cm]imgB.south);
     \draw[->, ultra thick, blue]
-      ([yshift=0.4cm, xshift=3cm]suba.west) -- ([yshift=2.7cm, xshift=-0.6cm]subb.south);
-
+      ([yshift=0.4cm, xshift=3cm]imgA.west) -- ([yshift=2.7cm, xshift=-0.6cm]imgB.south);
   \end{tikzpicture}
   
   \caption{
-    % The 4min orchard exploration experiment. The map (approx. 40x30m wide) contains noise due to low-light conditions, trees are highlighted in blue for clarity.
     The 4min orchard exploration experiment. Right: explored map (approx. 40x30m wide), the UAV's trajectory (black arrows) and trees (circles blue).
   }
   \label{fig:orchard}
@@ -827,61 +811,54 @@ Videos from these experiments are available in the multimedia materials.
 % REAL EXPERIMENT
 % %%{
 \begin{figure}[htb]
-  \def\subfigwidth{0.49\linewidth}
-  \centering
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t126.png}};
-      % \draw [latex-latex](3.2,0.9) -- (3.2,6.8);
-      % \node[align=center] at (3.6, 4) {\scriptsize \color{black}\SI{70}{\meter}};
-        \begin{scope}[x={(a.south east)},y={(a.north west)}]
-          \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=126\text{s}$};
-        \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     % \begin{subfigure}[b]{\subfigwidth}
-     %  \begin{tikzpicture}
-     %    \centering
-     %    \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t206.png}};
-     %    \begin{scope}[x={(a.south east)},y={(a.north west)}]
-     %      \node[align=center] at (0.9, 0.075) {\footnotesize \color{black}$t=206\text{s}$};
-     %    \end{scope}
-     %  \end{tikzpicture}
-     % \end{subfigure}
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t370.png}};
-        \begin{scope}[x={(a.south east)},y={(a.north west)}]
-          \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=370\text{s}$};
-        \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t516.png}};
-      \draw [latex-latex](4.05,0.4) -- (4.05,7.3);
-      \node[align=center] at (3.6, 3.4) {\scriptsize \color{black}\SI{80}{\meter}};
-        \begin{scope}[x={(a.south east)},y={(a.north west)}]
-          \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=516\text{s}$};
-        \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[angle=90, origin=c, width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/house.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[angle=180, origin=c, width=1.0\linewidth, trim={{0.15\width} {0.3\height} {0.2\width} {0.0\height}}, clip=true]{fig/house.png}};
-        % \begin{scope}[x={(a.south east)},y={(a.north west)}]
-        %   \node[align=center] at (0.9, 0.075) {\footnotesize \color{black}$t=516\text{s}$};
-        % \end{scope}
-      \end{tikzpicture}
-     \end{subfigure}
+\def\subfigwidth{0.49\linewidth}
+\centering
+
+% ---------- Top row ----------
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t126.png}};
+    \begin{scope}[x={(a.south east)},y={(a.north west)}]
+      \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=126\text{s}$};
+    \end{scope}
+  \end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t370.png}};
+    \begin{scope}[x={(a.south east)},y={(a.north west)}]
+      \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=370\text{s}$};
+    \end{scope}
+  \end{tikzpicture}
+\end{minipage}
+
+
+% ---------- Bottom row ----------
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/real_exper_t516.png}};
+    \draw [latex-latex](4.05,0.4) -- (4.05,7.3);
+    \node[align=center] at (3.6, 3.4) {\scriptsize \color{black}\SI{80}{\meter}};
+    \begin{scope}[x={(a.south east)},y={(a.north west)}]
+      \node[align=center] at (0.2, 0.925) {\footnotesize \color{black}$t=516\text{s}$};
+    \end{scope}
+  \end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[angle=180, origin=c, width=1.0\linewidth,
+        trim={{0.15\width} {0.34\height} {0.2\width} {0.0\height}}, clip=true]{fig/house.png}};
+  \end{tikzpicture}
+\end{minipage}
   \caption{
     Visualization of the real-world large-scale exploration experiment described in \autoref{sec:real_exper}, along with a satellite image of the explored abandoned farm area. Free space (green) is shown alongside mapped obstacle points (red), frontiers (purple) and explored viewpoints (black). 
   }
@@ -1339,8 +1316,9 @@ Videos from these experiments are available in the multimedia materials.
 % \todo{Q: Does the mapping and planning enable exploration at larger scales than conventional approaches?}
 As the previously published monocular exploration methods do not have code available (with the exception of \cite{simon2023mononav}, which, however, is not ROS-compatible as of writing this paper), we prepared a simple grid-based mapping and exploration pipeline for comparison with MonoSpheres.
 This reference method uses the same mapping approach as \cite{from_monoslam_to_explo, los_maps} (i.e. initializing free space between the camera and the visual SLAM points that have a low position covariance). 
-To explore, the method periodically samples free-space points uniformly in a 40x40x10 \SI{}{\meter} area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid that would move the robot as close as possible to the goal while respecting the same distance from obstacles and uknown space as the MonoSpheres method (\SI{1.5}{\meter} in these experiments).
-The robot then follows these paths with the camera pointing forward and replans at \SI{5}{\hertz} to handle measurement inacurracies. 
+\fix{In the following text, we show that it is the usage of this classical mapping method that limits exploration with sparse depth data in these previous works.
+To explore, the method periodically samples free-space points uniformly in a 40x40x10 \SI{}{\meter} area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid with the same minimum distance from obstacles and uknown space as the MonoSpheres method (\SI{1.5}{\meter} in these experiments).
+The robot then follows these paths with the camera pointing forward and the planner replans at \SI{5}{\hertz} to handle measurement inacurracies.}
 We use OctoMap \cite{octomap} for the grid-based mapping with a \SI{0.5}{\meter} cell size.
 This value was chosen because smaller cell sizes caused the robot to not find any safe paths due to the free-space gaps documented in \cite{from_monoslam_to_explo} and larger cell sizes blocked exploration of narrow areas. 
 
@@ -1368,7 +1346,7 @@ In all of the outdoor worlds, the classical mapping approach with random explora
 % With a more sophisticated viewpoint selection approach, the grid-based approach could explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
 % This finding supports that the mapping approach presented in \cite{from_monoslam_to_explo, los_maps} for textured, indoor spaces.
 
-We designed the earthquake environment to test the limits of our method, making it contain textureless surfaces (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
+We designed the earthquake environment to test the limits of our method, making it contain \fix{textureless surfaces} (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
 As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
 % This is due to the inability of the depth estimation frontend to detect such objects, and could be improved by using dense SLAM frontend (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV in future work.

@@ -181,7 +181,7 @@ MonoSpheres: Large-Scale Monocular SLAM-Based UAV Exploration through Perception
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
   Autonomous exploration of unknown environments is a key capability for mobile robots, but it is largely unsolved for robots equipped with a single monocular camera and no dense range sensors.
-  In this paper, we present a novel approach to monocular vision-based exploration that can \todo{safely} cover large-scale unstructured indoor and outdoor environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
+  In this paper, we present a novel approach to monocular vision-based exploration that can safely cover large-scale unstructured indoor and outdoor environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
   The mapping module solves the problems of sparse depth data, free-space gaps, and large depth uncertainty by oversampling free space in texture-sparse areas and keeping track of obstacle position uncertainty.
   The planning module handles the added free-space uncertainty through rapid replanning and perception-aware heading control.
   We further show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless surfaces are taken into account.
@@ -303,7 +303,7 @@ As a step towards low-cost vision-based UAV autonomy in unknown environments, ou
   % \item A perception-aware mapping method that constructs a sphere-based map for safety-aware navigation using only sparse pointclouds and pose estimates from monocular-inertial SLAM as input,
   %   with the ability to map sufficient free space for flight even in texture-sparse open-space areas.
   % \item A monocular 3D mapping method that builds a reliable map of obstacles and navigable space thanks to tight coupling with sparse monocular-inertial SLAM, 
-  \item A monocular 3D mapping method with perception-coupled modules that significantly increase the reliability of mapped free space and obstacles with unreliable, sparse, motion-based depth data as input.
+  \item A novel monocular 3D mapping method with perception-coupled modules that significantly increase the reliability of mapped free space and obstacles with unreliable, sparse, motion-based depth data as input.
   \item A perception-aware exploration approach, enabled by the proposed mapping method, that achieves large-scale 3D outdoor exploration on a UAV equipped with only a monocular camera and IMU, 
       validated in real-world conditions.
     \item Open-sourced code for the proposed methods, along with example simulation scripts for replicating our results, providing a benchmark for new monocular exploration methods.
@@ -676,6 +676,30 @@ For this reason, we block the sampling of new viewpoints near visited viewpoints
 This stops the UAV from getting stuck repeatedly trying to uncover such surfaces.
 
 
+\section{Experiments}
+\label{sec:experiments}
+In this section, we analyze the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
+The presented implementation of the proposed mapping and exploration methods is currently written in python in two threads.
+\fix{With this implementation, the mapping runs on average at $\SI{5}{\hertz}$ on 
+% a standard CPU.
+an AMD Ryzen 7 4800 CPU.
+The second loop -- frontier and goal viewpoint updates and long-distance path planning -- runs at approx. $\SI{7}{\hertz}$ in the evaluated worlds.
+% A different implementation could speed up the method further, but we leave this for future work.
+This is sufficient for exploration at moderate speeds, but can be slow to react to obstacles at high speeds.
+For this reason, the UAV also checks the predicted trajectory for potential collisions with the input pointclouds at the SLAM's update rate and stops on collision detection.
+% The frontier updates, viewpoint sampling and long-distance planning runs on a separate thread also at approx. $\SI{5}{\hertz}$
+% The most computationally intensive part, the frontier sampling, takes around TODO \%, while the other modules take significantly less time.
+% A full re-implementation in C++ and a different way of computing exploration value than the current sampling approach could speed up the method further, but this is out of the scope of this paper.
+}
+% , but could be further optimized with a parallelized implementation or a submap-based approach.
+% This has shown to be sufficient for safe flight up to $\SI{3}{\meter/\second}$ in the tested environments, but a more optimized implementation could allow even faster navigation.
+% Combined with a collision-checking thread that checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
+% Our implementation also checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
+The UAV used in the experiments was equipped with a monocular global-shutter grayscale fisheye Bluefox camera, and ICM-42688 IMU.
+The MRS UAV system \cite{mrs_uav_system} was used for low-level motion planning, control, and the grid-based path planning for the simulation comparisons.
+For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins}.
+% in the inverse-depth measurement mode.
+
 % ORCHARD IMG%%{
 \begin{figure}[!htb]
 \centering
@@ -722,29 +746,6 @@ This stops the UAV from getting stuck repeatedly trying to uncover such surfaces
 \end{figure}
 % %%}
 
-\section{Experiments}
-\label{sec:experiments}
-In this section, we analyze the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
-The presented implementation of the proposed mapping and exploration methods is currently written in python in two threads.
-\fix{With this implementation, the mapping runs on average at $\SI{5}{\hertz}$ on 
-% a standard CPU.
-an AMD Ryzen 7 4800 CPU.
-The second loop -- frontier and goal viewpoint updates and long-distance path planning -- runs at approx. $\SI{7}{\hertz}$ in the evaluated worlds.
-% A different implementation could speed up the method further, but we leave this for future work.
-This is sufficient for exploration at moderate speeds, but can be slow to react to obstacles at high speeds.
-For this reason, the UAV also checks the predicted trajectory for potential collisions with the input pointclouds at the SLAM's update rate and stops on collision detection.
-% The frontier updates, viewpoint sampling and long-distance planning runs on a separate thread also at approx. $\SI{5}{\hertz}$
-% The most computationally intensive part, the frontier sampling, takes around TODO \%, while the other modules take significantly less time.
-% A full re-implementation in C++ and a different way of computing exploration value than the current sampling approach could speed up the method further, but this is out of the scope of this paper.
-}
-% , but could be further optimized with a parallelized implementation or a submap-based approach.
-% This has shown to be sufficient for safe flight up to $\SI{3}{\meter/\second}$ in the tested environments, but a more optimized implementation could allow even faster navigation.
-% Combined with a collision-checking thread that checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
-% Our implementation also checks the predicted trajectory for potential collisions with local data at a high rate, this is suitable for safe flight.
-The UAV used in the experiments was equipped with a monocular global-shutter grayscale fisheye Bluefox camera, and ICM-42688 IMU.
-The MRS UAV system \cite{mrs_uav_system} was used for low-level motion planning, control, and the grid-based path planning for the simulation comparisons.
-For state estimation and as the source of sparse visual SLAM points, we used OpenVINS \cite{openvins}.
-% in the inverse-depth measurement mode.
 
 \subsection{Real-World UAV Monocular-Inertial Exploration}
 \label{sec:real_exper}
@@ -949,7 +950,7 @@ Videos from these experiments are available in the multimedia materials.
 
 
   \centering
-  \caption{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulated experiments per each world (top) along with the resulting MonoSpheres mapped obstacle points (bottom) colored by height. X marks the starting position.
+  \caption{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulation experiments per each of the 4 world (top) along with the resulting MonoSpheres mapped obstacle points (bottom) colored by height. X marks the starting position.
   }
   \label{fig:exper_fireworld}
 \end{figure*}

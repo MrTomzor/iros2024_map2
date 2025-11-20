@@ -374,15 +374,10 @@ A larger voxel size causes a higher percentage of voxels to be passed by the spa
 % In summary, the existing approaches to monocular exploration either rely on depth neural networks that are not yet reliable enough for safe deployment, or they use sparse monocular SLAM depth in a way that leads to large gaps in free space, prohibiting large-scale exploration.
 
 Based on the findings of the above described works, we decided that monocular depth sensing is so different from dense sensors, that not only the planning, but also the \textit{mapping} should be redesigned to explicitly take into account the specific depth estimation properties.
-Since safety and flexible representation of both large-scale and narrow spaces are our main concerns, we decided that a graph-of-spheres representation \cite{spheregraph, spheremap, bubbleplanner} could be more suitable for representing free space than voxel grids or TSDFs \cite{octomap, voxblox, ufomap}.
+% Since safety and flexible representation of both large-scale and narrow spaces are our main concerns, we decided that a graph-of-spheres representation \cite{spheregraph, spheremap, bubbleplanner} could be more suitable for representing free space than voxel grids or TSDFs \cite{octomap, voxblox, ufomap}.
+Since safety and flexible representation of both large-scale and narrow spaces are our main concerns, we chose to use a graph-of-spheres representation \cite{spheregraph, spheremap, bubbleplanner} as the world model instead of voxel grids \cite{octomap, ufomap} or TSDFs \cite{voxblox} traditionally used in exploration literature .
 In comparison to the existing sphere-based mapping methods however, our proposed approach is the first to build the map \textit{directly} from \textit{sparse} monocular depth data, as the others require a full voxel-based occupancy map to be built with dense sensors to extract the graph of spheres. 
-% Due to the high uncertainty and sparsity of depth estimates, 
-% The graph-of-spheres representation was chosen due to its scalable free-space representation and rapid path-planning capabilities \cite{spheregraph, spheremap, bubbleplanner}. 
-% The graph-of-spheres representation was chosen due to its scalable free-space representation and rapid path-planning capabilities \cite{spheregraph, spheremap, bubbleplanner}. 
-% However, most of the perception-aware mapping concepts introduced in this paper could be adapted to a voxel-based mapping approach as well.
-% In this paper, we present an approach to monocular exploration that works by explicitly taking into account the properties of sparse monocular SLAM in not only the planning, but also the \textit{mapping}.
-% Our system takes advantage of the potential of mapping-planning coupling, while at the same time producing a semi-dense 3D map of free and occupied space.
-% Thanks to the coupling, the approach is able to explore large-scale unstructured environments, including outdoor areas with large open spaces, which has not yet been demonstrated in literature.
+Compared to existing monocular exploration methods overall, our approach achieves exploration at larger scales, both indoor and outdoor, in unstructured 3D environments and without needing a GPU, thanks to the proposed perception-coupled mapping and planning modules.
 
 % PIPELINE IMG%%{
 \begin{figure*}[!ht]

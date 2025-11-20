@@ -68,6 +68,14 @@
   \texorpdfstring{\textcolor{blue}{#1}}{#1}%
 }
 
+% \newcommand{\fix}[1]{\hypersetup{allcolors=black}{\color{black} {#1}}}
+% \newcommand{\cfix}[1]{%
+%   \texorpdfstring{\textcolor{black}{#1}}{#1}%
+% }
+% \DeclareRobustCommand{\sectionfix}[1]{%
+%   \texorpdfstring{\textcolor{black}{#1}}{#1}%
+% }
+
 % \newcommand{\fix}[1]{{\hypersetup{allcolors=black}{\color{black} {#1}}}}
 % \newcommand{\vkcaption}[1]{{\color{blue} {#1}}}
 \newcommand{\todo}[1]{{\hypersetup{allcolors=red}{\color{red} {#1}}}}
@@ -193,10 +201,7 @@
   The planning module handles the added free-space uncertainty through rapid replanning and perception-aware heading control.
   We further show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless surfaces are taken into account.
   We evaluate our approach extensively in diverse real-world and simulated environments, including ablation studies.
-  % To the best of the authors' knowledge, the proposed method is the first to achieve both indoor and outdoor 3D monocular exploration in unstructured environments up to 170x110m in scale. 
   To the best of the authors' knowledge, the proposed method is the first to achieve 3D monocular exploration in real-world unstructured outdoor environments.
-  % TODO - and sthg in simulation
-  % and it consistently covers more area than the state-of-the-art method in various simulated environments.
   We open-source our implementation 
   to support future research.}
 
@@ -855,7 +860,7 @@ Videos from these experiments are available in the multimedia materials.
 
 
   \centering
-  \caption{\cfix{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulation experiments per each of the 4 world (top) along with the resulting MonoSpheres mapped obstacle points (bottom) colored by height. X marks the starting position.}
+  \caption{\cfix{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulation experiments per each of the 4 worlds (top) along with the resulting MonoSpheres mapped obstacle points (bottom) colored by height. X marks the starting position.}
   }
   \label{fig:exper_fireworld}
 \end{figure*}

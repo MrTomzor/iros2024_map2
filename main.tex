@@ -39,7 +39,8 @@
 %\usepackage{amssymb}  % assumes amsmath package installed
 \usepackage{amssymb}
 \usepackage{pdfpages}
-\usepackage{subcaption}
+% \usepackage{subcaption}
+\usepackage[caption=false]{subfig}  % IEEE requires caption=false
 % \captionsetup[subfigure]{labelfont=rm,textfont=rm}
 \usepackage{siunitx}
 % \usepackage[dvipsnames]{xcolor}
@@ -239,36 +240,34 @@ Thus, when classical mapping methods are used with any existing monocular depth 
 
 \begin{figure}[!t]
   \centering
+% Top full-width
+\begin{minipage}{0.995\linewidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] at (0,0) {%
+      \adjincludegraphics[width=\linewidth,
+        trim={{0.0\width} {0.1\height} {0.0\width} {0.1\height}}, clip=true]{fig/sar_mono_dji_2.png}};
+  \end{tikzpicture}
+\end{minipage}
 
-  % ---------- Top: full-width subfigure ----------
-  \subfloat{%
-    \begin{tikzpicture}
-      \node[anchor=south west,inner sep=0] (a) at (0,0) {%
-        \adjincludegraphics[width=0.995\linewidth,
-          trim={{0.0\width} {0.1\height} {0.0\width} {0.1\height}}, clip=true]{fig/sar_mono_dji_2.png}%
-      };
-    \end{tikzpicture}%
-  }
+\vspace{0.2em} % small space between rows
 
-  % ---------- Bottom row: two half-width subfigures ----------
-  \subfloat{%
-    \begin{tikzpicture}
-      \node[anchor=south west,inner sep=0] (a) at (0,0) {%
-        \adjincludegraphics[width=0.49\linewidth,
-          trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B}%
-      };
-    \end{tikzpicture}%
-  }\hfill
-  \subfloat{%
-    \begin{tikzpicture}
-      \node[anchor=south west,inner sep=0] (a) at (0,0) {%
-        \adjincludegraphics[width=0.49\linewidth,
-          trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/mono_sar_cover.png}%
-      };
-    \end{tikzpicture}%
-  }
+% Bottom row: two half-width images
+\begin{minipage}{0.49\linewidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] at (0,0) {%
+      \adjincludegraphics[width=\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B}};
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{0.49\linewidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] at (0,0) {%
+      \adjincludegraphics[width=\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/mono_sar_cover.png}};
+  \end{tikzpicture}
+\end{minipage}
 
-  \caption{Illustration of the proposed approach. The mapping pipeline estimates depth using virtual (blue) and tracked (red) points from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map consisting of free-space spheres and obstacle points (right).}
+  \caption{Illustration of the proposed approach. The mapping pipeline estimates depth using virtual (blue) and tracked (red) points from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map (right) consisting of free-space spheres (green), obstacle points (red) and frontier points (magenta).}
   \label{fig:smap_intro}
 \end{figure}
 % %%}
@@ -387,49 +386,14 @@ In comparison to the existing sphere-based mapping methods however, our proposed
 
 % PIPELINE IMG%%{
 \begin{figure*}[!ht]
-  % \includegraphics[width=1.0\textwidth]{./fig/monospheres_big_diagram_v3.pdf}
-     \begin{subfigure}[b]{0.99\linewidth}
-      \begin{tikzpicture}
-        \centering
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.1\width} {0.00\height} {0.05\width} {0.05\height}}, clip=true]{fig/monospheres_big_diagram_math3.pdf}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.1\width} {0.00\height} {0.05\width} {0.05\height}}, clip=true]{fig/monospheres_big_diagram_bigfinal.pdf}};
-      \end{tikzpicture}
-     \end{subfigure}
-  % \def\subfigwidth{0.24\linewidth}
-  % \centering
-  %    \begin{subfigure}[b]{\subfigwidth}
-  %     \begin{tikzpicture}
-  %       \centering
-  %       \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_968_poly1_A.png}};
-  %       % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_970_poly2_A.png}};
-  %     \end{tikzpicture}
-  %    \end{subfigure}
-  %    \hfill
-  %    \begin{subfigure}[b]{\subfigwidth}
-  %     \begin{tikzpicture}
-  %       \centering
-  %       \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_969_poly1_B.png}};
-  %       % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_971_poly2_B.png}};
-  %     \end{tikzpicture}
-  %    \end{subfigure}
-  %    \hfill
-  %    \begin{subfigure}[b]{\subfigwidth}
-  %     \begin{tikzpicture}
-  %       \centering
-  %       \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_914_right_poly.png}};
-  %     \end{tikzpicture}
-  %    \end{subfigure}
-  %    \hfill
-  %    \begin{subfigure}[b]{\subfigwidth}
-  %     \begin{tikzpicture}
-  %       \centering
-  %       \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/pipeline/Selection_927_right_free2.png}};
-  %     \end{tikzpicture}
-  %    \end{subfigure}
-  %    \hfill
+\centering
+\begin{tikzpicture}
+  \node[anchor=south west,inner sep=0] (a) at (0,0) {
+    \adjincludegraphics[width=0.99\linewidth,
+      trim={{0.1\width} {0.00\height} {0.05\width} {0.05\height}}, clip=true]{fig/monospheres_big_diagram_bigfinal.pdf}};
+\end{tikzpicture}
   \caption{
     Mapping pipeline overview. The OVDE and DBOF modules are illustrated in \autoref{fig:ofs} and \autoref{fig:distbased} respectively.
-    % Low-covariance SLAM points $\mathcal{X}_{in,k}$ and robot pose $\mathbf{p}_k$ at time step $k$ are used to update the map points $\mathcal{X}_{map}$, spheres $\mathcal{S}$ and sphere graph $\mathcal{G}$.
   }
   \label{fig:mapping_pipeline}
   \vspace{-0.5cm}
@@ -471,13 +435,11 @@ It is only used for the update step at the current time and discarded afterwards
 % OFS figure, crop top and down
 \begin{figure}[!h]
   % \includegraphics[width=0.5\textwidth]{fig/monospheres_ofs_v2.pdf}
-     \begin{subfigure}[b]{1\linewidth}
       \begin{tikzpicture}
         \centering
         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.15\height}}, clip=true]{fig/mononspheres_ofs_diagram_wide2.pdf}};
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.15\height}}, clip=true]{fig/mononspheres_ofs_diagram_narrow5.pdf}};
       \end{tikzpicture}
-     \end{subfigure}
   \centering
   \caption{Open-area virtual-depth estimation diagram. The thick green points $\mathbf{x}_{vir, k}$ satisfy the condition defined in \autoref{sec:fake} and are added to the construction of $\mathcal{F}_d$}
   \label{fig:ofs}
@@ -910,346 +872,116 @@ Videos from these experiments are available in the multimedia materials.
 % COMBINED ENDMAPS
 % %%{
 \begin{figure*}[!htb]
-  \def\subfigwidth{0.24\linewidth}
-  \centering
-  % ROW 1
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.03\width} {0.0\height} {0.03\width} {0.0\height}}, clip=true]{fig/Selection_1344_fireworld_bright_gazebo.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_gazebo1.jpg}};
-      \markX[0.15]{1.8}{1.2} 
-      \textbox{a}{Earthquake}
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.08\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/cavegz6.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.08\width} {0.0\height} {0.1\width} {0.0\height}}, clip=true]{fig/cavegz2.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/cavegz5.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.03\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1232.jpg}};
-% Define size of the X marker
-\def\xsize{0.3}
+\def\subfigwidth{0.24\linewidth}
+\centering
 
-% Draw the white X marker at (0.2,0.3)
-% \draw[line width=1.2pt, white]
-%   (0.2-\xsize,0.3-\xsize) -- (0.2+\xsize,0.3+\xsize);
-% \draw[line width=1.2pt, white]
-%   (0.2-\xsize,0.3+\xsize) -- (0.2+\xsize,0.3-\xsize);
+% ---------- ROW 1 ----------
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.03\width} {0.0\height} {0.03\width} {0.0\height}}, clip=true]{fig/Selection_1344_fireworld_bright_gazebo.png}};
+    \markX[0.15]{1.8}{1.2}
+    \textbox{a}{Earthquake}
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.08\width} {0.0\height} {0.1\width} {0.0\height}}, clip=true]{fig/cavegz2.png}};
+    \markX[0.15]{2.6}{2.2}
+    \textbox{a}{Cave}
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.05\height}}, clip=true]{fig/Selection_1344_rooftops_gazebo2bright.png}};
+    \markX[0.15]{1.9}{1.7}
+    \textbox{a}{Rooftops}
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/sparsebright2.png}};
+    \markX[0.15]{0.95}{1.2}
+    \textbox{a}{Sparse}
+  \end{tikzpicture}
+\end{minipage}
 
-% \draw[line width=0.4pt, black]
-%   (0.2-\xsize,0.3-\xsize) -- (0.2+\xsize,0.3+\xsize);
-% \draw[line width=0.4pt, black]
-      \markX[0.15]{2.6}{2.2} 
-
-      \textbox{a}{Cave}
-%   (0.2-\xsize,0.3+\xsize) -- (0.2+\xsize,0.3-\xsize);
-
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.05\height}}, clip=true]{fig/Selection_1344_rooftops_gazebo2bright.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/Selection_1343_rooftops_gazebo2.png}};
-      \markX[0.15]{1.9}{1.7} 
-      \textbox{a}{Rooftops}
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/sparsebright2.png}};
-      \markX[0.15]{0.95}{1.2} 
-
-      \textbox{a}{Sparse}
-      \end{tikzpicture}
-     \end{subfigure}
-
-    % ROW 2
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % RED BLUE BLACK GREEN
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-11_urban_blue_black_red.png}};
-        % HEIGHTMAP
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-24_urban_heightmap_05squares_topdown.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-24_urban_heightmap_05squares_topdown.png}};
-        % THICK HEIGHTMAP
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-45_urban_heightmap_fallscale2_1m_square_06path.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-43_urban_fall_heightmap_scale_1m_squares.png}};
-      \markX[0.15]{1.4}{1.5} 
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % RED BLUE BLACK GREEN
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-50_cave_2600_freespace.png}};
-        % HEIGHTMAP
-        \node[anchor=south west,inner sep=0] (rooftops_map) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_16-28_cave_heightmapscale4.png}};
-      \markX[0.15]{3.2}{2.6} 
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % RED BLUE BLACK GREEN
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-23_16-12_rooftops_blackbluered.png}};
-        % HEIGHTMAP
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-37_rooftops_heightmap_pts_topdown.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-40_rooftops_topdown_betterheightmap.png}};
-        % THICK HEIGHTMAP
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_16-39_rooftops_1m_squares_heightmap_06line.png}};
-
-        % \begin{scope}[x={(rooftops_map.south east)}, y={(rooftops_map.north west)}]
-
-        %     \node[fill=none, rounded corners=2pt, font=\bfseries, text=black]
-        %         at (0.1,0.1) {start};
-        %     \draw[black, very thick, -] (0.1,0.15) -- (0.4,0.35);
-        % \end{scope}
-
-        \markX[0.15]{1.7}{1.6} 
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % RED BLUE BLACK GREEN
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-23_16-03_sparse_trajs3_thinner.png}};
-        % HEIGHTMAP
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-44_sparse_heightmap_05squares.png}};
-        \node[anchor=south west,inner sep=0] (sparse_map) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-45_sparse_range2_05squares.png}};
-        % THICK HEIGHTMAP
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/monoexplo_bigmaps/2025-10-24_15-45_sparse_range2_1msquares.png}};
-
-        % START
-        % Define a coordinate system matching the image
-        \begin{scope}[x={(sparse_map.south east)}, y={(sparse_map.north west)}]
-
-            % \node[fill=none, rounded corners=2pt, font=\bfseries, text=black]
-            %     at (0.1,0.1) {start};
-            % \draw[black, very thick, -] (0.1,0.15) -- (0.22,0.47);
-        \end{scope}
-        \markX[0.15]{0.95}{1.8} 
-      \end{tikzpicture}
-     \end{subfigure}
+% ---------- ROW 2 ----------
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-24_urban_heightmap_05squares_topdown.png}};
+    \markX[0.15]{1.4}{1.5}
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_16-28_cave_heightmapscale4.png}};
+    \markX[0.15]{3.2}{2.6}
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-40_rooftops_topdown_betterheightmap.png}};
+    \markX[0.15]{1.7}{1.6}
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{monoexplo_bigmaps/2025-10-24_15-45_sparse_range2_05squares.png}};
+    \markX[0.15]{0.95}{1.8}
+  \end{tikzpicture}
+\end{minipage}
 
 
   \centering
-  % \caption{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulated experiments per each world (top row) along with the resulting MonoSpheres maps (bottom row). The map points are colored by height for clarity.
   \caption{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulated experiments per each world (top) along with the resulting MonoSpheres mapped obstacle points (bottom) colored by height. X marks the starting position.
-  % From left to right: Earthquake, Cave, Rooftops, Sparse.
   }
   \label{fig:exper_fireworld}
 \end{figure*}
 % %%}
 
-% CAVEWORLD ENDMAPS
-% %%{
-% \begin{figure}[htb]
-%   \def\subfigwidth{0.49\linewidth}
-%   \centering
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/comparsion_cave_700.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1232.jpg}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/monoexplo_cave_astar_final.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/monoexplo_cave_mono_final2.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%   \centering
-%   \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the cave world (top right) exploration experiments, and the exploration progress of all runs (top left). Green = MonoSpheres, Blue = Grid-based. 
-%   }
-%   \label{fig:exper_cave}
-% \end{figure}
-% %%}
-
-% FIREWORLD ENDMAPS V1
-% %%{
-% \begin{figure}[htb]
-%   \def\subfigwidth{0.49\linewidth}
-%   \centering
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/comparsion_fireworld_700.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/fireworld_gazebo1.jpg}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_astar_final.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/fireworld_monospheres_final.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%   \centering
-%   \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the urban world (top right) exploration experiments, and the exploration progress of all runs (top left). Green = MonoSpheres, Blue = Grid-based.
-%   }
-%   \label{fig:exper_fireworld}
-% \end{figure}
-% %%}
-
-% CAVEWORLD ENDMAPS
-% %%{
-% \begin{figure}[htb]
-%   \def\subfigwidth{0.49\linewidth}
-%   \centering
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/comparsion_cave_700.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/Selection_1232.jpg}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/monoexplo_cave_astar_final.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0\height}}, clip=true]{fig/monoexplo_cave_mono_final2.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%   \centering
-%   \caption{Best-result maps of the Grid-based exploration approach (bottom left) and MonoSpheres (bottom right) in the cave world (top right) exploration experiments, and the exploration progress of all runs (top left). Green = MonoSpheres, Blue = Grid-based. 
-%   }
-%   \label{fig:exper_cave}
-% \end{figure}
-% %%}
-
-% ABLATION GRAPH ONLY
-% \begin{figure}[htb]
-%   \def\subfigwidth{0.95\linewidth}
-%   \centering
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/ab_smolsquare_bubblegumgreen.png}};
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/abl_graph_superwide.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%   \centering
-%   \caption{ablation test results on the urban world
-%   }
-%   \label{fig:exper_fireworld}
-% \end{figure}
 
 % ABLATION GRAPH AND TRAJS
 \begin{figure}[htb]
-  \def\subfigwidth{0.49\linewidth}
-  \centering
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_graph_markers_tall.pdf}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_graph_markers_verytall_raster.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/abl_graph_noframe_smolsquare.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/abl_graph_fixed_snapped.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/squareholder.png}};
-      \end{tikzpicture}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{\subfigwidth}
-      \begin{tikzpicture}
-        \centering
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/ablations1.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_squre_angled.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_ortho.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.1\width} {0.1\height} {0.1\width} {0.1\height}}, clip=true]{fig/abl_ortho_nogrid.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.15\width} {0.0\height} {0.15\width} {0.0\height}}, clip=true]{fig/2025-10-23_13-49_ab_wide_all.png}};
-        \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.15\width} {0.0\height} {0.15\width} {0.0\height}}, clip=true]{fig/2025-10-23_13-49_ab_wide_all.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.1\width} {0.1\height} {0.1\width} {0.1\height}}, clip=true]{fig/2025-10-23_13-47_abl_all_topdown_nogrid.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.1\width} {0.1\height} {0.1\width} {0.1\height}}, clip=true]{fig/abl_ortho_heightmap.png}};
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_nogrid1.png}};
-        %2nd graph
-        % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/ab_smolsquare_bubblegumgreen.png}};
-      \end{tikzpicture}
-     \end{subfigure}
+\def\subfigwidth{0.49\linewidth}
+\centering
+
+% ---------- Left image ----------
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.0\width} {0.0\height} {0.07\width} {0.0\height}}, clip=true]{fig/abl_graph_fixed_snapped.png}};
+  \end{tikzpicture}
+\end{minipage}\hfill
+% ---------- Right image ----------
+\begin{minipage}{\subfigwidth}
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (a) at (0,0) {
+      \adjincludegraphics[width=1.0\linewidth,
+        trim={{0.15\width} {0.0\height} {0.15\width} {0.0\height}}, clip=true]{fig/2025-10-23_13-49_ab_wide_all.png}};
+  \end{tikzpicture}
+\end{minipage}
   \centering
   \caption{Ablation test results on the earthquake world. Left: visualization of exploration progress, best runs per method are thick and a marker signifies a crash or mission completion. Right: best-run trajectories for each method.
   }
   \label{fig:ablations}
 \end{figure}
-
-%%{ ABLATION WIDE
-% \begin{figure}[htb]
-%   \def\subfigwidth{0.9\linewidth}
-%   \centering
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_progress_wide1.png}};
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_graph_superwide.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{\subfigwidth}
-%       \begin{tikzpicture}
-%         \centering
-%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/ablations1.png}};
-%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_wide2.png}};
-%         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/2025-10-23_13-49_ab_wide_all.png}};
-%         % \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.0\height} {0.0\width} {0.0\height}}, clip=true]{fig/abl_trajs_squre_angled.png}};
-%       \end{tikzpicture}
-%      \end{subfigure}
-%   \centering
-%   \caption{Ablation test results on the Urban world
-%   }
-%   \label{fig:exper_fireworld}
-% \end{figure}
-%%}
 
 % ABL TABLE
 % %%{
@@ -1276,6 +1008,7 @@ Videos from these experiments are available in the multimedia materials.
 % SIM TABLE
 % %%{
 \begin{table}[h!]
+  \caption{Quantitative results showing the explored area in the simulation experiments described in \autoref{sec:sim_exper}. }
 \centering
   \begin{tabular}{m{18mm} m{12mm} m{10mm} m{10mm} m{10mm}} 
  \hline
@@ -1301,7 +1034,6 @@ Videos from these experiments are available in the multimedia materials.
     Grid-Based & Sparse  & 843& 867& 3413 \\
  \hline
 \end{tabular}
-  \caption{Quantitative results showing the explored area in the simulation experiments described in \autoref{sec:sim_exper}. }
 \label{table:sim_exper}
 \end{table}
 % %%}

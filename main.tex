@@ -179,10 +179,10 @@ MonoSpheres: Large-Scale Monocular SLAM-Based UAV Exploration through Perception
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
   Autonomous exploration of unknown environments is a key capability for mobile robots, but it is largely unsolved for robots equipped with a single monocular camera and no dense range sensors.
-  In this paper, we present a novel approach to monocular vision-based exploration that can safely cover large-scale unstructured indoor and outdoor environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
+  In this paper, we present a novel approach to monocular vision-based exploration that can \todo{safely} cover large-scale unstructured indoor and outdoor environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
   The mapping module solves the problems of sparse depth data, free-space gaps, and large depth uncertainty by oversampling free space in texture-sparse areas and keeping track of obstacle position uncertainty.
   The planning module handles the added free-space uncertainty through rapid replanning and perception-aware heading control.
-  We further show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless areas are taken into account.
+  We further show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless surfaces are taken into account.
   We evaluate our approach extensively in various real-world and simulated environments and ablation studies.
   % To the best of the authors' knowledge, the proposed method is the first to achieve both indoor and outdoor 3D monocular exploration in unstructured environments up to 170x110m in scale. 
   To the best of the authors' knowledge, the proposed method is the first to achieve 3D monocular exploration in real-world unstructured outdoor environments.
@@ -324,7 +324,7 @@ In the case of robots equipped with dense depth sensors (most commonly LiDAR, RG
 These works implicitly assume that from any given viewpoint, the sensor will uncover all obstacles up to its sensing range, and that non-detection of obstacles means that free-space can be initialized in the given direction  \cite{occupancy_moravec, octomap, voxblox, ufomap}.
 
 However, this assumption does not apply for monocular depth sensing.
-Motion-based depth sensing, as used in monocular SLAM algorithms, can only estimate depth for textured areas and requires sufficient parallax to do so.
+Motion-based depth sensing, as used in monocular SLAM algorithms, can only estimate depth for textured surfaces and requires sufficient parallax to do so.
 Single-image learning-based monocular depth estimation methods \cite{deep_mono_depth_2021, monodepth_survey_big_2024} can provide dense depth estimates, but they are not yet reliable enough for safe navigation in general unknown environments \cite{simon2023mononav, mono_airsim_nav_2025}.
 % However, this assumption is not applicable when using a monocular camera, as there is currently no method that can reliably provide dense and accurate depth measurements in all real-world environments.
 % However, monocular cameras do not provide direct range measurements and there is currently no method that can reliably provide dense and accurate depth measurements in all real-world environments.
@@ -503,7 +503,7 @@ However, we discard points that would project into the original Delaunay triangu
 Free space estimated in this manner also cannot erase existing obstacle points in the map.
 
 This approach allows flexibly adding more free space in open areas while using the SLAM points for estimating free space near obstacles.
-Of course, the assumption does not hold close to obstacles that are not detectable by the sparse visual SLAM frontend (e.g. textureless objects or thin wires). 
+Of course, the assumption does not hold close to obstacles that are not detectable by the sparse visual SLAM frontend (e.g. big textureless objects or thin wires). 
 We discuss potential solutions to this in \autoref{sec:discussion}.
 % However, this could be resolved by using a dense SLAM frontend (at a higher computational cost), or by adding low-cost ultrasonic sensors to detect close thin obstacles.
 % However, this could be resolved by adding low-cost ultrasonic sensors to detect close thin obstacles.
@@ -583,7 +583,8 @@ As the last part of this step, we delete all spheres with $r_{k+1} < r_{min}$, w
 % , usually slightly lower than the UAV's minimal allowed distance to obstacles. 
 
 % where TODO.
-To introduce new spheres into the map, we sample a fixed number of points inside $\mathcal{P}_f$ at random distances between the camera and the depth mesh $\mathcal{F}_d$.
+% To introduce new spheres into the map, we sample a fixed number of points inside $\mathcal{P}_f$ at random distances between the camera and the depth mesh $\mathcal{F}_d$.
+\fix{To introduce new spheres into the map, we sample a fixed number of points inside $\mathcal{P}_f$ in uniformly sampled directions at uniformly sampled distances between the camera and the depth mesh $\mathcal{F}_d$.}
 % \todo{This is a simplistic approach, and could be improved for faster flight, for example by sampling along the predicted trajectory of the UAV at high speeds.}
 A potential new sphere's radius is determined in the same way as for the old spheres in the previous step in Eq. \ref{eq:update} with $r_k = 0$.
 If the potential radius is larger than $r_{min}$, the sphere is added to the map.
@@ -1367,7 +1368,7 @@ In all of the outdoor worlds, the classical mapping approach with random explora
 % With a more sophisticated viewpoint selection approach, the grid-based approach could explore as much area in the end as MonoSpheres, supporting the viability of this mapping approach in indoor, textured areas claimed in \cite{from_monoslam_to_explo, los_maps}.
 % This finding supports that the mapping approach presented in \cite{from_monoslam_to_explo, los_maps} for textured, indoor spaces.
 
-We designed the earthquake environment to test the limits of our method, making it contain textureless areas (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
+We designed the earthquake environment to test the limits of our method, making it contain textureless surfaces (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
 As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
 % This is due to the inability of the depth estimation frontend to detect such objects, and could be improved by using dense SLAM frontend (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV in future work.

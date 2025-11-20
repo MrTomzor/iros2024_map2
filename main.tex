@@ -60,7 +60,11 @@
 \usepackage{cite}
 
 % REVISIONS
-\newcommand{\fix}[1]{{\hypersetup{allcolors=blue}{\color{blue} {#1}}}}
+\newcommand{\fix}[1]{\hypersetup{allcolors=blue}{\color{blue} {#1}}}
+\newcommand{\cfix}[1]{%
+  \texorpdfstring{\textcolor{blue}{#1}}{#1}%
+}
+
 % \newcommand{\fix}[1]{{\hypersetup{allcolors=black}{\color{black} {#1}}}}
 % \newcommand{\vkcaption}[1]{{\color{blue} {#1}}}
 \newcommand{\todo}[1]{{\hypersetup{allcolors=red}{\color{red} {#1}}}}
@@ -251,7 +255,7 @@ Thus, when classical mapping methods are used with any existing monocular depth 
   \end{tikzpicture}
 \end{minipage}
 
-  \caption{Illustration of the proposed approach. The mapping pipeline \fix{estimates depth using virtual (blue) and tracked (red) points} from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map (right) consisting of free-space spheres (green), obstacle points (red) \fix{and frontier points (magenta).}}
+  \caption{Illustration of the proposed approach. The mapping pipeline \cfix{estimates depth using virtual (blue) and tracked (red) points} from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map (right) consisting of free-space spheres (green), obstacle points (red) \cfix{and frontier points (magenta).}}
   \label{fig:smap_intro}
 \end{figure}
 % %%}
@@ -328,7 +332,7 @@ Compared to existing monocular exploration methods overall, our approach achieve
       trim={{0.1\width} {0.00\height} {0.05\width} {0.05\height}}, clip=true]{fig/monospheres_big_diagram_bigfinal.pdf}};
 \end{tikzpicture}
   \caption{
-    Mapping pipeline overview. The OVDE and DBOF modules are illustrated in \autoref{fig:ofs} and \autoref{fig:distbased} respectively.
+    \cfix{Mapping pipeline overview. The OVDE and DBOF modules are illustrated in \autoref{fig:ofs} and \autoref{fig:distbased} respectively.}
   }
   \label{fig:mapping_pipeline}
   \vspace{-0.5cm}
@@ -368,7 +372,7 @@ It is only used for the update step at the current time and discarded afterwards
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.15\height}}, clip=true]{fig/mononspheres_ofs_diagram_narrow5.pdf}};
       \end{tikzpicture}
   \centering
-  \caption{Open-area virtual-depth estimation diagram. The thick green points $\mathbf{x}_{vir, k}$ satisfy the condition defined in \autoref{sec:fake} and are added to the construction of $\mathcal{F}_d$}
+  \caption{\cfix{Open-area virtual-depth estimation diagram. The thick green points $\mathbf{x}_{vir, k}$ satisfy the condition defined in \autoref{sec:fake} and are added to the construction of $\mathcal{F}_d$}}
   \label{fig:ofs}
 \end{figure}
 
@@ -403,10 +407,10 @@ We discuss potential solutions to this in \autoref{sec:discussion}.
   \includegraphics[width=8.5cm]{fig/distbased9.pdf}
   \centering
   \caption{Top-down illustration of sphere sampling and obstacle point management: 
-  The visible free-space polyhedron $\mathcal{P}_f^{t_2}$ is created using the \fix{low-covariance SLAM points tracked at $t_2$} (black crosses) and the camera's \fix{pose} $\mathbf{p}_{cam}^{t_2}$.
-  The size of a point $\mathbf{x}$ \fix{corresponds} to the distance $d_{\mathbf{x}}$ that it was measured from.
-  \fix{Since our method prioritizes closer measurements (of obstacles and lack thereof), only the (dashed red) point seen far away from the camera at a previous time $t_1$, which now lies in $\mathcal{P}_f^{t_2}$ very close to the camera, will be deleted as noise.}
-  New spheres are inscribed inside $\mathcal{P}_f^{t_2}$, but their radii are also bound by the protected points (solid red) $\mathcal{X}_p$, which \fix{were added to the map at $t_1$ and not deleted at $t_2$ even though they lie in $\mathcal{P}_f^{t_2}$.
+  The visible free-space polyhedron $\mathcal{P}_f^{t_2}$ is created using the \cfix{low-covariance SLAM points tracked at $t_2$} (black crosses) and the camera's \cfix{pose} $\mathbf{p}_{cam}^{t_2}$.
+  The size of a point $\mathbf{x}$ \cfix{corresponds} to the distance $d_{\mathbf{x}}$ that it was measured from.
+  \cfix{Since our method prioritizes closer measurements (of obstacles and lack thereof), only the (dashed red) point seen far away from the camera at a previous time $t_1$, which now lies in $\mathcal{P}_f^{t_2}$ very close to the camera, will be deleted as noise.}
+  New spheres are inscribed inside $\mathcal{P}_f^{t_2}$, but their radii are also bound by the protected points (solid red) $\mathcal{X}_p$, which \cfix{were added to the map at $t_1$ and not deleted at $t_2$ even though they lie in $\mathcal{P}_f^{t_2}$.
   The (dashed black) two points observed far from the camera at $t_2$ are not added to the map, as there are more precisely localized (red) points nearby.} }
   \label{fig:distbased}
 \end{figure}
@@ -526,7 +530,7 @@ These frontier points are used to generate exploration viewpoints such that at l
   }%
      \hfill
   \caption{
-    \fix{Top-down illustration of the exploration approach.
+    \cfix{Top-down illustration of the exploration approach.
     In (a), the UAV navigates to one of the sampled viewpoints (yellow) aimed at a feature-sparse wall.
     This does not uncover any frontiers (magenta), so to stop returning to this or nearby viewpoints, the viewpoint is blocked (black).
     In both (a) and (b), the UAV flies facing forward and aligns itself with the viewpoint's direction when nearing it (green poses).
@@ -637,7 +641,7 @@ For state estimation and as the source of sparse visual SLAM points, we used Ope
   \end{tikzpicture}
   
   \caption{
-    \fix{The 4min orchard exploration experiment. Right: explored map (approx. 40x30m wide), the UAV's trajectory (small black arrows) and trees (circled blue).}
+    \cfix{The 4min orchard exploration experiment. Right: explored map (approx. 40x30m wide), the UAV's trajectory (small black arrows) and trees (circled blue).}
   }
   \label{fig:orchard}
 \end{figure}
@@ -847,11 +851,9 @@ Videos from these experiments are available in the multimedia materials.
 
 
   \centering
-  \caption{\fix{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulation experiments per each of the 4 world (top) along with the resulting MonoSpheres mapped obstacle points (bottom) colored by height. X marks the starting position.}
+  \caption{\cfix{Trajectories of the best MonoSpheres (black) and Grid-Based explorer (blue) simulation experiments per each of the 4 world (top) along with the resulting MonoSpheres mapped obstacle points (bottom) colored by height. X marks the starting position.}
   }
   \label{fig:exper_fireworld}
-
-  \vspace{-3mm}
 \end{figure*}
 % %%}
 
@@ -878,10 +880,9 @@ Videos from these experiments are available in the multimedia materials.
   \end{tikzpicture}
 \end{minipage}
   \centering
-  \caption{\fix{Ablation test results on the earthquake world. Left: visualization of exploration progress, best runs per method are thick and a marker signifies a crash or mission completion. Right: best-run trajectories for each method.}
+  \caption{\cfix{Ablation test results on the earthquake world. Left: visualization of exploration progress, best runs per method are thick and a marker signifies a crash or mission completion. Right: best-run trajectories for each method.}
   }
   \label{fig:ablations}
-  \vspace{-5mm}
 \end{figure}
 
 % ABL TABLE
@@ -909,7 +910,7 @@ Videos from these experiments are available in the multimedia materials.
 % SIM TABLE
 % %%{
 \begin{table}[h!]
-  \caption{\fix{Quantitative results showing the explored area in the simulation experiments described in \autoref{sec:sim_exper}.} }
+  \caption{\cfix{Quantitative results showing the explored area in the simulation experiments described in \autoref{sec:sim_exper}.} }
 \centering
   \begin{tabular}{m{18mm} m{12mm} m{10mm} m{10mm} m{10mm}} 
  \hline
@@ -969,7 +970,6 @@ The experiments were conducted in the Gazebo simulator \cite{gazebo} with the sa
 \fix{Exploration goal generation was constrained by a 3D bounding box in each outdoor world for both methods.}
 
 \fix{\subsection{Simulation Results Discussion}}
-\label{sec:discussion}
 \fix{
 The main result of the simulation experiments is that our approach is capable of exploring many different topologies of environments -- sparse, dense, indoor, outdoor and environments where flight over obstacles in wide open spaces is required.
 As expected based on the findings of \cite{from_monoslam_to_explo, los_maps}, the classical mapping approach was not able to map free space in open-space areas.
@@ -979,6 +979,8 @@ We designed the earthquake environment to test the limits of our method, making 
 As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
 This is due to the inability of the depth estimation frontend to detect such objects, and could be improved by using dense SLAM frontend (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV in future work.}
+\label{sec:discussion}
+
 
 \fix{\subsection{Ablation Experiments}
 \label{sec:ablations}

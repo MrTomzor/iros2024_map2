@@ -60,21 +60,21 @@
 \usepackage{cite}
 
 % REVISIONS
-\newcommand{\fix}[1]{\hypersetup{allcolors=blue}{\color{blue} {#1}}}
-\newcommand{\cfix}[1]{%
-  \texorpdfstring{\textcolor{blue}{#1}}{#1}%
-}
-\DeclareRobustCommand{\sectionfix}[1]{%
-  \texorpdfstring{\textcolor{blue}{#1}}{#1}%
-}
-
-% \newcommand{\fix}[1]{\hypersetup{allcolors=black}{\color{black} {#1}}}
+% \newcommand{\fix}[1]{\hypersetup{allcolors=blue}{\color{blue} {#1}}}
 % \newcommand{\cfix}[1]{%
-%   \texorpdfstring{\textcolor{black}{#1}}{#1}%
+%   \texorpdfstring{\textcolor{blue}{#1}}{#1}%
 % }
 % \DeclareRobustCommand{\sectionfix}[1]{%
-%   \texorpdfstring{\textcolor{black}{#1}}{#1}%
+%   \texorpdfstring{\textcolor{blue}{#1}}{#1}%
 % }
+
+\newcommand{\fix}[1]{\hypersetup{allcolors=black}{\color{black} {#1}}}
+\newcommand{\cfix}[1]{%
+  \texorpdfstring{\textcolor{black}{#1}}{#1}%
+}
+\DeclareRobustCommand{\sectionfix}[1]{%
+  \texorpdfstring{\textcolor{black}{#1}}{#1}%
+}
 
 % \newcommand{\fix}[1]{{\hypersetup{allcolors=black}{\color{black} {#1}}}}
 % \newcommand{\vkcaption}[1]{{\color{blue} {#1}}}
@@ -173,10 +173,10 @@
 % %         {\tt\small b.d.researcher@ieee.org}}%
 % }
 \author{
-  % Tom\'{a}\v{s} Musil$^{\orcidicon{0000-0002-9421-6544}}$, 
-  % Mat\v{e}j Petrl\'{i}k$^{\orcidicon{0000-0002-5337-9558}}$,
-  % Martin Saska$^{\orcidicon{0000-0001-7106-3816}}$%
-  Anonymous Authors
+  Tom\'{a}\v{s} Musil$^{\orcidicon{0000-0002-9421-6544}}$, 
+  Mat\v{e}j Petrl\'{i}k$^{\orcidicon{0000-0002-5337-9558}}$,
+  Martin Saska$^{\orcidicon{0000-0001-7106-3816}}$%
+  % Anonymous Authors
   % \thanks{%
   %   Authors are with the Department of Cybernetics, Faculty of Electrical Engineering, Czech Technical University in Prague, 166 36 Prague 6, {\tt\footnotesize\{\href{mailto:musilto8@fel.cvut.cz}{musilto8}|\href{mailto:matej.petrlik@fel.cvut.cz}{matej.petrlik}|\href{mailto:martin.saska@fel.cvut.cz}{martin.saska}\}@fel.cvut.cz}
 % }
@@ -205,8 +205,8 @@
   We open-source our implementation 
   to support future research.}
 
-Code--- %\href{
-In attached multimedia materials
+Code--- %\url{}
+  \href{https://github.com/ctu-mrs/monospheres}{https://github.com/ctu-mrs/monospheres}
 
 \end{abstract}
 

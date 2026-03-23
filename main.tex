@@ -330,7 +330,7 @@ They work around the gap issue by setting the map voxel size to be relatively la
 A larger voxel size causes a higher percentage of voxels to be passed by the sparse rays towards measured points, reducing the gaps, but can cause narrow passages to be blocked in the map if they are not perfectly aligned with the voxel grid.
 
 Based on the findings of the above described works, we decided that monocular depth sensing is so different from dense sensors, that not only the planning, but also the \textit{mapping} should be redesigned to explicitly take into account the specific depth estimation properties.
-Since safety and scalable representation of both large-scale and narrow spaces are our main concerns, we chose to use a graph-of-spheres representation \cite{spheregraph, spheremap, bubbleplanner} as the world model instead of voxel grids \cite{octomap, ufomap} or TSDFs \cite{voxblox} traditionally used in exploration literature .
+Since safety and scalable representation of both large-scale and narrow spaces are our main concerns, we chose to use a graph-of-spheres representation \cite{spheregraph, spheremap, bubbleplanner} as the world model instead of voxel grids \cite{octomap, ufomap} or TSDFs \cite{voxblox} traditionally used in exploration literature.
 In comparison to the existing sphere-based mapping methods however, our proposed approach is the first to build the map \textit{directly} from \textit{sparse} monocular depth data, as the others require a full voxel-based occupancy map to be built with dense sensors to extract the graph of spheres. 
 Compared to existing monocular exploration methods overall, \fix{MonoSpheres} achieves exploration at larger scales, both indoor and outdoor, in unstructured 3D environments and without needing a GPU, thanks to the proposed perception-coupled mapping and planning modules.
 }
@@ -384,7 +384,7 @@ It is only used for the update step at the current time and discarded afterwards
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.15\height}}, clip=true]{fig/mononspheres_ofs_diagram_narrow5.pdf}};
       \end{tikzpicture}
   \centering
-  \caption{{Open-area virtual-depth estimation diagram. The thick green points $\mathbf{x}_{vir, k}$ satisfy the condition defined in \autoref{sec:fake} and are added to the construction of $\mathcal{F}_d$}}
+  \caption{{Open-area virtual-depth estimation diagram. The thick green points $\mathbf{x}_{vir, k}$ satisfy the condition defined in \autoref{sec:fake} and are added to the construction of $\mathcal{F}_d$.}}
   \label{fig:ofs}
 \end{figure}
 
@@ -962,8 +962,8 @@ Videos from these experiments are available in the multimedia materials.
 As the previously published monocular exploration methods do not have code available (with the exception of \cite{simon2023mononav}, which, however, is not ROS-compatible as of writing this paper), we prepared a simple grid-based mapping and exploration pipeline for comparison with MonoSpheres.
 This reference method uses the same mapping approach as \cite{from_monoslam_to_explo, los_maps} (i.e. initializing free space between the camera and the visual SLAM points that have a low position covariance). 
 {In the following text, we show that it is the usage of this classical mapping method that limits exploration with sparse depth data in these previous works.
-To explore, the method periodically samples free-space points uniformly in a 40x40x10 \SI{}{\meter} area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid with the same minimum distance from obstacles and uknown space as the MonoSpheres method (\SI{1.5}{\meter} in these experiments).
-The robot then follows these paths with the camera pointing forward and the planner replans at \SI{5}{\hertz} to handle measurement inacurracies.}
+To explore, the method periodically samples free-space points uniformly in a 40x40x10 \SI{}{\meter} area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid with the same minimum distance from obstacles and unknown space as the MonoSpheres method (\SI{1.5}{\meter} in these experiments).
+The robot then follows these paths with the camera pointing forward and the planner replans at \SI{5}{\hertz} to handle measurement inaccuracies.}
 We use OctoMap \cite{octomap} for the grid-based mapping with a \SI{0.5}{\meter} cell size.
 This value was chosen because smaller cell sizes caused the robot to not find any safe paths due to the free-space gaps documented in \cite{from_monoslam_to_explo} and larger cell sizes blocked exploration of narrow areas. 
 
@@ -1012,7 +1012,7 @@ As expected, this has led to collisions in both MonoSpheres and the grid-based m
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
 This could be solved in future work by integrating low-cost but noisy short-range ultrasonic sensors into the mapping pipeline to act as a bumper, 
 % or by training a lightweight visual network specifically for detecting such objects (without requiring full precise depth maps, to keep compute low).
-or by using dense a SLAM frontend (at the cost of computational complexity).
+or by using a dense SLAM frontend (at the cost of computational complexity).
 % The detection of such obstacles could also be improved upon in future work by integrating measurements from low-cost but noisy ultrasound , or by using a dense SLAM frontend (at the cost of computational complexity).
 Additionally, the scalability of MonoSpheres could be further improved by rewriting the implementation to be more parallelized and submap-based.
 % , although now it is sufficient for exploration of areas of the size of several urban blocks, as shown in our experiments.
@@ -1058,7 +1058,7 @@ Compared to the existing approaches to 3D monocular exploration, which have so f
 
 % \section*{ACKNOWLEDGMENT}
 
-% The preferred spelling of the word ÒacknowledgmentÓ in America is without an ÒeÓ after the ÒgÓ. Avoid the stilted expression, ÒOne of us (R. B. G.) thanks . . .Ó  Instead, try ÒR. B. G. thanksÓ. Put sponsor acknowledgments in the unnumbered footnote on the first page.
+% The preferred spelling of the word ï¿½acknowledgmentï¿½ in America is without an ï¿½eï¿½ after the ï¿½gï¿½. Avoid the stilted expression, ï¿½One of us (R. B. G.) thanks . . .ï¿½  Instead, try ï¿½R. B. G. thanksï¿½. Put sponsor acknowledgments in the unnumbered footnote on the first page.
 
 
 
@@ -1081,26 +1081,26 @@ Compared to the existing approaches to 3D monocular exploration, which have so f
 
 % \begin{thebibliography}{99}
 
-% \bibitem{c1} G. O. Young, ÒSynthetic structure of industrial plastics (Book style with paper title and editor),Ó 	in Plastics, 2nd ed. vol. 3, J. Peters, Ed.  New York: McGraw-Hill, 1964, pp. 15Ð64.
-% \bibitem{c2} W.-K. Chen, Linear Networks and Systems (Book style).	Belmont, CA: Wadsworth, 1993, pp. 123Ð135.
+% \bibitem{c1} G. O. Young, ï¿½Synthetic structure of industrial plastics (Book style with paper title and editor),ï¿½ 	in Plastics, 2nd ed. vol. 3, J. Peters, Ed.  New York: McGraw-Hill, 1964, pp. 15ï¿½64.
+% \bibitem{c2} W.-K. Chen, Linear Networks and Systems (Book style).	Belmont, CA: Wadsworth, 1993, pp. 123ï¿½135.
 % \bibitem{c3} H. Poor, An Introduction to Signal Detection and Estimation.   New York: Springer-Verlag, 1985, ch. 4.
-% \bibitem{c4} B. Smith, ÒAn approach to graphs of linear forms (Unpublished work style),Ó unpublished.
-% \bibitem{c5} E. H. Miller, ÒA note on reflector arrays (Periodical styleÑAccepted for publication),Ó IEEE Trans. Antennas Propagat., to be publised.
-% \bibitem{c6} J. Wang, ÒFundamentals of erbium-doped fiber amplifiers arrays (Periodical styleÑSubmitted for publication),Ó IEEE J. Quantum Electron., submitted for publication.
+% \bibitem{c4} B. Smith, ï¿½An approach to graphs of linear forms (Unpublished work style),ï¿½ unpublished.
+% \bibitem{c5} E. H. Miller, ï¿½A note on reflector arrays (Periodical styleï¿½Accepted for publication),ï¿½ IEEE Trans. Antennas Propagat., to be publised.
+% \bibitem{c6} J. Wang, ï¿½Fundamentals of erbium-doped fiber amplifiers arrays (Periodical styleï¿½Submitted for publication),ï¿½ IEEE J. Quantum Electron., submitted for publication.
 % \bibitem{c7} C. J. Kaufman, Rocky Mountain Research Lab., Boulder, CO, private communication, May 1995.
-% \bibitem{c8} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ÒElectron spectroscopy studies on magneto-optical media and plastic substrate interfaces(Translation Journals style),Ó IEEE Transl. J. Magn.Jpn., vol. 2, Aug. 1987, pp. 740Ð741 [Dig. 9th Annu. Conf. Magnetics Japan, 1982, p. 301].
+% \bibitem{c8} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ï¿½Electron spectroscopy studies on magneto-optical media and plastic substrate interfaces(Translation Journals style),ï¿½ IEEE Transl. J. Magn.Jpn., vol. 2, Aug. 1987, pp. 740ï¿½741 [Dig. 9th Annu. Conf. Magnetics Japan, 1982, p. 301].
 % \bibitem{c9} M. Young, The Techincal Writers Handbook.  Mill Valley, CA: University Science, 1989.
-% \bibitem{c10} J. U. Duncombe, ÒInfrared navigationÑPart I: An assessment of feasibility (Periodical style),Ó IEEE Trans. Electron Devices, vol. ED-11, pp. 34Ð39, Jan. 1959.
-% \bibitem{c11} S. Chen, B. Mulgrew, and P. M. Grant, ÒA clustering technique for digital communications channel equalization using radial basis function networks,Ó IEEE Trans. Neural Networks, vol. 4, pp. 570Ð578, July 1993.
-% \bibitem{c12} R. W. Lucky, ÒAutomatic equalization for digital communication,Ó Bell Syst. Tech. J., vol. 44, no. 4, pp. 547Ð588, Apr. 1965.
-% \bibitem{c13} S. P. Bingulac, ÒOn the compatibility of adaptive controllers (Published Conference Proceedings style),Ó in Proc. 4th Annu. Allerton Conf. Circuits and Systems Theory, New York, 1994, pp. 8Ð16.
-% \bibitem{c14} G. R. Faulhaber, ÒDesign of service systems with priority reservation,Ó in Conf. Rec. 1995 IEEE Int. Conf. Communications, pp. 3Ð8.
-% \bibitem{c15} W. D. Doyle, ÒMagnetization reversal in films with biaxial anisotropy,Ó in 1987 Proc. INTERMAG Conf., pp. 2.2-1Ð2.2-6.
-% \bibitem{c16} G. W. Juette and L. E. Zeffanella, ÒRadio noise currents n short sections on bundle conductors (Presented Conference Paper style),Ó presented at the IEEE Summer power Meeting, Dallas, TX, June 22Ð27, 1990, Paper 90 SM 690-0 PWRS.
-% \bibitem{c17} J. G. Kreifeldt, ÒAn analysis of surface-detected EMG as an amplitude-modulated noise,Ó presented at the 1989 Int. Conf. Medicine and Biological Engineering, Chicago, IL.
-% \bibitem{c18} J. Williams, ÒNarrow-band analyzer (Thesis or Dissertation style),Ó Ph.D. dissertation, Dept. Elect. Eng., Harvard Univ., Cambridge, MA, 1993. 
-% \bibitem{c19} N. Kawasaki, ÒParametric study of thermal and chemical nonequilibrium nozzle flow,Ó M.S. thesis, Dept. Electron. Eng., Osaka Univ., Osaka, Japan, 1993.
-% \bibitem{c20} J. P. Wilkinson, ÒNonlinear resonant circuit devices (Patent style),Ó U.S. Patent 3 624 12, July 16, 1990. 
+% \bibitem{c10} J. U. Duncombe, ï¿½Infrared navigationï¿½Part I: An assessment of feasibility (Periodical style),ï¿½ IEEE Trans. Electron Devices, vol. ED-11, pp. 34ï¿½39, Jan. 1959.
+% \bibitem{c11} S. Chen, B. Mulgrew, and P. M. Grant, ï¿½A clustering technique for digital communications channel equalization using radial basis function networks,ï¿½ IEEE Trans. Neural Networks, vol. 4, pp. 570ï¿½578, July 1993.
+% \bibitem{c12} R. W. Lucky, ï¿½Automatic equalization for digital communication,ï¿½ Bell Syst. Tech. J., vol. 44, no. 4, pp. 547ï¿½588, Apr. 1965.
+% \bibitem{c13} S. P. Bingulac, ï¿½On the compatibility of adaptive controllers (Published Conference Proceedings style),ï¿½ in Proc. 4th Annu. Allerton Conf. Circuits and Systems Theory, New York, 1994, pp. 8ï¿½16.
+% \bibitem{c14} G. R. Faulhaber, ï¿½Design of service systems with priority reservation,ï¿½ in Conf. Rec. 1995 IEEE Int. Conf. Communications, pp. 3ï¿½8.
+% \bibitem{c15} W. D. Doyle, ï¿½Magnetization reversal in films with biaxial anisotropy,ï¿½ in 1987 Proc. INTERMAG Conf., pp. 2.2-1ï¿½2.2-6.
+% \bibitem{c16} G. W. Juette and L. E. Zeffanella, ï¿½Radio noise currents n short sections on bundle conductors (Presented Conference Paper style),ï¿½ presented at the IEEE Summer power Meeting, Dallas, TX, June 22ï¿½27, 1990, Paper 90 SM 690-0 PWRS.
+% \bibitem{c17} J. G. Kreifeldt, ï¿½An analysis of surface-detected EMG as an amplitude-modulated noise,ï¿½ presented at the 1989 Int. Conf. Medicine and Biological Engineering, Chicago, IL.
+% \bibitem{c18} J. Williams, ï¿½Narrow-band analyzer (Thesis or Dissertation style),ï¿½ Ph.D. dissertation, Dept. Elect. Eng., Harvard Univ., Cambridge, MA, 1993. 
+% \bibitem{c19} N. Kawasaki, ï¿½Parametric study of thermal and chemical nonequilibrium nozzle flow,ï¿½ M.S. thesis, Dept. Electron. Eng., Osaka Univ., Osaka, Japan, 1993.
+% \bibitem{c20} J. P. Wilkinson, ï¿½Nonlinear resonant circuit devices (Patent style),ï¿½ U.S. Patent 3 624 12, July 16, 1990. 
 
 
 

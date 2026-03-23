@@ -196,12 +196,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
   Autonomous exploration of unknown environments is a key capability for mobile robots, but it is largely unsolved for robots equipped with only a single monocular camera and no dense range sensors.
-  In this paper, we present a novel approach to monocular vision-based exploration that can safely cover large-scale unstructured indoor and outdoor 3D environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
+  In this paper, we present \fix{MonoSpheres} -- a novel approach to monocular vision-based exploration that can safely cover large-scale unstructured indoor and outdoor 3D environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
   The mapping module solves the problems of sparse depth data, free-space gaps, and large depth uncertainty by oversampling free space in texture-sparse areas and keeping track of obstacle position uncertainty.
   The planning module handles the added free-space uncertainty through rapid replanning and perception-aware heading control.
   We further show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless surfaces are taken into account.
-  We evaluate our approach extensively in diverse real-world and simulated environments, including ablation studies.
-  To the best of the authors' knowledge, the proposed method is the first to achieve 3D monocular exploration in real-world unstructured outdoor environments.
+  We evaluate \fix{MonoSpheres} extensively in diverse real-world and simulated environments, including ablation studies.
+  % To the best of the authors' knowledge, our method is the first to achieve 3D monocular exploration in real-world unstructured outdoor environments.
+  To the best of the authors' knowledge, \fix{MonoSpheres} is the first \fix{method} to achieve 3D monocular exploration in real-world unstructured outdoor environments.
   We open-source our implementation 
   to support future research.
 
@@ -273,7 +274,8 @@ Thus, when classical mapping methods are used with any existing monocular depth 
 In essence, our mapping approach interpolates depth and intelligently estimates free space in texture-sparse areas, solving the problem of sparse free space, while keeping track of obstacle position uncertainties to avoid wrongly deleting mapped obstacles.
 Our planning approach handles the uncertain depth estimates by flying in the direction of the camera, rapidly replanning when new information is obtained and ensuring pure translational motion when visiting exploration viewpoints.
 
-We evaluate our approach in multiple real-world scenarios, simulations, and ablation studies, demonstrating that it 
+% We evaluate our approach in multiple real-world scenarios, simulations, and ablation studies, demonstrating that it 
+We evaluate our \fix{combined mapping and planning approach, dubbed MonoSpheres,} in multiple real-world scenarios, simulations, and ablation studies, demonstrating that it 
 achieves exploration in both indoor and outdoor environments, and at considerably larger scales than existing monocular exploration methods.
 As a step towards low-cost vision-based UAV autonomy in unknown environments, our paper brings the following contributions:
 }
@@ -329,7 +331,7 @@ A larger voxel size causes a higher percentage of voxels to be passed by the spa
 Based on the findings of the above described works, we decided that monocular depth sensing is so different from dense sensors, that not only the planning, but also the \textit{mapping} should be redesigned to explicitly take into account the specific depth estimation properties.
 Since safety and scalable representation of both large-scale and narrow spaces are our main concerns, we chose to use a graph-of-spheres representation \cite{spheregraph, spheremap, bubbleplanner} as the world model instead of voxel grids \cite{octomap, ufomap} or TSDFs \cite{voxblox} traditionally used in exploration literature .
 In comparison to the existing sphere-based mapping methods however, our proposed approach is the first to build the map \textit{directly} from \textit{sparse} monocular depth data, as the others require a full voxel-based occupancy map to be built with dense sensors to extract the graph of spheres. 
-Compared to existing monocular exploration methods overall, our approach achieves exploration at larger scales, both indoor and outdoor, in unstructured 3D environments and without needing a GPU, thanks to the proposed perception-coupled mapping and planning modules.
+Compared to existing monocular exploration methods overall, \fix{MonoSpheres} achieves exploration at larger scales, both indoor and outdoor, in unstructured 3D environments and without needing a GPU, thanks to the proposed perception-coupled mapping and planning modules.
 }
 
 % PIPELINE IMG%%{
@@ -595,7 +597,7 @@ This stops the UAV from getting stuck repeatedly trying to uncover such surfaces
 
 \section{Experiments}
 \label{sec:experiments}
-In this section, we analyze the performance of the proposed method in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
+In this section, we analyze the performance of \fix{MonoSpheres} in large-scale real-world (Sec. \ref{sec:real_exper}) and simulated (Sec. \ref{sec:sim_exper}) environments.
 The presented implementation of the proposed mapping and exploration methods {is currently written in python in two threads.}
 {With this implementation, the mapping runs on average at $\SI{5}{\hertz}$ on 
 % a standard CPU.
@@ -984,7 +986,7 @@ The main result of the simulation experiments is that our approach is capable of
 As expected based on the findings of \cite{from_monoslam_to_explo, los_maps}, the classical mapping approach was not able to map free space in open-space areas.
 In all of the outdoor worlds, the classical mapping approach with random exploration goal sampling was only able to map the area close to tall obstacles near the starting position.
 
-We designed the earthquake environment to test the limits of our method, making it contain textureless surfaces (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
+We designed the earthquake environment to test the limits of \fix{MonoSpheres}, making it contain textureless surfaces (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
 As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
 This is due to the inability of the depth estimation frontend to detect such objects, and could be improved by using dense SLAM frontend (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV in future work.}
@@ -1006,9 +1008,11 @@ In summary, these results confirm the importance of all the proposed components 
 
 \section{CONCLUSION}
 {In this paper, we presented a novel, perception-coupled approach to mapping and planning for monocular UAV 3D exploration.
+% Through ablation experiments, we have confirmed the importance of the individual modules of \fix{MonoSpheres} that are tightly coupled to the properties of monocular motion-based depth sensing.
 Through ablation experiments, we have confirmed the importance of the individual modules of our proposed method that are tightly coupled to the properties of monocular motion-based depth sensing.
 Compared to the existing approaches to 3D monocular exploration, which have so far presented autonomy in highly specific environments and at the scale of a few indoor rooms \cite{from_monoslam_to_explo, los_maps, simon2023mononav}, 
-our proposed approach achieves autonomous exploration at considerably larger scales, both in simulation and in the real world, in a diverse set of environments.}
+\fix{MonoSpheres} achieves autonomous exploration at considerably larger scales, both in simulation and in the real world, in a diverse set of environments.}
+% our proposed approach achieves autonomous exploration at considerably larger scales, both in simulation and in the real world, in a diverse set of environments.}
 
 % our proposed approach achieves autonomous exploration at the scale of {urban areas} with multiple buildings, trees and wide open spaces, both indoor and outdoor, in simulation and in the real world.
 % our proposed approach achieves autonomous exploration at larger scales and in various environmental topologies, indoor and outdoor, in simulation and in the real world.

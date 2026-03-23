@@ -406,13 +406,12 @@ The points that fulfill this condition are used to recompute the \textit{depth m
 % However, we discard points that would fall into the Delaunay triangulation of the visible obstacle points, since there is a more reliable depth estimate from interpolating the SLAM points.
 However, we discard points that would project into the original Delaunay triangulation of the current SLAM points, since there is a more reliable depth estimate from interpolating the SLAM points.
 Free space estimated in this manner also cannot erase existing obstacle points in the map.
+\fix{This approach allows flexibly adding more free space in open areas while using the SLAM points for estimating free space near obstacles.}
 
-This approach allows flexibly adding more free space in open areas while using the SLAM points for estimating free space near obstacles.
-Of course, the assumption does not hold close to obstacles that are not detectable by the sparse visual SLAM frontend (e.g. big textureless objects or thin wires). 
-We discuss potential solutions to this in \autoref{sec:discussion}.
+% This approach allows flexibly adding more free space in open areas while using the SLAM points for estimating free space near obstacles.
+% Of course, the assumption does not hold close to obstacles that are not detectable by the sparse visual SLAM frontend (e.g. big textureless objects or thin wires). 
+% We discuss potential solutions to this in \autoref{sec:discussion}.
 }
-% However, this could be resolved by using a dense SLAM frontend (at a higher computational cost), or by adding low-cost ultrasonic sensors to detect close thin obstacles.
-% However, this could be resolved by adding low-cost ultrasonic sensors to detect close thin obstacles.
 
 \begin{figure}[!h]
   % \includegraphics[width=8.5cm]{fig/smap2.png}
@@ -981,18 +980,9 @@ The experiments were conducted in the Gazebo simulator \cite{gazebo} with the sa
 % Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of interest in the earthquake world for both methods, and to 170x110x20 \SI{}{\meter} in the cave world.
 {Exploration goal generation was constrained by a 3D bounding box in each outdoor world for both methods.}
 
-\subsection{Simulation Results Discussion}
-{
-The main result of the simulation experiments is that our approach is capable of exploring many different topologies of environments -- sparse, dense, indoor, outdoor and environments where flight over obstacles in wide open spaces is required.
+\fix{The main result of the simulation experiments is that our approach is capable of exploring many different topologies of environments -- sparse, dense, indoor, outdoor and environments where flight over obstacles in wide open spaces is required.
 As expected based on the findings of \cite{from_monoslam_to_explo, los_maps}, the classical mapping approach was not able to map free space in open-space areas.
-In all of the outdoor worlds, the classical mapping approach with random exploration goal sampling was only able to map the area close to tall obstacles near the starting position.
-
-We designed the earthquake environment to test the limits of \fix{MonoSpheres}, making it contain textureless surfaces (e.g. smooth cars and burned parts of buildings) and thin obstacles such as exposed metal rods.
-As expected, this led to collisions in both methods (see \autoref{fig:ablations}, as these objects cannot be detected by the used OpenVINS frontend.
-In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
-This is due to the inability of the depth estimation frontend to detect such objects, and could be improved by using dense SLAM frontend (at the cost of computational complexity), or by leveraging low-cost ultrasound sensors as a bumper for the UAV in future work.}
-\label{sec:discussion}
-
+In all of the outdoor worlds, the classical mapping approach with random exploration goal sampling was only able to map the area close to tall obstacles near the starting position.}
 
 \subsection{Ablation Experiments}
 \label{sec:ablations}
@@ -1005,6 +995,31 @@ Since the grid-based method allows casting thin rays even to faraway points, it 
 Lastly, removing viewpoint blocking (VPB) does not lead to critical failures, as the simulated environment does not have large featureless walls, but the exploration performance is still notably reduced due to the UAV revisiting some viewpoints.
 In summary, these results confirm the importance of all the proposed components of our mapping and exploration approach.
 }
+
+
+\section{\sectionfix{Discussion and Limitations}}
+\label{sec:discussion}
+% \section{\sectionfix{Limitations and Future Work}}
+{
+
+% The core limitation of our method lies in the detection capabilities of the visual SLAM frontend used for depth estimation.
+\fix{
+% While MonoSpheres has proven to solve the monocular mapping problems of erasing previously mapped obstacles and mapping of large-scale open-space outdoor areas, it is still limited by the detection capabilities of the visual SLAM frontend used for depth estimation.
+While MonoSpheres has proven to solve several problems of mapping and planning with sparse monocular depth data unaddressed by classic approaches, it is still limited by the detection capabilities of the visual frontend used for depth estimation.
+We designed the Earthquake environment in \autoref{sec:sim_exper}
+ to test the limits of MonoSpheres with the current frontend, making it contain textureless surfaces and thin obstacles.
+As expected, this has led to collisions in both MonoSpheres and the grid-based mapping method, showing that it is a problem of the sparse depth estimation frontend.
+In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus. 
+This could be solved in future work by integrating low-cost but noisy short-range ultrasonic sensors into the mapping pipeline to act as a bumper, 
+% or by training a lightweight visual network specifically for detecting such objects (without requiring full precise depth maps, to keep compute low).
+or by using dense a SLAM frontend (at the cost of computational complexity).
+% The detection of such obstacles could also be improved upon in future work by integrating measurements from low-cost but noisy ultrasound , or by using a dense SLAM frontend (at the cost of computational complexity).
+Additionally, the scalability of MonoSpheres could be further improved by rewriting the implementation to be more parallelized and submap-based.
+% , although now it is sufficient for exploration of areas of the size of several urban blocks, as shown in our experiments.
+}
+
+}
+
 
 
 \section{CONCLUSION}

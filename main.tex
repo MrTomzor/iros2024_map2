@@ -384,7 +384,7 @@ It is only used for the update step at the current time and discarded afterwards
         \node[anchor=south west,inner sep=0] (a) at (0,0) {\adjincludegraphics[width=1.0\linewidth, trim={{0.0\width} {0.05\height} {0.0\width} {0.15\height}}, clip=true]{fig/mononspheres_ofs_diagram_narrow5.pdf}};
       \end{tikzpicture}
   \centering
-  \caption{{Open-area virtual-depth estimation diagram. The thick green points $\mathbf{x}_{vir, k}$ satisfy the condition defined in \autoref{sec:fake} and are added to the construction of $\mathcal{F}_d$.}}
+  \caption{{Open-area virtual-depth estimation diagram. The thick green points $\mathbf{x}_{vir, k}$ satisfy the condition defined in \autoref{sec:fake} and are added to the construction of $\mathcal{F}_d$\cfix{.}}}
   \label{fig:ofs}
 \end{figure}
 
@@ -962,8 +962,8 @@ Videos from these experiments are available in the multimedia materials.
 As the previously published monocular exploration methods do not have code available (with the exception of \cite{simon2023mononav}, which, however, is not ROS-compatible as of writing this paper), we prepared a simple grid-based mapping and exploration pipeline for comparison with MonoSpheres.
 This reference method uses the same mapping approach as \cite{from_monoslam_to_explo, los_maps} (i.e. initializing free space between the camera and the visual SLAM points that have a low position covariance). 
 {In the following text, we show that it is the usage of this classical mapping method that limits exploration with sparse depth data in these previous works.
-To explore, the method periodically samples free-space points uniformly in a 40x40x10 \SI{}{\meter} area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid with the same minimum distance from obstacles and unknown space as the MonoSpheres method (\SI{1.5}{\meter} in these experiments).
-The robot then follows these paths with the camera pointing forward and the planner replans at \SI{5}{\hertz} to handle measurement inaccuracies.}
+To explore, the method periodically samples free-space points uniformly in a 40x40x10 \SI{}{\meter} area around the robot and sends these as goals to a grid-based A* path planning module, which finds path through the occupancy grid with the same minimum distance from obstacles and \fix{unknown} space as the MonoSpheres method (\SI{1.5}{\meter} in these experiments).
+The robot then follows these paths with the camera pointing forward and the planner replans at \SI{5}{\hertz} to handle measurement \fix{inaccuracies}.}
 We use OctoMap \cite{octomap} for the grid-based mapping with a \SI{0.5}{\meter} cell size.
 This value was chosen because smaller cell sizes caused the robot to not find any safe paths due to the free-space gaps documented in \cite{from_monoslam_to_explo} and larger cell sizes blocked exploration of narrow areas. 
 

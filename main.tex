@@ -980,9 +980,8 @@ The experiments were conducted in the Gazebo simulator \cite{gazebo} with the sa
 % Exploration goal generation was constrained to a 60x50x7 \SI{}{\meter} area of interest in the earthquake world for both methods, and to 170x110x20 \SI{}{\meter} in the cave world.
 {Exploration goal generation was constrained by a 3D bounding box in each outdoor world for both methods.}
 
-\fix{We designed the Earthquake environment in \autoref{sec:sim_exper}
- to test the limits of MonoSpheres with the current depth estimation frontend, making it contain textureless surfaces and thin obstacles.
-As expected, this has led to collisions in both MonoSpheres and the grid-based mapping method, showing that it is a problem of the sparse depth estimation frontend.
+\fix{We designed the Earthquake environment to test the limits of MonoSpheres with the OpenVINS SLAM frontend, making it contain textureless surfaces and thin obstacles.
+As expected, this has led to collisions in both MonoSpheres and the grid-based mapping method (see \autoref{fig:ablations}), as these objects cannot be detected by the sparse visual SLAM frontend.
 In particular, the grid-based method collided once with a smooth metal rod, and the MonoSpheres method collided with the textureless roof of a bus.}
 
 \subsection{Ablation Experiments}

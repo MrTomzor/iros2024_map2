@@ -196,7 +196,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
   Autonomous exploration of unknown environments is a key capability for mobile robots, but it is largely unsolved for robots equipped with only a single monocular camera and no dense range sensors.
-  In this paper, we present \fix{MonoSpheres} -- a novel approach to monocular vision-based exploration that can safely cover large-scale unstructured indoor and outdoor 3D environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
+  In this paper, we present \fix{MonoSpheres} --- a novel approach to monocular vision-based exploration that can safely cover large-scale unstructured indoor and outdoor 3D environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
   The mapping module solves the problems of sparse depth data, free-space gaps, and large depth uncertainty by oversampling free space in texture-sparse areas and keeping track of obstacle position uncertainty.
   The planning module handles the added free-space uncertainty through rapid replanning and perception-aware heading control.
   We further show that frontier-based exploration is possible with sparse monocular depth data when parallax requirements and the possibility of textureless surfaces are taken into account.
@@ -1003,13 +1003,13 @@ In summary, these results confirm the importance of all the proposed components 
 
 % The core limitation of our method lies in the detection capabilities of the visual SLAM frontend used for depth estimation.
 \fix{
-The results of the simulations and real-world experiments show that MonoSpheres is capable of exploring many different topologies of environments -- sparse, dense, indoor, outdoor and environments where flight over obstacles in wide open spaces is required.
+The results of the simulations and real-world experiments show that MonoSpheres is capable of exploring many different topologies of environments --- sparse, dense, indoor, outdoor and environments where flight over obstacles in wide open spaces is required.
 As expected based on the findings of \cite{from_monoslam_to_explo, los_maps}, the classical mapping approach with random exploration goal sampling was only able to map the area close to tall obstacles near the starting position.
 This, along with ablation results, supports the necessity of the OVDE module for mapping open spaces, which in turn requires the DBOF to avoid overwriting previously mapped obstacles.
 
 % While MonoSpheres has proven to solve the monocular mapping problems of erasing previously mapped obstacles and mapping of large-scale open-space outdoor areas, it is still limited by the detection capabilities of the visual SLAM frontend used for depth estimation.
 % While MonoSpheres has proven to solve several problems of mapping and planning with sparse monocular depth data unaddressed by classic approaches, it is still limited by the detection capabilities of the visual frontend used for depth estimation.
-The main limitation of MonoSpheres lies in the detection capabilities of the visual SLAM frontend used for depth estimation -- the mapping module cannot map obstacles that the frontend does not detect (thin objects or large textureless objects).
+The main limitation of MonoSpheres lies in the detection capabilities of the visual SLAM frontend used for depth estimation --- the mapping module cannot map obstacles that the frontend does not detect (thin objects or large textureless objects).
 This could be solved in future work by integrating low-cost but noisy short-range ultrasonic sensors into the mapping pipeline, 
 % or by training a lightweight visual network specifically for detecting such objects (without requiring full precise depth maps, to keep compute low).
 or by switching to a dense SLAM frontend (at the cost of higher computational complexity).

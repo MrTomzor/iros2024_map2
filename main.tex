@@ -60,21 +60,21 @@
 \usepackage{cite}
 
 % REVISIONS
-\newcommand{\fix}[1]{\hypersetup{allcolors=blue}{\color{blue} {#1}}}
-\newcommand{\cfix}[1]{%
-  \texorpdfstring{\textcolor{blue}{#1}}{#1}%
-}
-\DeclareRobustCommand{\sectionfix}[1]{%
-  \texorpdfstring{\textcolor{blue}{#1}}{#1}%
-}
-
-% \newcommand{\fix}[1]{\hypersetup{allcolors=black}{\color{black} {#1}}}
+% \newcommand{\fix}[1]{\hypersetup{allcolors=blue}{\color{blue} {#1}}}
 % \newcommand{\cfix}[1]{%
-%   \texorpdfstring{\textcolor{black}{#1}}{#1}%
+%   \texorpdfstring{\textcolor{blue}{#1}}{#1}%
 % }
 % \DeclareRobustCommand{\sectionfix}[1]{%
-%   \texorpdfstring{\textcolor{black}{#1}}{#1}%
+%   \texorpdfstring{\textcolor{blue}{#1}}{#1}%
 % }
+
+\newcommand{\fix}[1]{\hypersetup{allcolors=black}{\color{black} {#1}}}
+\newcommand{\cfix}[1]{%
+  \texorpdfstring{\textcolor{black}{#1}}{#1}%
+}
+\DeclareRobustCommand{\sectionfix}[1]{%
+  \texorpdfstring{\textcolor{black}{#1}}{#1}%
+}
 
 % \newcommand{\fix}[1]{{\hypersetup{allcolors=black}{\color{black} {#1}}}}
 % \newcommand{\vkcaption}[1]{{\color{blue} {#1}}}

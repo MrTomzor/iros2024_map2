@@ -2,7 +2,8 @@
 %2345678901234567890123456789012345678901234567890123456789012345678901234567890
 %        1         2         3         4         5         6         7         8
 \UseRawInputEncoding
-\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+% \documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+\documentclass[letterpaper, 10 pt, journal, twoside]{ieeetran}
 \usepackage[utf8]{inputenc}
 
 %\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
@@ -10,7 +11,7 @@
 \IEEEoverridecommandlockouts                              % This command is only needed if 
                                                           % you want to use the \thanks command
 
-\overrideIEEEmargins                                      % Needed to meet printer requirements.
+% \overrideIEEEmargins                                      % Needed to meet printer requirements.
 
 %In case you encounter the following error:
 %Error 1010 The PDF file may be corrupt (unable to open PDF file) OR
@@ -179,9 +180,9 @@
   % Anonymous Authors
   \thanks{%
     Authors are with the Department of Cybernetics, Faculty of Electrical Engineering, Czech Technical University in Prague, 166 36 Prague 6, {\tt\footnotesize\{\href{mailto:musilto8@fel.cvut.cz}{musilto8}|\href{mailto:matej.petrlik@fel.cvut.cz}{matej.petrlik}|\href{mailto:martin.saska@fel.cvut.cz}{martin.saska}\}@fel.cvut.cz}
-  This work was funded by the Czech Science Foundation (GAČR) under research project no. 25-17779M, by the European Union under the project Robotics and advanced industrial production (reg. no. CZ.02.01.01/00/22\_008/0004590), and by CTU grant no SGS26/077/OHK3/1T/13.
 }
-  % \thanks{Digital Object Identifier (DOI): see top of this page.}
+  \thanks{This work was funded by the Czech Science Foundation (GAČR) under research project no. 25-17779M, by the European Union under the project Robotics and advanced industrial production (reg. no. CZ.02.01.01/00/22\_008/0004590), and by CTU grant no SGS26/077/OHK3/1T/13.}
+  \thanks{Digital Object Identifier (DOI): see top of this page.}
 }
 
 
@@ -208,10 +209,21 @@
   We open-source our implementation 
   to support future research.
 
-  Code--- \href{https://github.com/ctu-mrs/monospheres}{https://github.com/ctu-mrs/monospheres}
-% In attached multimedia materials
+  \textit{Code}--- \href{https://github.com/ctu-mrs/monospheres}{https://github.com/ctu-mrs/monospheres}
 
+  \textit{Videos}--- \href{http://mrs.felk.cvut.cz/papers/monospheres}{mrs.felk.cvut.cz/papers/monospheres}
+
+  % Index terms--- TODO
+  % Code and Videos: \href{https://github.com/ctu-mrs/monospheres}{https://github.com/ctu-mrs/monospheres}
+% In attached multimedia materials
 \end{abstract}
+
+\begin{IEEEkeywords}
+% \begin{keywords}
+% Autonomous Vehicle Navigation, Planning under Uncertainty, Mapping, Aerial Systems: Perception and Autonomy, Robotics in Hazardous Fields 
+Vision-Based Navigation; Mapping; Aerial Systems: Perception and Autonomy
+% \end{keywords}
+\end{IEEEkeywords}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,7 +280,7 @@ Thus, when classical mapping methods are used with any existing monocular depth 
 
   \caption{Illustration of the proposed approach. The mapping pipeline {estimates depth using virtual (blue) and tracked (red) points} from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map (right) consisting of free-space spheres (green), obstacle points (red) {and frontier points (magenta).}}
   \label{fig:smap_intro}
-  \vspace{-0.5cm}
+  \vspace{-0.55cm}
 \end{figure}
 % %%}
 

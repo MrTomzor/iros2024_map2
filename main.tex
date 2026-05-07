@@ -92,8 +92,10 @@
 
 % \newcommand{\real}{\mathbb{R}}
 
-\title{\LARGE \bf
-{MonoSpheres: Large-Scale Monocular SLAM-Based UAV Exploration through Perception-Coupled Mapping and Planning}}
+% \title{\LARGE \bf
+% {MonoSpheres: Large-Scale Monocular SLAM-Based UAV Exploration through Perception-Coupled Mapping and Planning}}
+
+\title{MonoSpheres: Large-Scale Monocular SLAM-Based UAV Exploration through Perception-Coupled Mapping and Planning}
 
 
 % ORCID %%{
@@ -116,21 +118,10 @@
         \end{tikzpicture}
 }{|}}}}
 % %%}
-
-% \author{Tomas Musil, Matej Petrlik, Martin Saska% <-this % stops a space
-% % \thanks{*This work was not supported by any organization}% <-this % stops a space
-% % \thanks{$^{1}$Albert Author is with Faculty of Electrical Engineering, Mathematics and Computer Science,
-% %         University of Twente, 7500 AE Enschede, The Netherlands
-% %         {\tt\small albert.author@papercept.net}}%
-% % \thanks{$^{2}$Bernard D. Researcheris with the Department of Electrical Engineering, Wright State University,
-% %         Dayton, OH 45435, USA
-% %         {\tt\small b.d.researcher@ieee.org}}%
-% }
 \author{
   Tom\'{a}\v{s} Musil$^{\orcidicon{0000-0002-9421-6544}}$, 
   Mat\v{e}j Petrl\'{i}k$^{\orcidicon{0000-0002-5337-9558}}$,
   Martin Saska$^{\orcidicon{0000-0001-7106-3816}}$%
-  % Anonymous Authors
 \thanks{%
   Manuscript received November 20, 2025; Revised February 26, 2026; Accepted April 27, 2026.
   This paper was recommended for publication by Editor Tamim Asfour upon evaluation of the Associate Editor and Reviewers’ comments.}
@@ -140,33 +131,10 @@
 }
   \thanks{Digital Object Identifier (DOI): see top of this page.}
 }
-
-
 \begin{document}
-
-
-
-
-
-
 \maketitle
-% The paper headers
-%\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
-%{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
 \markboth{IEEE Robotics and Automation Letters. Preprint Version. Accepted April, 2026}
 {Musil \MakeLowercase{\textit{et al.}}: MonoSpheres} 
-% The only time the second header will appear is for the odd numbered pages
-% after the title page when using the twoside option.
-% 
-% *** Note that you probably will NOT want to include the author's ***
-% *** name in the headers of peer review papers.                   ***
-% You can use \ifCLASSOPTIONpeerreview for conditional compilation here if
-% you desire.
-% \thispagestyle{empty}
-% \pagestyle{empty}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
   Autonomous exploration of unknown environments is a key capability for mobile robots, but it is largely unsolved for robots equipped with only a single monocular camera and no dense range sensors.
   In this paper, we present \fix{MonoSpheres} --- a novel approach to monocular vision-based exploration that can safely cover large-scale unstructured indoor and outdoor 3D environments by explicitly accounting for the properties of a sparse monocular SLAM frontend in both mapping and planning.
@@ -235,7 +203,6 @@ Thus, when classical mapping methods are used with any existing monocular depth 
 
   \caption{Illustration of the proposed approach. The mapping pipeline {estimates depth using virtual (blue) and tracked (red) points} from sparse monocular-inertial SLAM (left) running on board the UAV (top) to construct a large-scale map (right) consisting of free-space spheres (green), obstacle points (red) {and frontier points (magenta).}}
   \label{fig:smap_intro}
-  \vspace{-0.55cm}
 \end{figure}
 % %%}
 
@@ -309,7 +276,6 @@ A larger voxel size causes a higher percentage of voxels to be passed by the spa
     {Mapping pipeline overview. The OVDE and DBOF modules are illustrated in \autoref{fig:ofs} and \autoref{fig:distbased} respectively.}
   }
   \label{fig:mapping_pipeline}
-  \vspace{-0.5cm}
 \end{figure*}
 % %%}
 
@@ -815,6 +781,7 @@ Videos from these experiments are available in the multimedia materials.
   \caption{{Ablation test results on the earthquake world. Left: visualization of exploration progress, best runs per method are thick and a marker signifies a crash or mission completion. Right: best-run trajectories for each method.}
   }
   \label{fig:ablations}
+
 \end{figure}
 
 
